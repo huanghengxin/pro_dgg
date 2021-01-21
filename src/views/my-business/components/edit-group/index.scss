@@ -1,0 +1,20 @@
+.set-group-dialog {
+  .el-input {
+    width: 388px;
+  }
+  .el-form-item__content {
+    .el-button--small {
+      margin-left: 12px;
+    }
+  }
+  .set-group_info {
+    margin-top: $set-group-info-margin-top;
+    font-size: $set-group-info-font-size;
+    i {
+      margin-right: 8px;
+    }
+  }
+  .set-group_item {
+    margin-top: $set-group-item-margin-top;
+  }
+}

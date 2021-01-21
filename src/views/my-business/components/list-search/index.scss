@@ -1,0 +1,194 @@
+@import 'assets/scss/mixins/base';
+.list-search {
+  background-color: $base-list-background-color;
+  padding: $list-search-padding;
+  box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+  // /* 可以设置不同的进入和离开动画 */
+  // /* 设置持续时间和动画函数 */
+  // .slide-fade-enter-active {
+  //   transition: all 0.3s ease;
+  // }
+  // .slide-fade-leave-active {
+  //   transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+  // }
+
+  .top-part {
+    display: flex;
+    justify-content: space-between;
+    .add-business {
+      @include flex-center();
+      width: $list-search-add-business-width;
+      height: $list-search-add-business-height;
+      border: $list-search-add-business-border;
+      border-radius: $list-search-add-business-border-radius;
+      cursor: pointer;
+      user-select: none;
+      .add-business-icon,
+      .add-business-name {
+        color: $list-search-add-business-name-color;
+        font-size: $list-search-add-business-name-font-size;
+      }
+      .add-business-name {
+        margin-left: $list-search-add-business-name-margin-left;
+      }
+    }
+  }
+  .icon-question {
+    color: #bfbfbf;
+    margin-left: 4px;
+  }
+  .tab-warp {
+    display: flex;
+    justify-content: space-between;
+    user-select: none;
+    margin-top: $list-search-tab-warp-margin-top;
+    height: $list-search-tab-warp-height;
+    border-bottom: $list-search-tab-warp-border-bottom;
+    .warp-tabs {
+      display: flex;
+      justify-content: space-between;
+      .warp-item {
+        flex-shrink: 0;
+        @include flex-center_align();
+        margin-right: $list-search-tab-warp-item-margin-right;
+        cursor: pointer;
+        &:last-child {
+          margin-right: 0;
+        }
+        &_active {
+          border-bottom: $list-search-tab-warp-item-border-bottom;
+        }
+        &_name {
+          font-weight: $list-search-tab-warp-item-name-font-weight;
+        }
+        &_icon {
+          width: $list-search-tab-warp-item-icon-width;
+          height: $list-search-tab-warp-item-icon-height;
+          margin-left: $list-search-tab-warp-item-icon-margin-left;
+        }
+      }
+    }
+    .warp-status {
+      @include flex-center_align();
+      cursor: pointer;
+      p {
+        flex-shrink: 0;
+      }
+      &_number {
+        color: $list-search-tab-warp-status-number-color;
+      }
+    }
+  }
+  @include arrow-right_icon();
+
+  .filter-list {
+    @include filter-item();
+    .filter-warp {
+      min-height: 92px;
+    }
+
+    .list-warp {
+      display: flex;
+      padding-top: $list-search-filter-list-warp-name-margin-top;
+      cursor: pointer;
+      color: $list-search-filter-list-warp-name-color;
+      &_name {
+        flex-shrink: 0;
+        width: $list-search-filter-list-warp-name-width;
+        font-weight: $list-search-filter-list-warp-name-font-weight;
+        line-height: 26px;
+        font-size: $font-size-sm;
+      }
+      &_content {
+        display: flex;
+        flex: 1;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+      }
+      .item-warp {
+        display: flex;
+        align-items: center;
+        .el-date-editor {
+          margin-left: 12px;
+        }
+      }
+    }
+    .icon-up {
+      transform: rotate(-90deg);
+    }
+    .icon-down {
+      transform: rotate(90deg);
+    }
+    .list-more {
+      display: flex;
+      align-items: center;
+      margin-top: $list-search-filter-list-warp-name-margin-top;
+      &::before {
+        width: calc((100%-84px) / 2);
+        display: inline-block;
+        content: '';
+        height: 1px;
+        background-color: #e5e5e5;
+      }
+      &::after {
+        width: calc((100%-84px) / 2);
+        display: inline-block;
+        content: '';
+        height: 1px;
+        background-color: #e5e5e5;
+      }
+      &_content {
+        box-sizing: border-box;
+        cursor: pointer;
+        color: $base-color;
+        flex-shrink: 0;
+        width: 84px;
+        padding: $list-search-filter-list-more-padding;
+      }
+    }
+    .list-checked {
+      @include flex-center_align();
+      margin-top: $list-search-filter-list-checked-clear-margin-top;
+      cursor: pointer;
+      height: $list-search-filter-list-checked-height;
+      background: $list-search-filter-list-checked-background;
+      .el-tag--small,
+      &_name,
+      &_clear {
+        font-size: $list-search-filter-list-checked-font-size;
+      }
+      &_name {
+        width: $list-search-filter-list-checked-name-width;
+        text-align: center;
+      }
+      &_tag {
+        flex: 1;
+        .checked-tag_item {
+          margin-left: $list-search-filter-list-checked-tag-item-margin-left;
+          &:first-child {
+            margin-left: 0;
+          }
+        }
+      }
+      &_clear {
+        @include flex-center();
+        span {
+          @include flex-center();
+          width: $list-search-filter-list-checked-clear-width;
+          height: $list-search-filter-list-checked-clear-height;
+          border: $list-search-filter-list-checked-clear-border;
+          margin-left: $list-search-filter-list-checked-clear-margin-left;
+          margin-right: $list-search-filter-list-checked-clear-margin-right;
+          user-select: none;
+        }
+        &::before {
+          content: '';
+          display: inline-block;
+          width: 1px;
+          height: 14px;
+          background-color: $base-tag-line-color;
+        }
+      }
+    }
+  }
+}

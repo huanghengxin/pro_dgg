@@ -1,0 +1,122 @@
+@import 'assets/scss/mixins/base';
+@import 'assets/scss/mixins/list-ui';
+@include list();
+
+.prospective {
+  width: 100%;
+  font-size: $font-size-md;
+
+  &__search {
+    box-sizing: border-box;
+    background-color: $white;
+    height: 116px !important;
+    padding: 10px 20px 10px 20px;
+
+    &-tab {
+      border-bottom: #ccc 1px solid;
+
+      span {
+        display: inline-block;
+        height: 48px;
+        line-height: 48px;
+        font-size: $font-size-md;
+        border-bottom: $base-color 2px solid;
+        color: $base-color;
+        font-weight: $font-weight-crm;
+      }
+    }
+
+    &-from {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+
+      .lable {
+        font-size: $font-size-sm;
+        color: $black-2;
+        margin-right: 42px;
+        font-weight: $font-weight-crm;
+      }
+
+      @include filter-item();
+
+
+      .el-date-editor--datetimerange.el-input__inner {
+        width: 394px;
+        vertical-align: middle;
+        margin-left: 10px;
+      }
+    }
+  }
+
+  &__main {
+    margin-top: 16px;
+    background-color: $white;
+    position: relative;
+
+    .el-table {
+      color: $black-2;
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
+      .el-table_1_column_1 {
+        padding-left: 14px;
+      }
+
+      .list-last {
+        .cell {
+          padding-right: 0px;
+        }
+      }
+
+      .list-handle {
+        @include flex-center();
+
+        &_follow,
+        &_more {
+          cursor: pointer;
+          color: $list-table-handle-color;
+          margin-right: 20px;
+          white-space: nowrap;
+        }
+      }
+
+      .hidden {
+        width: 68px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .blue {
+        color: #4974f5;
+        cursor: pointer;
+      }
+
+      .follow {
+        display: flex;
+
+        .more {
+          color: $list-table-handle-color;
+          cursor: pointer;
+        }
+      }
+
+      .cell {
+        padding-right: 0;
+      }
+
+      th {
+        background-color: $white;
+        color: $black-2;
+        font-weight: $font-weight-crm;
+      }
+
+      .el-checkbox__inner {
+        z-index: 0;
+      }
+    }
+  }
+}

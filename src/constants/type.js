@@ -1,0 +1,58 @@
+export const GET_WAY_TYPE_MAP = {
+  CRM_GET_WAY_MOVE: '移交',
+  CRM_GET_WAY_REFERRAL: '转介绍',
+  CRM_GET_WAY_PICK: '拾回',
+  CRM_GET_WAY_SELF_DEV: '自开发',
+  CRM_GET_WAY_CLUE_CONVERT: '线索转商机',
+  CRM_GET_WAY_ALLOCATION: 'IBOSS系统分配',
+};
+
+export const PREDICT_DROP_TYPE_MAP = {
+  LZ_FIR: '首跟收回',
+  LZ_PRI_CON: '未连跟掉库',
+  LZ_PRI_SAC: '未签单掉库',
+  RULE_LZ_PUBLIC_TRANSFER_MOVE: '移交商机跟进',
+};
+
+export const REQUIRE_PROGRESS_TYPE_MAP = {
+  CRM_BIZ_PROGRESS_FIRST_FOLLOW: '首跟',
+  CRM_BIZ_PROGRESS_FOLLOWING: '跟进中',
+  CRM_BIZ_PROGRESS_INVITE: '邀约',
+  CRM_BIZ_PROGRESS_INTERVIEW: '面谈',
+  CRM_BIZ_PROGRESS_PHSH_ORDER: '推单',
+  CRM_BIZ_PROGRESS_SIGN_ORDER: '签单',
+  CRM_BIZ_PROGRESS_BACK_ORDER: '退单',
+};
+
+export const PRODUCE_TYPE_MAP = {
+  PRO_CLASS_TYPE_SERVICE: 1, //服务
+  PRO_CLASS_TYPE_SERVICE_RESOURCE: 2, //资源
+  PRO_CLASS_TYPE_TRANSACTION: 3, //交易
+  PRO_CLASS_TYPE_SALES: 4, //销售
+};
+
+export const HANDLE_LOG = {
+  CRM_OPER_ADD_BIZ: '新增商机',
+  CRM_OPER_EDIT_BIZ: '编辑商机',
+  CRM_OPER_DEL_BIZ: '删除商机',
+  CRM_OPER_ADD_REQ: '新增需求',
+  CRM_OPER_EDIT_REQ: '编辑需求',
+  CRM_OPER_DEL_REQ: '删除需求',
+  CRM_OPER_MOVE_BIZ: '移交商机',
+  CRM_OPER_PICKUP_BIZ: '商机拾回',
+  CRM_OPER_DROP_BIZ: '商机掉库',
+  CRM_OPER_CALL: '打电话',
+  CRM_OPER_FOLLOW: '写跟进',
+  CRM_OPER_INVITATION: '邀约',
+  CRM_OPER_INTERVIEW: '面谈完成',
+  CRM_OPER_DISABLE_FLAG: '标记无效',
+  CRM_OPER_PUSH_ORDER: '推单',
+  CRM_OPER_PUSH_ORDER_NEW: '推单子类型：新建需求（状态和进度修改使用）',
+  CRM_OPER_PUSH_ORDER_UPDATE: '推单子类型：修改需求（状态和进度修改使用）',
+  CRM_OPER_SIGN_ORDER: '签单',
+  CRM_OPER_NO_ATTENTION: '暂不关注',
+  CRM_OPER_CANCEL_NO_ATTENTION: '取消暂不关注',
+  CRM_OPER_SET_NEXT_FOLLOW_TIME: '设置下次跟进时间',
+  CRM_OPER_SET_GROUP: '设置分组',
+  CRM_OPER_ADD_CONTACT: '新增联系人',
+};

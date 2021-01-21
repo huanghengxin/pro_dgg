@@ -1,0 +1,265 @@
+.confirm-product-serve {
+  .el-dialog__body {
+    padding: 16px 20px 0;
+  }
+  .el-dialog__title {
+    font-weight: 600;
+    line-height: 22px;
+    font-size: 16px;
+    color: #222;
+  }
+
+  .shallow-color {
+    color: $gray-13;
+    background-color: $gray-12;
+  }
+  .companySignUp {
+    &-title-text {
+      height: 40px;
+      width: 584px;
+      background-color: $push-sheet-dialog-title-color;
+      padding: $padding-dialog-title-base;
+      box-sizing: border-box;
+      font-size: $font-size-md;
+      line-height: $line-height-md;
+      .text-color {
+        color: $push-sheet-dialog-title-content-color;
+        margin-left: 16px;
+      }
+    }
+    //sku dialog对话框 页面样式
+    &-skuBox {
+      display: flex;
+      align-items: center;
+      margin: 9.5px 0;
+      span {
+        width: 94px;
+        margin-right: 22px;
+      }
+      &-sku {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        align-items: center;
+        margin: 5px 0;
+        .normal {
+          padding: 5px 12px 4px;
+          box-sizing: border-box;
+          border: 1px solid transparent;
+          height: 26px;
+          text-align: center;
+          line-height: 13px;
+          margin-right: 12px;
+          border-radius: 2px;
+          cursor: pointer;
+          user-select: none;
+        }
+        .active {
+          border-color: $base-color;
+          color: $base-color;
+        }
+      }
+    }
+    .company-proNum {
+      display: flex;
+      align-items: center;
+      .el-input {
+        width: 70px;
+        height: 32px;
+      }
+      .el-input__inner {
+        height: 32px;
+        width: 70px;
+      }
+      p {
+        width: 78px;
+        margin-right: 22px;
+      }
+      &-input-number {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &-public-style {
+          width: 24px;
+          height: 24px;
+          line-height: 20px;
+          border: $border-bottom-color;
+          text-align: center;
+          cursor: pointer;
+          border-radius: 2px;
+          font-weight: $font-weight-noraml;
+          background-color: #fff;
+        }
+        &-input {
+          width: 29px;
+          border: none;
+          outline: none;
+          line-height: 20px;
+          text-align: center;
+          background-color: $white;
+        }
+        .text-deep-color {
+          color: $black;
+          background-color: $white;
+        }
+        .shallow-color {
+          color: $gray-13;
+          background-color: $gray-12;
+        }
+      }
+    }
+  }
+  .officeAddress {
+    &-title-text {
+      height: 40px;
+      width: 584px;
+      background-color: $push-sheet-dialog-title-color;
+      padding: $padding-dialog-title-base;
+      box-sizing: border-box;
+      font-size: $font-size-md;
+      line-height: $line-height-md;
+      .text-color {
+        color: $push-sheet-dialog-title-content-color;
+        margin-left: 16px;
+      }
+    }
+    &-product-info {
+      color: $black;
+      font-weight: $font-weight-crm;
+      margin: 16px 0 12px;
+      width: 90px;
+      position: relative;
+      left: -20px;
+      text-align: center;
+      border-left: 2px solid #4974f5;
+      font-size: $push-sheet-bussiness-info-title-fontsize;
+    }
+    &-title {
+      height: 20px;
+      line-height: 20px;
+      color: $gray-14;
+      font-weight: $font-weight-noraml;
+      margin: 12px 0;
+      display: flex;
+      &-name {
+        width: 73px;
+        margin-right: 42px;
+      }
+      &-address {
+        color: $black-2;
+      }
+      &-input-number {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &-public-style {
+          width: 24px;
+          height: 24px;
+          line-height: 20px;
+          border: $border-bottom-color;
+          text-align: center;
+          cursor: pointer;
+          border-radius: 2px;
+          font-weight: $font-weight-normal;
+        }
+        &-input {
+          width: 29px;
+          border: none;
+          outline: none;
+          line-height: 20px;
+          text-align: center;
+          background-color: $white;
+        }
+        .text-deep-color {
+          color: $black;
+          background-color: $white;
+        }
+        .shallow-color {
+          color: $gray-13;
+          background-color: $gray-12;
+        }
+      }
+    }
+  }
+  .companyTransfer {
+    &-title-text {
+      height: 40px;
+      width: 584px;
+      background-color: $push-sheet-dialog-title-color;
+      padding: $padding-dialog-title-base;
+      box-sizing: border-box;
+      font-size: $font-size-md;
+      line-height: $line-height-md;
+      .text-color {
+        color: $push-sheet-dialog-title-content-color;
+        margin-left: 16px;
+      }
+    }
+    &-product-info {
+      color: $black;
+      font-weight: $font-weight-crm;
+      margin: 16px 0 12px;
+      font-weight: $font-weight-crm;
+      margin: 16px 0 12px;
+      width: 90px;
+      position: relative;
+      left: -20px;
+      text-align: center;
+      border-left: 2px solid #4974f5;
+      font-size: $push-sheet-bussiness-info-title-fontsize;
+    }
+    &-title {
+      height: 20px;
+      line-height: 20px;
+      color: $gray-14;
+      font-weight: $font-weight-noraml;
+      margin: 12px 0;
+      display: flex;
+      &-name {
+        width: 102px;
+        margin-right: 13px;
+      }
+      &-address {
+        color: $black-2;
+      }
+      &-input-number {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &-public-style {
+          width: 24px;
+          height: 24px;
+          line-height: 20px;
+          border: $border-bottom-color;
+          text-align: center;
+          cursor: pointer;
+          border-radius: 2px;
+          font-weight: $font-weight-normal;
+        }
+        &-input {
+          width: 29px;
+          border: none;
+          outline: none;
+          line-height: 20px;
+          text-align: center;
+          background-color: $white;
+        }
+        .text-deep-color {
+          color: $black;
+          background-color: $white;
+        }
+        .shallow-color {
+          color: $gray-13;
+          background-color: $gray-12;
+        }
+      }
+    }
+  }
+  .dialog-footer {
+    .four-Word {
+      width: 74px;
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "name": "subapp",
+  "version": "1.0.1",
+  "description": "",
+  "main": "src/main.js",
+  "private": true,
+  "author": "sp",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "sp-scripts-test start",
+    "build": "sp-scripts-test build",
+    "dev-serve": "serve -l 2753 -s dist",
+    "format": "sp-scripts-test format",
+    "lint": "sp-scripts-test lint",
+    "analyse": "sp-scripts-test analyse",
+    "copy": "sp-scripts-test copy"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "git add . && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "./src/**/*.{js,vue}": [
+      "prettier --write",
+      "git add ."
+    ]
+  },
+  "commonDependencies": {
+    "vue": "2.6.12",
+    "vue-router": "^3.4.9",
+    "axios": "^0.21.0"
+  },
+  "dependencies": {
+    "@fe/common": "0.0.8",
+    "@fe/sp-im-pc": "^0.2.16",
+    "async": "^3.2.0",
+    "axios": "^0.21.1",
+    "dayjs": "^1.9.6",
+    "element-ui": "^2.14.1",
+    "mitt": "^2.1.0",
+    "single-spa": "^5.6.1",
+    "single-spa-vue": "^2.0.0",
+    "sip.js": "^0.7.8",
+    "vuex": "^3.6.0",
+    "yarn": "^1.22.10"
+  },
+  "devDependencies": {
+    "@fe/sp-scripts-test": "latest",
+    "core-js": "^3.7.0",
+    "postcss": "^8.1.1",
+    "postcss-loader": "^4.0.3",
+    "serve": "^11.3.2",
+    "storejs": "^1.1.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./lint.js"
+    ]
+  },
+  "prettier": "./node_modules/@fe/sp-scripts-test/scripts/prettier.js",
+  "babel": {
+    "extends": "@fe/sp-scripts-test/scripts/babel.js"
+  },
+  "browserslist": [
+    "chrome >= 30",
+    "firefox >= 30",
+    "ie >= 11",
+    "safari >= 7",
+    "ios >= 6",
+    "android >= 4"
+  ]
+}

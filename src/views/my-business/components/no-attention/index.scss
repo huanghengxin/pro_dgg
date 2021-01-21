@@ -1,0 +1,29 @@
+@import 'assets/scss/mixins/reset-ui.scss';
+@import 'assets/scss/mixins/base.scss';
+.no-attention {
+  .el-dialog__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .el-input {
+    width: 300px;
+  }
+
+  .el-textarea {
+    width: 398px;
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    .footer-info {
+      color: $invite-interview-footer-info-color;
+      display: inline-block;
+      &_var {
+        color: $base-color;
+      }
+    }
+  }
+
+  @include reset-label-before();
+}

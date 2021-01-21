@@ -1,0 +1,74 @@
+@import 'assets/scss/var.scss';
+.confirm-resource {
+  .text-deep-color {
+    color: $black;
+    background-color: $white;
+  }
+  .shallow-color {
+    color: $gray-13;
+    background-color: $gray-12;
+  }
+  .officeAddress {
+    &-title-text {
+      height: 40px;
+      width: 584px;
+      background-color: $push-sheet-dialog-title-color;
+      padding: $padding-dialog-title-base;
+      box-sizing: border-box;
+      font-size: $font-size-md;
+      line-height: $line-height-md;
+      .text-color {
+        color: $push-sheet-dialog-title-content-color;
+        margin-left: 16px;
+      }
+    }
+    &-product-info {
+      color: $black;
+      font-weight: $font-weight-crm;
+      margin: 16px 0 12px;
+    }
+    &-title {
+      color: $gray-14;
+      font-weight: $font-weight-noraml;
+      margin: 12px 0;
+      display: flex;
+      &-name {
+        width: 73px;
+      }
+      &-address {
+        color: $black-2;
+      }
+      &-input-number {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &-public-style {
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+          border: $border-bottom-color;
+          text-align: center;
+          cursor: pointer;
+          border-radius: 2px;
+          font-weight: $font-weight-crm;
+        }
+        &-input {
+          width: 29px;
+          border: none;
+          outline: none;
+          line-height: 20px;
+          text-align: center;
+          background-color: $white;
+        }
+        .text-deep-color {
+          color: $black;
+          background-color: $white;
+        }
+        .shallow-color {
+          color: $gray-13;
+          background-color: $gray-12;
+        }
+      }
+    }
+  }
+}

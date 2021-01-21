@@ -1,0 +1,124 @@
+@import 'assets/scss/mixins/base.scss';
+.edit-base-info {
+  .el-form-item__content {
+    line-height: 32px;
+  }
+  //
+  @include reset-label-before();
+  .el-dialog__headerbtn {
+    top: 15px;
+  }
+  .el-form-item__label {
+    padding: 0;
+  }
+  .from-sex-man {
+    margin-right: 20px;
+  }
+  .from-phone {
+    margin-bottom: 0;
+  }
+  .from-phone div:nth-child(1) {
+    display: flex;
+    & > span:nth-child(2) {
+      cursor: pointer;
+    }
+    .from-phone-icon-add {
+      margin: 0 8px 0 12px;
+      font-size: 14px;
+    }
+    .disabled {
+      color: #8cadff;
+    }
+  }
+  .from-phone div:nth-child(2) {
+    .from-phone-icon-warn {
+      font-size: 15px;
+    }
+  }
+  .from-phone-delete {
+    margin-left: 12px;
+  }
+  .content-beiyong {
+    .el-form-item__content {
+      display: flex;
+    }
+    .el-form-item {
+      .el-input,
+      .el-input__inner {
+        width: 160px;
+      }
+      margin-right: 12px;
+    }
+    .el-select {
+      .el-input {
+        width: 80px;
+      }
+      .el-input__inner {
+        width: 80px;
+        padding-right: 8px;
+        padding-left: 8px;
+      }
+    }
+  }
+  .icon-plus {
+    width: 50px;
+    margin-left: 12px;
+    color: #4974f5;
+    font-size: 12px;
+    cursor: pointer;
+    em {
+      margin-left: 4px;
+    }
+  }
+  .new-add {
+    margin-bottom: 16px;
+    .el-form-item__content {
+      display: flex;
+      width: max-content;
+    }
+    .el-button--small {
+      margin-left: 12px;
+    }
+  }
+  .warn {
+    line-height: 18px;
+    color: #999999;
+    margin-bottom: 12px;
+    .warn-icon {
+      font-size: 12px;
+    }
+    .warn-text {
+      font-size: 12px;
+      margin-left: 4px;
+    }
+  }
+  .el-input {
+    width: 300px;
+  }
+  .from-level {
+    display: flex;
+    align-items: center;
+    .el-form-item__content {
+      margin-left: 0 !important;
+    }
+  }
+  .el-textarea {
+    width: 420px;
+  }
+  .from-low {
+    .el-form-item__content {
+      .el-input {
+        width: 160px;
+      }
+      .el-select {
+        .el-input {
+          width: 54px;
+          .el-input__inner {
+            padding-right: 0;
+            padding-left: 10px;
+          }
+        }
+      }
+    }
+  }
+}

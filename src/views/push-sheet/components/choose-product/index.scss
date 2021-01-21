@@ -1,0 +1,141 @@
+@import 'assets/scss/mixins/base';
+
+.choose-product {
+  &-dialog {
+    @include flex-center_pagination();
+  }
+  .el-input {
+    width: 160px;
+    height: 32px;
+  }
+  .el-input__inner {
+    height: 32px;
+    border-radius: 2px;
+    font-size: 13px;
+  }
+  .el-form-item__label {
+    text-align: left;
+    height: 32px;
+    line-height: 32px;
+  }
+  .el-form-item__content {
+    line-height: 32px;
+  }
+  .el-tabs__nav {
+    user-select: none;
+  }
+  &-no-data {
+    width: 1200px;
+    margin: $margin-20 0;
+    &-bg {
+      width: 1160px;
+      height: 48px;
+      background-color: $base-tag-background-color;
+    }
+    &-box {
+      width: 60px;
+      margin: 0 auto;
+      .icon {
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        fill: currentColor;
+        overflow: hidden;
+      }
+      &-img {
+        width: 60px;
+      }
+      &-text {
+        font-size: $font-size-md;
+        color: $gray-15;
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+  &-alreadyTable {
+    width: 100%;
+    margin-bottom: 20px;
+    &-box {
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      &-title {
+        font-size: $push-sheet-bussiness-info-title-fontsize;
+        color: $push-sheet-bussiness-info-title-color;
+        font-weight: $push-sheet-bussiness-info-title-weight;
+      }
+      &-delAll {
+        width: 92px;
+        height: 32px;
+        text-align: center;
+        line-height: 32px;
+        border-radius: 2px;
+        color: $base-color;
+        cursor: pointer;
+        border: 1px solid $base-color;
+      }
+    }
+  }
+
+  .flexBox {
+    display: flex;
+    flex-wrap: wrap;
+    &-item {
+      margin-right: 16px;
+      height: 32px;
+      padding-top: 4px;
+      .el-cascader {
+        line-height: 32px;
+        .el-input__icon {
+          line-height: 31px;
+        }
+      }
+      &-input-box {
+        display: flex;
+        width: 160px;
+        height: 32px;
+        .border-none-right,
+        .border-none-left {
+          width: 100%;
+          border: $border-bottom-color;
+          border-radius: 2px;
+          padding-left: 10px;
+          box-sizing: border-box;
+        }
+        .border-none-right {
+          border-right: none !important;
+        }
+        span {
+          border-top: $border-bottom-color;
+          border-bottom: $border-bottom-color;
+        }
+        .border-none-left {
+          border-left: none !important;
+        }
+      }
+      .el-input__icon {
+        line-height: 32px;
+      }
+      .el-button--small {
+        height: 32px;
+        font-size: 12px;
+        border-radius: 3px;
+      }
+    }
+  }
+
+  //上架样式
+  .has-been-on {
+    color: $push-sheet-bussiness-has-been-on;
+    font-size: $push-sheet-bussiness-info-title-fontsize;
+  } //下架样式
+  .sold-out {
+    color: $push-sheet-bussiness-sold-out;
+    font-size: $push-sheet-bussiness-info-title-fontsize;
+  }
+  .el-button {
+    width: 49px;
+    height: 32px;
+  }
+}

@@ -1,0 +1,90 @@
+/**
+* @description 全局修改element-ui样式
+*/
+
+//文本域输入字数样式修改
+.el-textarea {
+  .el-input__count {
+    line-height: 14px;
+    bottom: 3px;
+    right: 10px;
+    background-color: transparent;
+  }
+}
+
+//级联组件菜单最小高度
+.el-cascader-menu {
+  .el-scrollbar__wrap {
+    height: 204px;
+  }
+}
+//打电话指令样式,禁止用户点击
+.call-loading-color {
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* 全局定义字体大小 */
+body {
+  font-size: 14px;
+  font-family: 'verdana';
+  line-height: normal;
+}
+.el-button--small {
+  padding: 9px 8px;
+}
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+  border-radius: 8px;
+  background-color: #d8d8d8;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #b7babf;
+}
+
+// ie
+scrollbar-track {
+  border-radius: 8px;
+  background-color: #d8d8d8;
+}
+
+.message-box-min-height {
+  .el-message-box__content {
+    height: 130px;
+    width: 360px;
+    padding: 16px 20px;
+    margin: 0 !important;
+
+    .el-message-box__title {
+      font-weight: 600;
+    }
+
+    .el-message-box__status {
+      font-size: 18px !important;
+    }
+  }
+}
+
+.el-form_error {
+  .el-input__inner {
+    border-color: #f56c6c;
+  }
+  &::after {
+    position: absolute;
+    left: 0;
+    bottom: -30px;
+    content: '不能输入特殊字符';
+    color: #f56c6c;
+  }
+}

@@ -1,0 +1,57 @@
+.close-all-rule-dialog {
+  .el-dialog__header {
+    padding: 14px 16px;
+    font-weight: bold;
+
+    .el-dialog__headerbtn {
+      top: 16px;
+      right: 18px;
+    }
+  }
+
+  .el-dialog__body {
+    box-sizing: border-box;
+    height: 130px;
+    padding-top: 38px;
+    padding-right: 0px;
+
+    .el-form {
+
+      .el-form-item {
+        margin-bottom: 8px;
+
+        .el-form-item__label {
+          display: inline-block;
+          text-align: left;
+          padding: 0 !important;
+          height: 32px;
+          line-height: 32px;
+        }
+
+        .el-form-item--mini .el-form-item__label {
+          line-height: 32px;
+        }
+
+        .el-range-editor--mini.el-input__inner {
+          height: 32px;
+        }
+
+        .el-date-editor--datetimerange.el-input,
+        .el-date-editor--datetimerange.el-input__inner {
+          width: 360px;
+        }
+      }
+    }
+
+    .warming {
+      margin-left: 80px;
+      display: inline-block;
+      padding-top: 10px;
+      color: $gray-11;
+      font-size: $font-size-sm;
+      letter-spacing: 0.23px;
+    }
+
+  }
+
+}

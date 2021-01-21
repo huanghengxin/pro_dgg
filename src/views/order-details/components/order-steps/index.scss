@@ -1,0 +1,41 @@
+.steps {
+  width: 100%;
+  height: 90px;
+  background: #ffffff;
+  box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+  padding: 16px 0;
+  .el-step__title.is-process,
+  .el-step__title.is-finish {
+    font-size: 13px;
+    font-weight: 400;
+    color: #67c239;
+    line-height: 18px;
+    margin-bottom: 4px;
+  }
+  .el-step__description.is-process,
+  .el-step__description.is-finish,
+  .el-step__description {
+    width: 200px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: #999999;
+    line-height: 18px;
+  }
+  .el-step__title.is-wait {
+    font-size: 13px;
+    font-weight: 400;
+    color: #222222;
+    line-height: 18px;
+    margin-bottom: 4px;
+  }
+  .el-step__head.is-finish,
+  .el-step__icon-inner,
+  .el-step__icon {
+    color: #67c239;
+    border: none;
+    .el-step__line {
+      background-color: #67c239;
+    }
+  }
+}

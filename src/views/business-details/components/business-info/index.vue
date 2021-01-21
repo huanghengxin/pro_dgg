@@ -1,0 +1,299 @@
+<template>
+  <div v-loading="loading" class="business-info">
+    <div class="name-info business-info_item">
+      <show-tooltip :text="businessInfo.customerName || ''" :width="262"></show-tooltip>
+      <span v-if="businessInfo.noAttention == '1'" class="name-info_attention">暂不关注</span>
+    </div>
+    <div class="business-info_item sex-info">
+      <span v-if="businessInfo.customerSex">{{ businessInfo.customerSex == 1 ? '男' : '女' }}</span>
+      <span v-else>未选择性别</span>
+      <el-rate
+        :value="Number(businessInfo.intentionLevel) || 0"
+        :max="Number(businessInfo.intentionLevel) || 0"
+        disabled
+        disabled-void-color="transparent"
+      >
+      </el-rate>
+    </div>
+    <div class="business-info_item record-info">
+      <show-tooltip
+        v-if="businessInfo.comment"
+        :tooltip-line-clamp="2"
+        :text="businessInfo.comment || ''"
+        :width="268"
+      ></show-tooltip>
+      <span v-else>暂无备注</span>
+      <i
+        class="el-icon-edit-outline"
+        data-tid="infoShowModalHandleClick"
+        @click="
+          showModalHandleClick('editRemarkRef', {
+            comment: businessInfo.comment,
+            id: businessInfo.id,
+          })
+        "
+      ></i>
+    </div>
+    <div class="business-info_item-small">
+      <span class="item-label">商机编号：</span><span>{{ businessInfo.bizNo }}</span>
+    </div>
+    <div v-callLoading="callLoading" class="business-info_item-small phone-info">
+      <span class="item-label">手机号码：</span>
+      <div v-if="businessInfo.customerPhone">
+        <div>
+          <span>
+            {{ businessInfo.customerPhone }}
+          </span>
+          <i
+            class="iconfont-qds-crm icon-view phone-info_icon"
+            data-tid="infoShowModalHandleClick"
+            @click="showModalHandleClick('showPhoneRef', businessInfo.customerContact)"
+          ></i>
+          <i
+            v-accControls:noAttention="businessInfo"
+            class="iconfont-qds-crm icon-dianhua phone-info_icon"
+            data-tid="infoBusinessInfoCall"
+            @click="businessInfoCall"
+          ></i>
+        </div>
+        <div v-for="item in businessInfo.relation" :key="item.id" class="phone-info_sen">
+          <span>
+            {{ item.contactNo }}
+          </span>
+          <i
+            class="iconfont-qds-crm icon-view phone-info_icon"
+            data-tid="infoShowModalHandleClick"
+            @click="showModalHandleClick('showPhoneRef', item.contactNoFull)"
+          ></i>
+          <i
+            v-accControls:noAttention="businessInfo"
+            class="iconfont-qds-crm icon-dianhua phone-info_icon"
+            data-tid="infoBusinessInfoCall"
+            @click="businessInfoCall(item.contactNoFull)"
+          ></i>
+        </div>
+      </div>
+      <span v-else>-</span>
+    </div>
+    <div class="business-info_item-small require-info">
+      <!-- 有效且未签单的客户需求 -->
+      <span class="item-label">客户需求：</span>
+      <show-tooltip
+        v-if="businessInfo.requireName"
+        key="require-info"
+        :text="businessInfo.requireName.replace(/(,+)/g, '、')"
+        :width="260"
+      ></show-tooltip>
+      <div v-else key="require-info">-</div>
+    </div>
+    <div class="business-info_item-small">
+      <span class="item-label">下次跟进时间：</span>
+      <span v-if="businessInfo.nextFollowTime" key="time-info">
+        {{ businessInfo.nextFollowTime | filterSecond }}
+      </span>
+      <span v-else key="time-info">-</span>
+    </div>
+    <div class="business-info_item-small">
+      <span class="item-label">预计掉库时间：</span>
+      <span v-if="businessInfo.dropTime && businessInfo.noAttention != 1" class="color-info">
+        {{ businessInfo.dropTime | filterSecond }}
+      </span>
+      <span v-else>-</span>
+    </div>
+    <div class="business-info_item-small">
+      <span class="item-label">预计掉库类型：</span>
+      <span v-if="businessInfo.noAttention == 1" class="color-info">暂不关注/不掉库</span>
+      <span v-else-if="businessInfo.dropTypeCode" class="color-info">
+        {{ businessInfo.dropTypeCode | dropTypeMap }}
+      </span>
+      <span v-else>-</span>
+    </div>
+    <div class="business-info_item-small">
+      <span class="item-label">获取方式：</span>
+      <span>{{ businessInfo.getWay | getWayTypeMap }}</span>
+    </div>
+    <div class="business-info_item-small">
+      <span class="item-label">获取时间：</span>
+      <span>{{ businessInfo.getTime | filterSecond }}</span>
+    </div>
+    <div class="business-info_item-small require-info">
+      <span class="item-label">备用联系人：</span>
+      <show-tooltip
+        v-if="businessInfo.bakRelation && businessInfo.bakRelation.contactName"
+        key="business-bakRelation"
+        :text="contactName"
+        :width="260"
+      ></show-tooltip>
+      <span
+        v-else
+        key="business-bakRelation"
+        :class="{
+          'iconfont-qds-crm': true,
+          'icon-plus': true,
+        }"
+        data-tid="infoAddStandbyPerson"
+        @click="addStandbyPerson"
+        ><em>新增</em></span
+      >
+    </div>
+    <div
+      v-if="businessInfo.bakRelation && businessInfo.bakRelation.contactNo"
+      class="business-info_item-small phone-info"
+    >
+      <span class="item-label">备用联系号码：</span
+      ><span>{{ businessInfo.bakRelation.contactNo }}</span>
+      <i
+        class="iconfont-qds-crm icon-view phone-info_icon"
+        data-tid="infoShowModalHandleClick"
+        @click="showModalHandleClick('showPhoneRef', businessInfo.bakRelation.contactNoFull)"
+      ></i>
+      <i
+        v-accControls:noAttention="businessInfo"
+        class="iconfont-qds-crm icon-dianhua phone-info_icon"
+        data-tid="infoBusinessInfoCall"
+        @click="businessInfoCall(businessInfo.bakRelation.contactNoFull)"
+      ></i>
+    </div>
+    <div>
+      <span class="item-label">分组：</span>
+      <span v-if="businessInfo.groupName">{{ businessInfo.groupName }}</span>
+      <span v-else>-</span>
+    </div>
+    <show-phone ref="showPhoneRef" />
+    <edit-remark ref="editRemarkRef" @set-remark="setRemark" />
+    <add-standby ref="addStandbyContact"></add-standby>
+  </div>
+</template>
+
+<script>
+import './index.scss';
+import ShowTooltip from 'components/show-tooltip';
+import ShowPhone from '../show-phone';
+import EditRemark from '../edit-remark';
+import AddStandby from '../../../my-business/components/add-standby-contact';
+import { get_business_info } from 'api/business-details';
+import callMixins from 'utils/mixins/callMixins';
+import { GET_WAY_TYPE_MAP, PREDICT_DROP_TYPE_MAP } from 'constants/type';
+import dayjs from 'dayjs';
+export default {
+  name: 'BusinessInfo',
+  components: {
+    ShowTooltip,
+    ShowPhone,
+    EditRemark,
+    AddStandby,
+  },
+  filters: {
+    dropTypeMap(val) {
+      return PREDICT_DROP_TYPE_MAP[val];
+    },
+    getWayTypeMap(val) {
+      return GET_WAY_TYPE_MAP[val];
+    },
+    filterSecond(val) {
+      return val && dayjs(val).isValid() ? dayjs(val).format('YYYY-MM-DD HH:mm') : '';
+    },
+  },
+  mixins: [callMixins],
+  props: {
+    businessId: {
+      type: String,
+      default: '',
+    },
+  },
+  data() {
+    return {
+      businessInfo: {},
+      loading: false,
+    };
+  },
+  computed: {
+    contactName() {
+      const businessInfo = this.businessInfo;
+      const sex =
+        businessInfo.bakRelation.sex == 1
+          ? '（男）'
+          : businessInfo.bakRelation.sex == 0
+          ? '（女）'
+          : '';
+      return businessInfo.bakRelation.contactName + sex;
+    },
+  },
+  created() {
+    if (this.businessId) {
+      this.getBusinessInfo();
+    }
+  },
+
+  mounted() {
+    this.$eventBus.$on('edit-on-submit_update-business-info', () => {
+      this.getBusinessInfo();
+    });
+  },
+  beforeDestroy() {
+    this.$eventBus.$off('edit-on-submit_update-business-info');
+  },
+  methods: {
+    /**
+     * @description 打电话需要刷新页面方法
+     */
+    flowRefresh() {
+      this.$router.go(-1);
+    },
+    /**
+     * @description 商机详情打电话
+     * @param {String} 改变当前选中的号码
+     */
+    businessInfoCall(contactNoFull) {
+      this.callMixins('bus', this.businessInfo, 'one', contactNoFull);
+    },
+    addStandbyPerson() {
+      this.$refs.addStandbyContact.openModal(this.businessInfo);
+    },
+    setRemark() {
+      this.getBusinessInfo();
+    },
+    editRemarkHandleClick() {},
+    /**
+     * @description 编辑备注 查看号码
+     */
+    showModalHandleClick(ref, param) {
+      this.$refs[ref].openModal(param);
+    },
+    /**
+     * @description 获取商机基本信息
+     */
+    getBusinessInfo() {
+      this.loading = true;
+      const params = { bizId: this.businessId };
+      get_business_info(params)
+        .then((res) => {
+          const { code, data, message } = res;
+          if (code === 200) {
+            if (data.relation.length >= 1) {
+              data.relation.shift();
+            }
+            data.requireName = data.requireName
+              ? JSON.parse(data.requireName)
+                  .map((item) => item.intentionName)
+                  .join(',')
+              : '';
+            this.$eventBus.$emit('get-business-info', data);
+            this.businessInfo = Object.freeze(data) || {};
+          } else {
+            this.$message.warning(message);
+            if (res.code === 5002) {
+              this.$router.go(-1);
+            }
+          }
+          this.loading = false;
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+    },
+  },
+};
+</script>
+
+<style></style>

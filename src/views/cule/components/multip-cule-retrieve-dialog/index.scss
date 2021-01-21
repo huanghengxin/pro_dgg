@@ -1,0 +1,54 @@
+.multip-cule-retrieve-dialog {
+  .el-dialog__body {
+    min-height: 80px;
+    position: relative;
+
+    .text {
+      height: 20px;
+      position: absolute;
+      top: 50%;
+
+      &__remind {
+        color: $push-sheet-dialog-title-content-color !important;
+      }
+
+      margin-top: -10px;
+
+      .icon-success {
+        color: $gray-11;
+      }
+
+      .txt {
+        color: $base-color;
+      }
+    }
+
+    .el-select {
+      width: 300px;
+    }
+
+    .el-input__count {
+      line-height: 14px;
+    }
+  }
+
+  .el-dialog__footer {
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .note {
+        color: $gray-11;
+        font-size: $font-size-sm;
+      }
+    }
+  }
+}
+
+// .el-message-box {
+//   .el-message-box__status {
+//     top: 30%;
+//     font-size: 18px !important;
+//   }
+// }

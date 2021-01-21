@@ -1,0 +1,94 @@
+.pay {
+  padding: 16px 0;
+  &-title {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    ::v-deep .el-icon-edit {
+      font-size: 18px;
+    }
+    .titleWord {
+      width: 93px;
+      text-align: center;
+      position: relative;
+      left: -20px;
+      border-left: 2px solid #4974f5;
+      font-size: $push-sheet-bussiness-info-title-fontsize;
+      color: $push-sheet-bussiness-info-title-color;
+      font-weight: $push-sheet-bussiness-info-title-weight;
+      margin-right: $margin-xs;
+    }
+  }
+  &-content {
+    padding: 20px 0;
+    .el-radio:nth-child(1) {
+      margin-right: 23px;
+    }
+    .el-radio__label {
+      padding-left: 3px;
+    }
+    .all {
+      margin-top: 22px;
+      font-size: $font-size-md;
+      color: $black-2;
+      font-weight: $font-weight-noraml;
+    }
+    .instalments {
+      margin-top: $margin-xs;
+      &-info {
+        display: flex;
+        p:nth-child(1) {
+          margin-right: 35px;
+          color: $gray-14;
+          font-size: $font-size-md;
+        }
+        &-money {
+          color: $push-sheet-stages-color;
+          line-height: 32px;
+        }
+      }
+      .el-input__inner {
+        height: 32px !important;
+      }
+      .el-input__icon {
+        line-height: 32px;
+      }
+      .el-form-item {
+        margin-bottom: 0;
+      }
+      &-stages {
+        width: 300px;
+      }
+      &-detail {
+        .el-table tr {
+          height: 64px;
+        }
+        .el-input__inner {
+          width: 160px;
+        }
+        .el-form-item__content {
+          position: static;
+        }
+        .el-form-item__error {
+          width: 90px;
+          top: 75%;
+          left: 20px;
+        }
+        .el-input--suffix {
+          width: 160px;
+        }
+      }
+      &-tip {
+        display: flex;
+        margin-top: $margin-20;
+        .el-icon-warning-outline {
+          font-size: $font-size-xlg;
+        }
+      }
+    }
+    &-tip {
+      color: $gray-11;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+@import 'assets/scss/mixins/reset-ui.scss';
+.set-group {
+  &_edit {
+    cursor: pointer;
+    margin-left: 12px;
+    color: $base-color;
+  }
+  .el-dialog__body {
+    display: flex;
+    align-items: center;
+    .el-form-item {
+      display: flex;
+    }
+    .el-form-item__label {
+      padding: 0;
+    }
+    .el-select {
+      width: 300px;
+    }
+  }
+}

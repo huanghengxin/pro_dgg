@@ -1,0 +1,43 @@
+@import 'assets/scss/mixins/reset-ui.scss';
+@import 'assets/scss/mixins/base.scss';
+
+.select-remote {
+  .el-select-dropdown__item {
+    height: auto;
+  }
+}
+
+el-form-item__content {
+  margin-left: 130px;
+}
+
+.invite-interview {
+  .el-dialog__body &_resource {
+    margin-bottom: 0;
+  }
+
+  .el-checkbox {
+    margin-right: 20px;
+  }
+
+  .el-form-item__label {
+    padding-right: 0;
+  }
+
+  .el-input {
+    width: 300px;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+
+    .footer-info {
+      color: $invite-interview-footer-info-color;
+      display: inline-block;
+    }
+  }
+
+  @include reset-label-before();
+  @include quick-note();
+}

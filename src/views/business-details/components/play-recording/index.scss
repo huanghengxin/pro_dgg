@@ -1,0 +1,18 @@
+.play-recording {
+  width: 820px;
+  padding-bottom: 20px;
+  .el-dialog__footer {
+    margin-top: 26px;
+  }
+  .dialog-p {
+    margin-bottom: 12px;
+    &:last-child {
+      margin-bottom: 26px;
+    }
+    & > span:nth-child(1) {
+      display: inline-block;
+      width: 72px;
+      margin-right: 36px;
+    }
+  }
+}

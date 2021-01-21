@@ -1,0 +1,126 @@
+::v-deep.el-input-group {
+  width: 160px;
+}
+::v-deep.el-input__inner {
+  height: 32px;
+  margin-top: 2px;
+}
+::v-deep.el-input__icon {
+  line-height: 32px;
+}
+::v-deep.el-input-group__append {
+  background-color: #fafafb;
+  color: $gray-11;
+}
+
+.validity {
+  &-title {
+    .el-icon-warning-outline {
+      width: 12px;
+    }
+  }
+  .el-textarea__inner {
+    height: 70px;
+  }
+
+  .titleWord {
+    width: 105px;
+    position: relative;
+    left: -20px;
+    text-align: center;
+    border-left: 2px solid #4974f5;
+    font-size: $push-sheet-bussiness-info-title-fontsize;
+    color: $push-sheet-bussiness-info-title-color;
+    font-weight: $push-sheet-bussiness-info-title-weight;
+    margin-right: 10px;
+  }
+  .tipsText {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    color: #e6a23c;
+    .warning {
+      margin-left: 8px;
+      font-size: 12px;
+    }
+  }
+  &-time {
+    margin-top: 12px;
+    display: flex;
+    color: $gray-14;
+    align-items: flex-start;
+    // height: 32px;
+    flex-wrap: wrap;
+    .el-input__inner {
+      height: 32px;
+    }
+    .el-form-item__error {
+      width: 60px;
+      left: 10px;
+    }
+    p {
+      width: 90px;
+      margin-top: 5px;
+    }
+    &-first-select {
+      margin-right: 12px;
+      width: 100px;
+      .el-input .el-input__inner {
+        width: 100px;
+      }
+      .el-select > .el-input {
+        width: 100px;
+      }
+    }
+  }
+  &-mark {
+    margin-top: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $gray-10;
+    display: flex;
+    flex-wrap: wrap;
+    &_width {
+      width: 90px;
+      color: $gray;
+    }
+    .el-form-item__error {
+      width: 60px;
+      left: 0;
+    }
+  }
+  .customSelect {
+    display: flex;
+    .el-form-item--small.el-form-item {
+      margin-bottom: 0;
+    }
+    &-first {
+      .el-select {
+        width: 100px;
+      }
+      .el-input__inner {
+        height: 32px;
+      }
+    }
+
+    &-with-select {
+      height: 32px;
+      .el-input__inner {
+        width: 106px;
+        height: 32px;
+      }
+      .el-input-group__append {
+        .el-input--small .el-input__icon {
+          line-height: 34px;
+        }
+        .el-select .el-select--small {
+          margin: -1px -20px;
+          .el-input .el-input--small .el-input--suffix {
+            .el-input__inner {
+              padding-left: 5px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
