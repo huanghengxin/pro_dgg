@@ -16,7 +16,21 @@ export function get_business_info(params) {
 //获取服务产品列表数据
 export function get_page(params) {
   return api.post(
-    '/crm-middle-pc/api/crisps-crm/service/yk/product/service/v1/get_page.do',
+    '/crm-middle-app/api/crisps-crm/service/yk/product/service/v1/get_page.do',
+    params,
+  );
+}
+//获取资源产品列表数据
+export function get_resource_page(params) {
+  return api.post(
+    '/crm-middle-app/api/crisps-crm/service/yk/product/resource/v1/get_page.do',
+    params,
+  );
+}
+//获取交易产品列表数据
+export function get_deal_page(params) {
+  return api.post(
+    '/crm-middle-app/api/crisps-crm/service/yk/product/trading/v1/get_page.do',
     params,
   );
 }
@@ -31,6 +45,15 @@ export function get_user_business_category(params) {
     params,
   );
 }
+// 获取分期列表数据
+export function get_order_validity(params) {
+  return api.get('http://yapi.dgg.cn/mock/307/order_validity.do', params);
+}
+// 获取分期数
+export function get_order_num(params) {
+  return api.get('http://yapi.dgg.cn/mock/307/get_order_num.do', params);
+}
+
 export function getProductInfo(params) {
   return api.get('/business_ding_qi_cha.do', params);
 }

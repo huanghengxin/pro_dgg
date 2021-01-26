@@ -41,7 +41,6 @@
           :data="potentialCustomerList"
           clear-sort
           :default-sort="{ prop: 'null', order: 'null' }"
-          max-height="600"
           data-tid="customerSortList"
           @sort-change="sortList"
         >
@@ -129,18 +128,26 @@
               <div class="list-handle">
                 <p
                   class="list-handle_follow"
-                  data-tid="customerListHandleClick"
+                  :data-tid="'customerListHandleClick' + scope.$index"
                   @click="listHandleClick(scope.row)"
                 >
                   写跟进
                 </p>
-                <el-dropdown trigger="click" @command="handleCommand">
+                <el-dropdown
+                  trigger="click"
+                  :data-tid="'handleCommand' + scope.$index"
+                  @command="handleCommand"
+                >
                   <p class="list-handle_more">更多操作</p>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item :command="{ component: 'callPhoneRef', item: scope.row }"
+                    <el-dropdown-item
+                      :data-tid="'callPhoneRef' + scope.$index"
+                      :command="{ component: 'callPhoneRef', item: scope.row }"
                       >打电话</el-dropdown-item
                     >
-                    <el-dropdown-item :command="{ component: 'conversionRef', item: scope.row }"
+                    <el-dropdown-item
+                      :data-tid="'conversionRef' + scope.$index"
+                      :command="{ component: 'conversionRef', item: scope.row }"
                       >转商机</el-dropdown-item
                     >
                   </el-dropdown-menu>
@@ -154,7 +161,7 @@
             background
             :current-page="param.start"
             :page-size="param.limit"
-            :page-sizes="[10, 50, 100, 150]"
+            :page-sizes="[10, 20, 30, 40, 50]"
             layout="total, prev, pager, next, sizes, jumper"
             :total="param.total"
             @size-change="handleSizeChange"

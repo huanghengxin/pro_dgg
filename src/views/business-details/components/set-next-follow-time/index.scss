@@ -1,6 +1,10 @@
 @import 'assets/scss/mixins/base';
 @include set-next-follow-datatime();
 .set-next-follow-time {
+  .el-input__inner {
+    height: 32px;
+    border-radius: 2px;
+  }
   .label {
     color: #333333;
   }

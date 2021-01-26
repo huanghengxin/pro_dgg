@@ -50,7 +50,6 @@
         :data="tableDataRecords"
         :default-sort="{ prop: 'drop_time', order: 'null' }"
         clear-sort
-        max-height="600"
         data-tid="dynamicSortOrder"
         @sort-change="sortOrder"
       >
@@ -98,7 +97,7 @@
                 scope.row.library && ['GROUP', 'MERCHANT', 'BRAND'].includes(scope.row.library)
               "
               class="handle-blue"
-              data-tid="dynamicPickUp"
+              :data-tid="'dynamicPickUp' + scope.$index"
               @click="pickUp(scope.row.bizId)"
               >拾回</span
             >
@@ -109,7 +108,7 @@
       <div class="footer">
         <el-pagination
           :current-page="start"
-          :page-sizes="[10, 50, 100, 150]"
+          :page-sizes="[10, 20, 30, 40, 50]"
           background
           layout="total, prev, pager, next,sizes,  jumper"
           :total="tableDataPage"

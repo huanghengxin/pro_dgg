@@ -21,6 +21,10 @@
     .el-input__count {
       line-height: 14px;
     }
+    .el-input__inner {
+      height: 32px;
+      border-radius: 2px;
+    }
 
     .el-form {
       .el-form-item:last-child {
@@ -50,14 +54,17 @@
       width: 482px;
 
       &__item {
+        margin: 4px 0 8px;
         max-width: 450px;
-        padding: $write-quick-note-item-padding;
-        font-size: $write-quick-note-item-font-size;
-        margin-right: $write-quick-note-item-margin-right;
-        background-color: $write-quick-note-item-background-color;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        height: 22px;
+        line-height: 22px;
+        border-radius: 2px;
+        display: inline-block;
+        padding: 0px 8px;
+        box-sizing: border-box;
+        font-size: 12px;
+        margin-right: 8px;
+        background-color: #f2f2f2;
       }
     }
   }

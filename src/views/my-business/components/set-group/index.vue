@@ -17,6 +17,7 @@
             size="mini"
             type="primary"
             icon="el-icon-plus"
+            data-tid="addGroupHandleClick"
             @click="addGroupHandleClick"
             >新建分组</el-button
           >
@@ -30,13 +31,20 @@
               >
               </el-option>
             </el-select>
-            <span class="set-group_edit" @click="addGroupHandleClick">编辑</span>
+            <span
+              class="set-group_edit"
+              data-tid="editGroupHandleClick"
+              @click="addGroupHandleClick"
+              >编辑</span
+            >
           </div>
         </el-form-item>
       </el-form>
       <!-- 弹层按钮 -->
       <span slot="footer" class="footer">
-        <el-button size="small" @click="dialogVisible = false">取消</el-button>
+        <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+          >取消</el-button
+        >
         <el-button
           type="primary"
           :disabled="disabled"
@@ -153,7 +161,7 @@ export default {
               };
             }) || [];
           this.ruleForm.groupId =
-            this.groupList.find((it) => it.groupId === item.groupId)?.groupId || '';
+            this.groupList.find((it) => it.groupId === item?.groupId)?.groupId || '';
           if (this.groupList.length === 0) {
             this.disabled = true;
           } else {

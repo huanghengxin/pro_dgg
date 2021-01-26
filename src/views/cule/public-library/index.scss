@@ -12,12 +12,13 @@
     padding: 16px 0px 16px 20px;
 
     &-from {
-      margin-top: 12px;
-
+      height: 42px;
       &:first-child {
         margin-top: 0;
       }
-
+      span {
+        margin: 8px 0;
+      }
       .lable {
         display: inline-block;
         font-size: $font-size-sm;
@@ -30,7 +31,6 @@
       @include filter-item();
     }
   }
-
 
   .button-box {
     margin-top: 12px;
@@ -47,8 +47,6 @@
   &__main {
     background-color: $white;
     position: relative;
-
-
 
     a {
       color: $base-color !important;

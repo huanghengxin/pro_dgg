@@ -17,7 +17,7 @@ const envs = [
     hosts: {},
     // 需要额外注入的全局变量，代码中可直接通过 window.__EXTERNAL_ENVIRONMENT__.xx 使用
     externalEnvironment: {},
-    baseUrl: 'https://dp.shupian.cn/',
+    baseUrl: 'https://dcrm.shupian.cn/',
     //应用运行环境如:开发环境、测试环境、生产环境
     SP_SERVER_ENV: 'development',
   },
@@ -39,8 +39,8 @@ const envs = [
     hosts: {},
     // 需要额外注入的全局变量，代码中可直接通过 window.__EXTERNAL_ENVIRONMENT__.xx 使用
     externalEnvironment: {},
-    baseUrl: 'https://tp.shupian.cn/',
-    //应用运行环境如:开发环境、测试环境、生产环`境
+    baseUrl: 'https://tcrm.shupian.cn/',
+    //应用运行环境如:开发环境、测试环境、生产环境
     SP_SERVER_ENV: 'test',
   },
   {

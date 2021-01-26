@@ -61,7 +61,12 @@
               class="demo-ruleForm"
             >
               <el-form-item prop="phone">
-                <el-input v-model="phoneForm.phone" type="text" placeholder="请输入手机号">
+                <el-input
+                  v-model="phoneForm.phone"
+                  type="text"
+                  data-tid="phoneInput"
+                  placeholder="请输入手机号"
+                >
                   <i slot="prefix" class="input_icon el-input__icon el-icon-user"></i>
                 </el-input>
               </el-form-item>
@@ -71,18 +76,19 @@
                     v-model="phoneForm.captcha"
                     class="captcha-input"
                     type="password"
+                    data-tid="captchaInput"
                     placeholder="请输入验证码"
                   >
                     <i slot="prefix" class="input_icon el-input__icon el-icon-lock"></i>
                   </el-input>
 
-                  <el-button class="captcha-btn">获取验证码</el-button>
+                  <el-button class="captcha-btn" data-tid="getCode">获取验证码</el-button>
                 </div>
               </el-form-item>
 
               <div class="remember">
-                <el-checkbox v-model="checked">自动登录</el-checkbox>
-                <a>找回密码</a>
+                <el-checkbox v-model="checked" data-tid="autoLogin">自动登录</el-checkbox>
+                <a data-tid="fingPwd">找回密码</a>
               </div>
               <el-button type="primary" class="btn_login" data-tid="login" @click="login">
                 登&nbsp;录
@@ -107,12 +113,12 @@ export default {
       loading: false,
       phoneForm: {
         phone: '18512811263',
-        captcha: '',
+        captcha: '123456',
       },
 
       ruleForm: {
-        account: '17765488997',
-        password: '488997',
+        account: '18512811263',
+        password: '123456',
         platformType: 'COMDIC_PLATFORM_QIDASHUN',
       },
     };

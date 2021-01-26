@@ -95,6 +95,8 @@ export default {
       discountShow: false,
       multipleSelection: [], //表格多选删除的数据
       delarr: [], //删除的id数组
+      spanArr1: [], //存放每一行记录的合并数
+      position1: 0, //记录spanArr1的索引值
     };
   },
   computed: {
@@ -125,6 +127,7 @@ export default {
             Number(arr[i].goodsExecutionsNumber) *
             Number(arr[i].num) +
           Number(arr[i].taskItem[arr[i].taskItem.length - 1].price) * Number(arr[i].num);
+        this.setProductTableInfo.productTableInfo[i].subTotalPrice = res; //向数组中加入小计
       }
       return res.toFixed(2);
     },
@@ -147,25 +150,26 @@ export default {
         console.log('修改后', val, '修改前', oldval);
         if (val.length > 0) {
           this.$store.commit('pushSheet/editBusinessCode', { index: 1, flag: true });
-          this.$store.commit('pushSheet/editProductData', val);
-          // this.$eventBus.$emit('change-status-product', 2);
-          // this.loading = true;
           setTimeout(() => {
             this.loading = false;
           }, 1000);
         } else {
           this.$store.commit('pushSheet/editBusinessCode', { index: 1, flag: false });
-          this.$store.commit('pushSheet/editProductData', val);
         }
+        this.$store.commit('pushSheet/editProductData', val);
       },
     },
   },
   created() {
-    this.getProductInfo();
     this.$eventBus.$on('confirm-product-row', (row) => {
       //接收确认产品服务页面的一行数据
-      console.log(row, 'row===');
-      this.setProductTableInfo.productTableInfo.push(row);
+      let list = this.setProductTableInfo.productTableInfo;
+      list.push(row);
+      list?.forEach((item, index) => {
+        item.index = index + 1;
+      });
+      console.log(list, 'list');
+      this.GetSpanArr();
     });
   },
   methods: {
@@ -178,111 +182,12 @@ export default {
     discountInput(row) {
       console.log(row);
     },
-    //获取主页产品表格数据
-    getProductInfo() {
-      // getProductInfo().then(() => {
-      //   // this.
-      // });
-      let res = [
-        //   {
-        //     index: '1',
-        //     typeCode: 1,
-        //     type: '1',
-        //     id: '12987123',
-        //     name: '创建订单',
-        //     taskItem: [
-        //       {
-        //         id: 1,
-        //         content: '任务项一',
-        //       },
-        //       {
-        //         id: 2,
-        //         content: '任务项二',
-        //       },
-        //       {
-        //         id: 23,
-        //         content: '任务项三',
-        //       },
-        //     ],
-        //     city: '嘻嘻嘻',
-        //     price: 10,
-        //     discount: 10,
-        //     number: 1,
-        //     memberPrice: 100,
-        //     subTotalPrice: 802.0,
-        //     product: 'CP10000003',
-        //     mainBody: '四川ABC公司',
-        //   },
-        //   {
-        //     index: '2',
-        //     typeCode: 2,
-        //     type: '1',
-        //     id: '129871232',
-        //     name: '创建订单',
-        //     taskItem: [
-        //       {
-        //         id: 1,
-        //         content: '任务项一',
-        //       },
-        //       {
-        //         id: 2,
-        //         content: '任务项二',
-        //       },
-        //       {
-        //         id: 23,
-        //         content: '任务项三',
-        //       },
-        //     ],
-        //     city: '嘻嘻嘻',
-        //     price: 10,
-        //     discount: 10,
-        //     number: 1,
-        //     memberPrice: 100,
-        //     subTotalPrice: 802.0,
-        //     product: 'CP10000003',
-        //     mainBody: '四川ABCC公司',
-        //   },
-        //   {
-        //     index: '3',
-        //     typeCode: 3,
-        //     type: '2',
-        //     id: '129871233',
-        //     name: '创建订单',
-        //     taskItem: [
-        //       {
-        //         id: 1,
-        //         content: '任务项一',
-        //       },
-        //       {
-        //         id: 2,
-        //         content: '任务项二',
-        //       },
-        //       {
-        //         id: 23,
-        //         content: '任务项三',
-        //       },
-        //     ],
-        //     city: '嘻嘻嘻',
-        //     price: 10,
-        //     discount: 10,
-        //     number: 1,
-        //     memberPrice: 100,
-        //     subTotalPrice: 802.0,
-        //     product: 'CP10000003',
-        //     mainBody: '四川ABCD公司',
-        //   },
-      ];
-      res.forEach((item, index) => {
-        item.index = index + 1;
-      });
-      // this.$set(this, "productTableInfo",res )
-      this.setProductTableInfo.productTableInfo = res;
-    },
     /**
      * @description 选择产品 控制对话框显示隐藏
      */
     chooseProduct() {
-      this.$refs.chooseProductRef.openModal();
+      let list = this.setProductTableInfo.productTableInfo;
+      this.$refs.chooseProductRef.openModal(list);
     },
     /**
      * @description 选择产品tabs切换点击
@@ -295,24 +200,62 @@ export default {
      * @param {Object}
      */
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      const linkSourceCode = this.setProductTableInfo.productTableInfo[rowIndex + 1]?.addressIndex;
-      // if (row.typeCode === linkSourceCode) {
-      if (linkSourceCode >= 0) {
-        if (columnIndex == 1) {
-          if (rowIndex === linkSourceCode) {
-            return {
-              rowspan: 2,
-              colspan: 1,
-            };
+      // const linkSourceCode = this.setProductTableInfo.productTableInfo[rowIndex + 1]?.addressIndex;
+      // // if (row.typeCode === linkSourceCode) {
+      // if (linkSourceCode >= 0) {
+      //   if (columnIndex == 1) {
+      //     if (rowIndex === linkSourceCode) {
+      //       return {
+      //         rowspan: 2,
+      //         colspan: 1,
+      //       };
+      //     } else {
+      //       return {
+      //         rowspan: 0,
+      //         colspan: 0,
+      //       };
+      //     }
+      //   }
+      // }
+      // // }
+      if (columnIndex === 1) {
+        //每次走到第2列时给单元格加上rowspan和colspan属性
+        const _row = this.spanArr1[rowIndex];
+        const _col = _row > 0 ? 1 : 0; //1为不合并 0为合并至最后一列
+        return {
+          //返回需要合并的对象
+          rowspan: _row,
+          colspan: _col,
+        };
+      }
+    },
+    //处理数据
+    GetSpanArr() {
+      //由于数据是动态的，所以页面加载时需要调用下面的方法，根据后台数据处理以知道要合并的行/列
+      //得到的spanArr数组表示某一行所需要合并的列数
+      var data = this.setProductTableInfo.productTableInfo;
+      if (data.length <= 0) {
+        return;
+      }
+      data.forEach((element, index) => {
+        //遍历数据 得到每项 和下标
+        if (index === 0) {
+          //如果是一条数据 直接不合并
+          this.spanArr1.push(1); //记录合并数
+          this.position = 0; //记录spanArr1的索引值
+        } else {
+          console.log(data[index - 1], 'data[index - 1]');
+          if (element.name === data[index - 1].name) {
+            //非第一条数据 则判断是否与上一条相邻的数据值相等
+            this.spanArr1[this.position1] += 1; //相等则说明需要合并 rousoan:2 = 合并一行
+            this.spanArr1.push(0); //记录索引
+            console.log(this.spanArr1, 'this.spanArr1');
           } else {
-            return {
-              rowspan: 0,
-              colspan: 0,
-            };
+            this.spanArr1.push(1); //与上一单元格数据不相等 则不合并 rowspan:1 = 不合并
+            this.position1 = index; //记录索引
           }
         }
-      }
-      // }
+      });
     },
     showEditDialoga(val) {
       console.log(val, 'val');
@@ -416,7 +359,6 @@ export default {
       row.addressIndex = this.addressIndex;
       row.linkSourceCode = this.setProductTableInfo.productTableInfo[this.addressIndex].typeCode;
       this.setProductTableInfo.productTableInfo.splice(this.addressIndex + 1, 0, row);
-      console.log(row);
     },
     /**
      * @description 确定关联资源
@@ -424,20 +366,17 @@ export default {
     confirmLinkResource() {
       this.linkResourceDialog = false;
     },
-
     /**
      * @description 服务产品 改变当前页
      */
     serveCurrentChange(val) {
       this.serveForm.currentPage = val;
-      console.log(this.serveForm.currentPage);
     },
     /**
      * @description 服务产品 改变当前页显示数量
      */
     serveSizeChange(val) {
       this.serveForm.pagesize = val;
-      console.log(this.serveForm.pagesize);
     },
     /**
      * @description 验证字符串是否是数字

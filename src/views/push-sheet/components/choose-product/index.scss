@@ -8,11 +8,20 @@
     width: 160px;
     height: 32px;
   }
+  .two-input-warp .tow-input {
+    width: 160px;
+    height: 32px;
+    border-radius: 0;
+  }
+  .two-input-warp .tow-input input {
+    width: 75px;
+  }
   .el-input__inner {
     height: 32px;
     border-radius: 2px;
     font-size: 13px;
   }
+
   .el-form-item__label {
     text-align: left;
     height: 32px;

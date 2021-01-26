@@ -22,6 +22,7 @@
           clearable
           maxlength="20"
           placeholder="请输入客户姓名或企业名称"
+          data-tid="customerNameInput"
           class="clearable"
         ></el-input>
       </el-form-item>
@@ -35,12 +36,15 @@
         <el-input
           v-model.trim="ruleForm.customerPhone"
           maxlength="11"
+          data-tid="customerPhoneInput"
           placeholder="请输入11位手机号码"
         ></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="footer">
-      <el-button size="small" @click="dialogVisible = false">取消</el-button>
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
       <el-button
         type="primary"
         size="small"

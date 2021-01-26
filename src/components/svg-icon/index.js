@@ -48,9 +48,11 @@ export default {
       const node = this.isImage(icon) ? (
         <img src={icon} />
       ) : (
-        <svg class="svg-icon" style={{ fontSize: newSize }} aria-hidden="true">
-          <use xlinkHref={'#' + icon}></use>
-        </svg>
+        <tag class={[avaClass]}>
+          <svg class="svg-icon" style={{ fontSize: newSize }} aria-hidden="true">
+            <use xlinkHref={'#' + icon}></use>
+          </svg>
+        </tag>
       );
       if (TYPE[type]) {
         const text = textContent ? textContent : TYPE[type]?.text;

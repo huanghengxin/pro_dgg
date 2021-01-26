@@ -2,12 +2,12 @@
  * 将给定的金额数值转换为中文繁体的方法,
  *  最大值为'兆'的的数值,不为负数
  * @author cqj
- * @version 2016.05.04 v1.0
+ * @version 2020.12.04 v1.0
  * @param money 传入的金额数值
  * @return result 当返回的不是'ERROR'时,
  *  返回的是转换后的金额中文值
  */
-export const _moneyToChinese = function (money) {
+export const _moneyToChinese = function(money) {
   //汉字的数字
   let cnNums = new Array('零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖');
   //基本单位

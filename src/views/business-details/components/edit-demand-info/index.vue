@@ -32,7 +32,7 @@
       </el-form-item>
       <!-- 业务区域： -->
       <el-form-item class="from-name" label="业务区域：" prop="demandArea">
-        <el-select v-model="ruleForm.demandArea" placeholder="请选择">
+        <el-select v-model="ruleForm.demandArea" data-tid="demandAreaSelect" placeholder="请选择">
           <el-option v-for="item in areaList" :key="item.key" :label="item.value" :value="item.key">
           </el-option>
         </el-select>
@@ -44,6 +44,7 @@
           clearable
           value-key="productCode"
           :disabled="proDisable"
+          data-tid="productCodeSelect"
           placeholder="请先选择需求在选择对应产品"
         >
           <el-option
@@ -66,6 +67,7 @@
           placeholder="选择日期"
           :picker-options="pickerOptions"
           value-format="yyyy-MM-dd"
+          data-tid="expectFinishTimePick"
           size="small"
         >
         </el-date-picker>
@@ -77,6 +79,7 @@
             v-model="ruleForm.service[parent.code]"
             value-key="attriValueCode"
             clearable
+            data-tid="serviceSelect"
             placeholder="请选择"
           >
             <el-option
@@ -92,7 +95,7 @@
     </el-form>
     <!-- 弹层按钮 -->
     <span slot="footer" class="footer">
-      <el-button size="small" data-tid="infoDialogVisible" @click="dialogVisible = false"
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
         >取消</el-button
       >
       <el-button

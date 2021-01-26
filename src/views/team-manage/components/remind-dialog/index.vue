@@ -12,11 +12,19 @@
         <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;失败原因:{{ message }}!</p>
       </div>
       <span slot="footer" class="footer">
-        <el-button size="medium" @click="dialogVisible = false">取消</el-button>
+        <el-button size="medium" data-tid="recordsCancelButton" @click="dialogVisible = false"
+          >取消</el-button
+        >
         <el-button type="danger" size="medium" data-tid="remindLose" @click="lose"
           >失效此商机</el-button
         >
-        <el-button type="primary" size="medium" @click="dialogVisible = false">确定</el-button>
+        <el-button
+          type="primary"
+          size="medium"
+          data-tid="recordsCancelButton"
+          @click="dialogVisible = false"
+          >确定</el-button
+        >
       </span>
     </el-dialog>
   </div>

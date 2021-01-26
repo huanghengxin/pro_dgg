@@ -1,5 +1,6 @@
 import './index.scss';
 import ShowTooltip from 'components/show-tooltip';
+import dayjs from 'dayjs';
 import {
   queryTreeBook,
   rules_switch_boarded,
@@ -7,14 +8,13 @@ import {
   update_merchants,
 } from 'api/rule';
 import SvgIcon from 'components/svg-icon';
-import { MerchantflowRule } from 'constants/rule-type';
 export default {
   name: 'Merchant',
   /**
    * @description 过滤单位
    */
   filters: {
-    getTimeName: function(val) {
+    getTimeName: function (val) {
       // if (value == 'TIAO') return '条';
       // if (value == 'GE') return '个';
       const map = {
@@ -43,6 +43,7 @@ export default {
       rulesMerchantLists: [],
       getRuleList: { data1: [] },
       getStaffList: { data2: [] },
+      edit: true,
     };
   },
   computed: {},
@@ -75,6 +76,7 @@ export default {
       }
       // 数据字典
       const dictionaryTree = (await this.getDictionary().catch()) || {};
+      console.log(dictionaryTree, 'shuju ');
       this.loading = false;
       this.unitCode = dictionaryTree.rule_date_code || [];
       let libraryMap = dictionaryTree.rule_biz_db_code.reduce((acc, cur) => {
@@ -95,10 +97,8 @@ export default {
         if (isLibraryCode) item['【X】库'] = libraryMap[item.libraryCode];
         if (isTimeCode) item['【单位】'] = dateMap[item.timeCode];
         if (isNoAttentionMaxDay) item['【X】自然日'] = item.noAttentionMaxDay;
-
         unitCodeMap[item.ruleCode] = item;
       }
-
       this.handleDataList(unitCodeMap, dictionaryTree.lz_code, 'getRuleList');
       this.handleDataList(unitCodeMap, dictionaryTree.sx_code, 'getStaffList');
     },
@@ -112,8 +112,26 @@ export default {
       const boarded = await rules_switch_boarded(param);
       if (boarded.code === 200) {
         this.switchboardStatus = boarded.data.status;
+        if (this.switchboardStatus === 1) {
+          this.edit = true;
+        } else {
+          this.start = boarded.data.val1;
+          this.editAble(this.start);
+        }
       } else {
         this.$message.warning(boarded.message);
+      }
+    },
+    /**
+     * @description  当前时间和开关开启时间的判断
+     */
+    editAble(startDateStr) {
+      var curDate = dayjs(new Date()).format('YYYY-MM-DD');
+      let startTime = dayjs(new Date(startDateStr)).format('YYYY-MM-DD');
+      if (curDate < startTime) {
+        this.edit = true;
+      } else {
+        this.edit = false;
       }
     },
     /**
@@ -121,11 +139,16 @@ export default {
      */
     handleDataList(unitCodeMap, _codeList, data) {
       const reg = /【单位】|【X】库|【X】自然日|上限/g;
+      console.log(_codeList[10], '151515151');
       for (const item1 of _codeList) {
-        if (item1.ext1 !== 'Y') continue;
-        const unit = unitCodeMap[item1.code];
+        if (item1.ext1.trim() !== 'Y') {
+          console.log(111111);
+          continue;
+        }
+        console.log(222222);
+        const unit = unitCodeMap[item1.code.trim()];
         if (typeof unit == 'undefined') {
-          return;
+          continue;
         }
         let arr = Object.keys(unit);
         if (arr.length == 0) {
@@ -285,7 +308,7 @@ export default {
       const getRule = this.getRuleList?.data1 || [];
       const getStaff = this.getStaffList?.data2 || [];
       const rulesMerchant =
-        [...getRule, ...getStaff].map((item) => {
+        [...getRule, ...getStaff]?.map((item) => {
           return {
             id: item.id,
             ruleCode: item.ruleCode,

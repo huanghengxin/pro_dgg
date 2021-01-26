@@ -35,7 +35,6 @@
           ref="tableRef"
           v-loading="loading"
           :data="publicLibraryList"
-          max-height="600"
           clear-sort
           :default-sort="{ prop: 'null', order: 'null' }"
           data-tid="recordSortList"
@@ -114,7 +113,7 @@
               <div class="list-handle">
                 <p
                   class="list-handle_follow"
-                  data-tid="remarkListHandleClick"
+                  :data-tid="'remarkListHandleClick' + scope.$index"
                   @click="listHandleClick(scope.row)"
                 >
                   拾回
@@ -122,13 +121,19 @@
                 <el-dropdown trigger="click" @command="handleCommand">
                   <p class="list-handle_more">更多操作</p>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item :command="{ component: 'callPhoneRef', item: scope.row }"
+                    <el-dropdown-item
+                      :data-tid="'clueSeasLibraryCallPhone' + scope.$index"
+                      :command="{ component: 'callPhoneRef', item: scope.row }"
                       >打电话</el-dropdown-item
                     >
-                    <el-dropdown-item :command="{ component: 'remarkRef', item: scope.row }"
+                    <el-dropdown-item
+                      :data-tid="'clueSeasLibraryRemark' + scope.$index"
+                      :command="{ component: 'remarkRef', item: scope.row }"
                       >备注</el-dropdown-item
                     >
-                    <el-dropdown-item :command="{ component: 'conversionRef', item: scope.row }"
+                    <el-dropdown-item
+                      :data-tid="'clueSeasLibraryConversionRef' + scope.$index"
+                      :command="{ component: 'conversionRef', item: scope.row }"
                       >转商机</el-dropdown-item
                     >
                   </el-dropdown-menu>
@@ -142,7 +147,7 @@
             background
             :current-page="param.start"
             :page-size="param.limit"
-            :page-sizes="[10, 50, 100, 150]"
+            :page-sizes="[10, 20, 30, 40, 50]"
             layout="total, prev, pager, next, sizes, jumper"
             :total="total"
             @size-change="handleSizeChange"

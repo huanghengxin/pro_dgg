@@ -12,6 +12,9 @@ el-form-item__content {
 }
 
 .invite-interview {
+  .quick-note_group-add > i {
+    font-size: 8px;
+  }
   .el-dialog__body &_resource {
     margin-bottom: 0;
   }
@@ -24,8 +27,15 @@ el-form-item__content {
     padding-right: 0;
   }
 
+  .el-form-item {
+    margin-bottom: 20px;
+  }
   .el-input {
     width: 300px;
+    .el-input__inner {
+      height: 32px;
+      border-radius: 2px;
+    }
   }
 
   .footer {

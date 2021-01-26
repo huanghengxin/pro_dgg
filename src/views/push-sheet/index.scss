@@ -4,6 +4,15 @@
   height: 16px;
   background-color: #eee;
 }
+.el-step__head.is-finish,
+.el-step__icon-inner,
+.el-step__icon {
+  color: #67c239;
+  border: none;
+  .el-step__line {
+    background-color: #67c239;
+  }
+}
 
 .el-steps {
   width: 100%;

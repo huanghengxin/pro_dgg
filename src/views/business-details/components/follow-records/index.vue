@@ -28,15 +28,22 @@
             size="small"
             type="month"
             placeholder="选择月"
+            data-tid="changeTimeHandle"
             @change="changeTimeHandle"
           >
           </el-date-picker>
-          <el-checkbox v-model="checked" @change="clearTimeHandleClick">查看90天以前</el-checkbox>
+          <el-checkbox
+            v-model="checked"
+            data-tid="clearTimeHandleClick"
+            @change="clearTimeHandleClick"
+            >查看90天以前</el-checkbox
+          >
           <el-button
+            v-if="from !== 'team-manage'"
             v-accControls:noAttention="noAttentionStatus"
             type="primary"
             :disabled="disabledButton"
-            icon="el-icon-edit"
+            icon="iconfont-qds-crm icon-edit"
             size="small"
             data-tid="recordWriteFollowRcordHandle"
             @click="writeFollowRcordHandle"
@@ -130,6 +137,7 @@
                               >
                             </span>
                             <span
+                              v-if="from !== 'team-manage'"
                               v-show="subTabActive == 1 && item.inviteStatus == 0"
                               class="invite-warp_right"
                               data-tid="recordCancelInviteClick"

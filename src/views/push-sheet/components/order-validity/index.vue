@@ -16,6 +16,7 @@
               v-model="ruleForm.value1"
               placeholder="请选择"
               style="width: 300px"
+              data-tid="dateSelsect"
               @change="validityChange"
             >
               <el-option
@@ -38,6 +39,7 @@
                   slot="append"
                   v-model="ruleForm.value3"
                   style="width: 74px"
+                  data-tid="numSelsect"
                   @change="unitChange"
                 >
                   <el-option
@@ -75,6 +77,7 @@
 </template>
 <script>
 import './index.scss';
+import { get_order_validity } from 'api/push-sheet';
 export default {
   data() {
     var checkNum = (rule, value, callback) => {
@@ -155,6 +158,7 @@ export default {
   },
   created() {
     this.ruleForm.value1 = this.validityOptions[1].value;
+    // this.get_order_validity();//查询分期数
   },
   mounted() {},
   methods: {
@@ -177,7 +181,24 @@ export default {
       console.log(val, 'val');
       this.unit = val;
     },
-
+    /**
+     * @description 获取分期
+     * @param {}
+     * @returns {}
+     */
+    get_order_validity() {
+      get_order_validity()
+        .then((res) => {
+          const { code, data, message } = res;
+          if (code == 200) {
+            console.log(data, '分期数据');
+            this.validityOptions = data;
+          } else {
+            this.$message.warning(message);
+          }
+        })
+        .catch(() => {});
+    },
     // 校验数据
     checkForm() {
       let flag = false;

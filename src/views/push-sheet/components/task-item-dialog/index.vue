@@ -35,7 +35,11 @@
           <div class="normal-task-designee">
             <template v-if="i === 0">
               <div v-if="!isDesignee" class="normal-task-designee-button-box">
-                <button class="normal-task-designee-button-box-button" @click="isDesignee = true">
+                <button
+                  class="normal-task-designee-button-box-button"
+                  data-tid="isDesignee"
+                  @click="isDesignee = true"
+                >
                   指定消化
                 </button>
                 <span class="el-icon-warning-outline normal-task-designee-button-box-tip"
@@ -51,6 +55,7 @@
                 placeholder="请选择"
                 readonly
                 suffix-icon="el-icon-arrow-down"
+                data-tid="chooseDigestion"
                 @focus="chooseDigestion(item.code, 1)"
               >
               </el-input>
@@ -84,6 +89,7 @@
               placeholder="请选择"
               readonly
               suffix-icon="el-icon-arrow-down"
+              data-tid="chooseDigestion"
               @focus="chooseDigestion(item.code, 2)"
             >
             </el-input>
@@ -91,8 +97,12 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="taskItemDialog = false">取消</el-button>
-        <el-button size="small" type="primary" @click="taskItemConfirm">确 定</el-button>
+        <el-button size="small" data-tid="taskItemDialog" @click="taskItemDialog = false"
+          >取消</el-button
+        >
+        <el-button size="small" data-tid="taskItemConfirm" type="primary" @click="taskItemConfirm"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <designee-person ref="designeeRef" @get-designee-modal="getDesigneeModal"></designee-person>

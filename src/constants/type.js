@@ -1,3 +1,6 @@
+/**
+ * @description 数据字典翻译
+ */
 export const GET_WAY_TYPE_MAP = {
   CRM_GET_WAY_MOVE: '移交',
   CRM_GET_WAY_REFERRAL: '转介绍',

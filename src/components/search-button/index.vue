@@ -5,11 +5,12 @@
       :placeholder="placeholder"
       :maxlength="20"
       clearable
+      data-tid="searchInput"
       @input="handleInput"
       @blur="handleBlur"
       @clear="clear"
     ></el-input>
-    <el-button type="primary" @click="handleClick">查询</el-button>
+    <el-button type="primary" data-tid="searchButton" @click="handleClick">查询</el-button>
   </div>
 </template>
 

@@ -89,6 +89,7 @@ export default {
       switchboardId: '',
       type: '',
       platformHeight: null,
+      edit: true,
     };
   },
   computed: {
@@ -227,6 +228,7 @@ export default {
       }
       return false;
     },
+
     /**
      * @description 总开关
      */
@@ -252,6 +254,7 @@ export default {
             exe_platform_rule_switch(obj)
               .then((res) => {
                 if (res.code === 200) {
+                  // this.edit = true;
                   this.$message({
                     type: 'success',
                     message: '操作成功!',
@@ -420,7 +423,12 @@ export default {
         .then((res) => {
           if (res.code === 200) {
             this.switchboardStatus = res.data.status;
-            this.start = res.data.val1;
+            if (this.switchboardStatus === 1) {
+              this.edit = true;
+            } else {
+              this.start = res.data.val1;
+              this.editAble(this.start);
+            }
             this.end = res.data.val2;
             this.switchboardId = res.data.id;
           } else {
@@ -430,6 +438,18 @@ export default {
         .catch(() => {
           this.loading = false;
         });
+    },
+    /**
+     * @description  当前时间和开关开启时间的判断
+     */
+    editAble(startDateStr) {
+      var curDate = dayjs(new Date()).format('YYYY-MM-DD');
+      let startTime = dayjs(new Date(startDateStr)).format('YYYY-MM-DD');
+      if (curDate < startTime) {
+        this.edit = true;
+      } else {
+        this.edit = false;
+      }
     },
   },
 };

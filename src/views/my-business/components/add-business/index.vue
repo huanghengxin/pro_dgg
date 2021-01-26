@@ -21,6 +21,7 @@
           onkeyup="this.value=this.value.replace(/^\s+/g,'')"
           clearable
           maxlength="20"
+          data-tid="nameInput"
           placeholder="请输入客户姓名或企业名称"
           class="clearable"
         ></el-input>
@@ -40,7 +41,7 @@
             v-model.trim="ruleForm.customerPhone"
             maxlength="11"
             placeholder="请输入11位手机号码"
-            data-tid="addDetailPhoneBlurValidate"
+            data-tid="customerPhoneInput"
             @blur="phoneBlurValidate"
           ></el-input>
           <!-- 新增？ -->
@@ -50,6 +51,7 @@
               'icon-plus': true,
               disabled: !isRelevance || ruleForm.phoneArray.length > 1,
             }"
+            data-tid="addNew"
             @click="addNew"
             ><em>新增</em>
           </span>
@@ -85,6 +87,7 @@
               plain
               size="medium"
               icon="el-icon-delete"
+              data-tid="delPhone"
               :disabled="ruleForm.phoneArray.length > 0 && Boolean(item.id)"
               @click="delPhone(index)"
             ></el-button>

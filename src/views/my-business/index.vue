@@ -1,7 +1,6 @@
 <template>
   <div class="my-business">
     <list-search></list-search>
-
     <business-list></business-list>
   </div>
 </template>
@@ -16,9 +15,20 @@ export default {
     ListSearch,
     BusinessList,
   },
+  beforeRouteLeave(to, from, next) {
+    if (to.path == '/business-details') {
+      //缓存
+      from.meta.keepAlive = true;
+    } else {
+      //不缓存
+      from.meta.keepAlive = false;
+    }
+    next();
+  },
   data() {
     return {};
   },
+
   methods: {},
 };
 </script>

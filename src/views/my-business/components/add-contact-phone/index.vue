@@ -29,8 +29,9 @@
           <el-button
             :disabled="ruleForm.phoneArray.length >= num"
             type="primary"
-            icon="el-icon-plus"
+            icon="iconfont-qds-crm icon-plusoutline"
             size="small"
+            data-tid="addPhoneHandleClick"
             @click="addPhoneHandleClick"
             >新增号码</el-button
           >
@@ -45,20 +46,28 @@
             v-model.trim="item.contact"
             type="text"
             maxlength="11"
+            data-tid="phoneInput"
             placeholder="请输入11位手机号码"
           ></el-input>
-          <el-button plain icon="el-icon-delete" @click="deleteGroup(index)"></el-button>
+          <el-button
+            plain
+            icon="el-icon-delete"
+            data-tid="deleteGroup"
+            @click="deleteGroup(index)"
+          ></el-button>
         </el-form-item>
         <!-- 提示行！ -->
         <div class="warn">
-          <span class="iconfont-qds-crm icon-attention warn-icon"
-            ><em class="warn-text">保存后不可更改，且会作为核查的重要依据，请认真填写。</em>
+          <span class="iconfont-qds-crm icon-attention warn-icon">
+            <em class="warn-text">保存后不可更改，且会作为核查的重要依据，请认真填写。</em>
           </span>
         </div>
       </el-form-item>
     </el-form>
     <span slot="footer" class="footer">
-      <el-button size="small" @click="dialogVisible = false">取消</el-button>
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
       <el-button
         type="primary"
         size="small"

@@ -71,6 +71,9 @@ export default [
       {
         path: '/my-business',
         name: 'MyBusiness',
+        meta: {
+          keepAlive: true,
+        },
         component: MyBusiness,
       },
       // 经营管理

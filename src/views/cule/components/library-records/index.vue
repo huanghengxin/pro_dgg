@@ -24,6 +24,7 @@
           :maxlength="200"
           show-word-limit
           resize="none"
+          data-tid="recordListInput"
           placeholder="请输入跟进内容"
         ></el-input>
       </el-form-item>
@@ -49,7 +50,9 @@
     </el-form>
     <!-- 弹层按钮 -->
     <span slot="footer" class="footer">
-      <el-button size="small" @click="dialogVisible = false">取消</el-button>
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
       <el-button
         type="primary"
         size="small"

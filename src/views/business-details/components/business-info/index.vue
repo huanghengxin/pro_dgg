@@ -24,7 +24,8 @@
       ></show-tooltip>
       <span v-else>暂无备注</span>
       <i
-        class="el-icon-edit-outline"
+        v-if="from !== 'team-manage'"
+        class="iconfont-qds-crm icon-offlinesign"
         data-tid="infoShowModalHandleClick"
         @click="
           showModalHandleClick('editRemarkRef', {
@@ -45,11 +46,13 @@
             {{ businessInfo.customerPhone }}
           </span>
           <i
-            class="iconfont-qds-crm icon-view phone-info_icon"
+            v-if="from !== 'team-manage'"
+            class="iconfont-qds-crm icon-view1 phone-info_icon"
             data-tid="infoShowModalHandleClick"
             @click="showModalHandleClick('showPhoneRef', businessInfo.customerContact)"
           ></i>
           <i
+            v-if="from !== 'team-manage'"
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
             data-tid="infoBusinessInfoCall"
@@ -61,11 +64,13 @@
             {{ item.contactNo }}
           </span>
           <i
+            v-if="from !== 'team-manage'"
             class="iconfont-qds-crm icon-view phone-info_icon"
             data-tid="infoShowModalHandleClick"
             @click="showModalHandleClick('showPhoneRef', item.contactNoFull)"
           ></i>
           <i
+            v-if="from !== 'team-manage'"
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
             data-tid="infoBusinessInfoCall"
@@ -126,6 +131,7 @@
       ></show-tooltip>
       <span
         v-else
+        v-show="from !== 'team-manage'"
         key="business-bakRelation"
         :class="{
           'iconfont-qds-crm': true,
@@ -143,11 +149,13 @@
       <span class="item-label">备用联系号码：</span
       ><span>{{ businessInfo.bakRelation.contactNo }}</span>
       <i
-        class="iconfont-qds-crm icon-view phone-info_icon"
+        v-if="from !== 'team-manage'"
+        class="iconfont-qds-crm icon-view1 phone-info_icon"
         data-tid="infoShowModalHandleClick"
         @click="showModalHandleClick('showPhoneRef', businessInfo.bakRelation.contactNoFull)"
       ></i>
       <i
+        v-if="from !== 'team-manage'"
         v-accControls:noAttention="businessInfo"
         class="iconfont-qds-crm icon-dianhua phone-info_icon"
         data-tid="infoBusinessInfoCall"
@@ -197,6 +205,10 @@ export default {
   mixins: [callMixins],
   props: {
     businessId: {
+      type: String,
+      default: '',
+    },
+    from: {
       type: String,
       default: '',
     },

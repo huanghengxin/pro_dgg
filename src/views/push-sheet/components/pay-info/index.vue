@@ -4,7 +4,7 @@
       <p class="titleWord">付款信息</p>
     </div>
     <div class="pay-content">
-      <el-radio-group v-model="query.radio" @change="radioChange">
+      <el-radio-group v-model="query.radio" data-tid="radioChange" @change="radioChange">
         <el-radio label="1">全款</el-radio>
         <el-radio label="2">分批</el-radio>
       </el-radio-group>
@@ -19,6 +19,7 @@
               v-model="query.value"
               placeholder="请选择"
               class="instalments-info-stages"
+              data-tid="stagesChange"
               @change="stagesChange"
             >
               <el-option
@@ -73,6 +74,7 @@
                       placeholder="年/月/日"
                       :picker-options="pickerOptions"
                       prefix-icon="el-icon-time"
+                      data-tid="dateTimeChange"
                       @change="dateTimeChange"
                     >
                     </el-date-picker>
@@ -88,13 +90,12 @@
 </template>
 
 <script>
-import './index.scss';
+import { get_order_num } from 'api/push-sheet';
 import dayjs from 'dayjs';
+import './index.scss';
 export default {
   data() {
     var validatePrice = (rule, value, callback) => {
-      debugger;
-
       if (!value) {
         value = value.trim();
         console.log('rule', value);
@@ -182,7 +183,9 @@ export default {
       stagesList: [], //分期选中的数据
     };
   },
-  created() {},
+  created() {
+    this.get_order_num();
+  },
   mounted() {},
   methods: {
     /**
@@ -227,6 +230,24 @@ export default {
         item.percent = percent;
       });
       // console.log(this.stagesList, 'this.stagesList');
+    },
+    /**
+     * @description
+     * @param {}
+     * @returns {}
+     */
+    get_order_num() {
+      get_order_num()
+        .then((res) => {
+          const { code, data, message } = res;
+          if (code == 200) {
+            console.log(data, '分期数');
+            this.validityOptions = data;
+          } else {
+            this.$message.warning(message);
+          }
+        })
+        .catch(() => {});
     },
     // 校验数据
     validateForm() {

@@ -1,5 +1,9 @@
 @import 'assets/scss/mixins/reset-ui.scss';
 .set-group {
+  .el-input__inner {
+    height: 32px;
+    border-radius: 2px;
+  }
   &_edit {
     cursor: pointer;
     margin-left: 12px;

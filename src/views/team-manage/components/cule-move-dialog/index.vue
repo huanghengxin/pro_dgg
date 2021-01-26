@@ -62,7 +62,9 @@
       <span slot="footer" class="footer">
         <span class="note">接收人库容量已满!接收人已有客户可能会导致商机移交失效!</span>
         <div>
-          <el-button size="medium" @click="dialogVisible = false">取消</el-button>
+          <el-button size="medium" data-tid="recordsCancelButton" @click="dialogVisible = false"
+            >取消</el-button
+          >
           <el-button
             type="primary"
             size="medium"
@@ -225,6 +227,7 @@ export default {
      * @param {Object} 点击当前列表项
      */
     openModal(item) {
+      console.log('ssss', item);
       this.businessDetail = item;
       this.businessId = item.id;
       this.rowPlannerId = item.plannerId;

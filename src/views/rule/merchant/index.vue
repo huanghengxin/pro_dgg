@@ -12,7 +12,7 @@
           <div class="explain__title-txt1">规则说明</div>
           <el-button
             type="primary"
-            :disabled="switchboardStatus === 2"
+            :disabled="!edit"
             data-tid="saveMerchantRule"
             @click="saveMerchantRule"
             >保存</el-button
@@ -76,13 +76,20 @@
                   <el-input
                     v-model="scope.row.val1"
                     :placeholder="scope.row.max"
-                    :disabled="!scope.row.max || switchboardStatus === 2 || scope.row.status === 2"
+                    :disabled="!scope.row.max || !edit || scope.row.status === 2"
                     type="text"
+                    :data-tid="'val1Input' + scope.$index"
                     class="val1"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input v-model="scope.row.val2" disabled type="text" class="val2"></el-input>
+                  <el-input
+                    v-model="scope.row.val2"
+                    disabled
+                    type="text"
+                    class="val2"
+                    :data-tid="'val2Input' + scope.$index"
+                  ></el-input>
                 </el-form-item>
               </template>
             </el-table-column>
@@ -95,6 +102,7 @@
                   :inactive-value="2"
                   active-color="#4974F5"
                   inactive-color="#B9B9B9"
+                  :data-tid="'status' + scope.$index"
                 >
                 </el-switch>
               </template>
@@ -143,12 +151,19 @@
                     v-model="scope.row.val1"
                     type="text"
                     :placeholder="scope.row.max"
-                    :disabled="!scope.row.max || switchboardStatus === 2"
+                    :disabled="!scope.row.max || !edit"
                     class="val1"
+                    :data-tid="'rule1Input' + scope.$index"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-input v-model="scope.row.val2" disabled type="text" class="val2"></el-input>
+                  <el-input
+                    v-model="scope.row.val2"
+                    disabled
+                    type="text"
+                    class="val2"
+                    :data-tid="'rule2Input' + scope.$index"
+                  ></el-input>
                 </el-form-item>
               </template>
             </el-table-column>

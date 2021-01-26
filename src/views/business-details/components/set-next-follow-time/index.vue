@@ -32,7 +32,9 @@
     </el-form>
     <!-- 弹层按钮 -->
     <span slot="footer" class="footer">
-      <el-button size="small" @click="dialogVisible = false">取消</el-button>
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
       <el-button
         type="primary"
         :loading="loading"

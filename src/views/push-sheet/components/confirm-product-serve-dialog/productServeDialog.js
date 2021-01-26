@@ -22,7 +22,7 @@ export default {
         addedValue: {},
       },
       serveName: '',
-      registerCompanyPrice: 400,
+      registerCompanyPrice: 0,
       query: {
         serviceNum: 1, //计数器 数量 服务产品
         resourceNum: 1, //计数器 数量 资源产品
@@ -152,7 +152,13 @@ export default {
      */
     openModal(name, row) {
       this.productName = name;
-      this.serveName = row.className;
+      if (name == 'serve') {
+        this.registerCompanyPrice = row.referencePrice;
+      } else {
+        this.registerCompanyPrice = row.platformPrice;
+      }
+      this.serveName = row.name;
+      console.log(name, row, 'row');
       this.skuAttrs = row.skuAttrs;
       console.log(this.skuAttrs, 'skuAttrs');
       this.confirmRowInfo = row;
@@ -210,6 +216,7 @@ export default {
      * @description 确定Sku 服务产品
      */
     confirmSku() {
+      //服务产品
       if (this.productName == 'serve') {
         //sku属性值组合为字符串
         if (!this.skuSubmit.sku1.code || !this.skuSubmit.sku2.code || !this.skuSubmit.sku3.code) {
@@ -236,8 +243,11 @@ export default {
         item.skuContent = str;
         this.$set(item, 'num', this.query.serviceNum);
       } else {
+        //资源产品 //交易产品
         this.loading = true;
       }
+      this.$set(this.confirmRowInfo, 'isClick', true);
+
       console.log(this.confirmRowInfo, 'this.confirmRowInfo');
       setTimeout(() => {
         this.$emit('on-choose-confirm', this.confirmRowInfo); //确定的数据 传给已加购数组

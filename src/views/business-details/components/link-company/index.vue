@@ -4,6 +4,7 @@
       <span>关联企业</span>
       <div
         :class="{ 'title-button': true, disable: companyList && companyList.length > 9 }"
+        data-tid="handleClick"
         @click="handleClick"
       >
         <i class="iconfont-qds-crm icon-plus"></i><span>新增</span>

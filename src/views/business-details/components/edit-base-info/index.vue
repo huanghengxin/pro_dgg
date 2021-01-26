@@ -108,6 +108,7 @@
             maxlength="20"
             clearable
             type="text"
+            data-tid="standbyNamePhoneInput"
             placeholder="请输入联系人姓名"
           />
         </el-form-item>
@@ -118,6 +119,7 @@
             maxlength="11"
             clearable
             type="text"
+            data-tid="standbyPhoneInput"
             placeholder="请输入手机号码"
           />
         </el-form-item>
@@ -130,7 +132,7 @@
     </el-form>
     <!-- 弹层按钮 -->
     <span slot="footer" class="footer">
-      <el-button size="small" data-tid="infoDialogVisible" @click="dialogVisible = false"
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
         >取消</el-button
       >
       <el-button
@@ -182,10 +184,16 @@ export default {
               trigger: 'blur',
             },
           ],
-          standbyName: [{ validator: this.checkStandbyName, trigger: 'blur' }],
+          standbyName: [
+            { validator: this.checkStandbyName, trigger: 'blur' },
+            { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
+          ],
         },
         contactNo: [{ validator: this.checkContactNo, trigger: 'blur' }], //次联系人号码验证
-        customerName: [{ required: true, validator: this.checkCtomerName, trigger: 'blur' }],
+        customerName: [
+          { required: true, validator: this.checkCtomerName, trigger: 'blur' },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
+        ],
       },
     };
   },

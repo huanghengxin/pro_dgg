@@ -332,7 +332,7 @@ export default {
      */
     selectAllClick(row) {
       if (this.limit <= 50) {
-        this.multipleSelectionList = row?.map(function (val) {
+        this.multipleSelectionList = row?.map(function(val) {
           return { bizId: val.id, plannerId: val.plannerId };
         });
       } else {
@@ -346,7 +346,7 @@ export default {
      * @description 选择框
      */
     handleSelectionChange(val) {
-      this.multipleSelectionList = val?.map(function (val) {
+      this.multipleSelectionList = val?.map(function(val) {
         return { bizId: val.id, plannerId: val.plannerId };
       });
     },

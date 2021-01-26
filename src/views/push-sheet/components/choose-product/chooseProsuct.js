@@ -1,109 +1,66 @@
 import './index.scss';
-import { get_page } from 'api/push-sheet';
+import { get_page, get_resource_page, get_deal_page } from 'api/push-sheet';
 import ShowTooltip from 'components/show-tooltip';
+import TowInput from 'components/two-input';
 import { get_user_website, get_user_business_category } from 'api/common';
 import SvgIcon from 'components/svg-icon';
 import ConfirmProductServe from '../confirm-product-serve-dialog'; //确定服务产品对话框
+import { timesSeries } from 'async';
 export default {
   components: {
+    TowInput,
     ConfirmProductServe,
     ShowTooltip,
     SvgIcon,
   },
   data() {
     return {
+      parentList: [], //父页面展示数据
       activeName: 'serve',
       tabType: '', //用于判断是那个tab页
       loading: false,
-      productForm: {
+      serveForm: {
         //服务产品表单
-        query: '', //综合搜索
-        productType: '', //产品分类
-        productCity: '', //产品城市
-        currentPage: 1, //当前页
-        pagesize: 10, //每页显示条数
-        price: {
-          priceMin: null, //单价最小值
-          priceMax: null, //单价最大值
-        },
+        searchKey: undefined, //综合搜索
+        cityCode: undefined, //地区code
+        classifyCode: undefined, //分类code
+        parentClassifyCode: undefined, //父级分类
+        maxPrice: undefined,
+        minPrice: undefined,
       },
+      pageData: {
+        pageNum: 1, //当前页
+        pageSize: 10, //每页显示条数
+      },
+      productPrice: '', //服务产品单价
       total: 0,
-      productClassify: [
-        //服务产品分类数据
-        {
-          value: '选项1',
-          label: '黄金糕',
-        },
-      ],
-      productCity: [
-        //产品城市数据
-        {
-          value: '选项1',
-          label: '黄金糕',
-        },
-        {
-          value: '选项2',
-          label: '双皮奶',
-        },
-      ],
+      //服务产品分类数据
+      productClassify: [], //产品城市数据
+      productCity: [],
+      //资源产品表单
       resourceForm: {
-        //资源产品表单
-        query: '', //综合搜索
-        productType: '', //产品分类
-        currentPage: 1, //当前页
-        price: {
-          priceMin: null, //单价最小值
-          priceMax: null, //单价最大值
-        },
-        pagesize: 10, //每页显示条数
+        searchKey: undefined, //综合搜索
+        classifyCode: undefined, //分类code
+        parentClassifyCode: undefined, //父级分类
+        maxPrice: undefined,
+        minPrice: undefined,
       },
 
       serveFormRules: {
-        query: [{ required: true, message: '请输入客户名称/商机编号', trigger: 'blur' }],
+        searchKey: [{ required: true, message: '请输入客户名称/商机编号', trigger: 'blur' }],
       },
-      //资源产品分类数据
-      resourceClassify: [
-        {
-          value: '选项1',
-          label: '黄金糕',
-        },
-        // {
-        //   value: '选项2',
-        //   label: '双皮奶',
-        // },
-      ],
-      //资源产品分类数据
-      resourceCity: [
-        {
-          value: '选项1',
-          label: '黄金糕',
-        },
-        {
-          value: '选项2',
-          label: '双皮奶',
-        },
-      ],
 
       //交易产品表单
       dealForm: {
-        query: '', //综合搜索
-        productType: '', //产品分类
-        currentPage: 1, //当前页
-        price: {
-          priceMin: null, //单价最小值
-          priceMax: null, //单价最大值
-        },
-        pagesize: 10, //每页显示条数
+        searchKey: undefined, //综合搜索
+        classifyCode: undefined, //分类code
+        parentClassifyCode: undefined, //父级分类
+        maxPrice: undefined,
+        minPrice: undefined,
       },
       //交易数据表格
       dealProductData: [],
-      //产品分类
-      // productProps: {
-      //   value: 'showTypeCode',
-      //   label: 'showTypeName',
-      //   children: 'children',
-      //   clearable: 'true',
-      // },
+      //产品分类 共用一个
       productProps: {
         lazy: true,
         lazyLoad: (node, resolve) => {
@@ -112,6 +69,7 @@ export default {
             productTypeCode: data?.productTypeCode || undefined,
             code: value,
           };
+
           get_user_business_category(params).then((res) => {
             if (res.code === 200) {
               let { data } = res;
@@ -132,63 +90,6 @@ export default {
           });
         },
       },
-      // //城市分类
-      // cityProps: {
-      //   value: 'showTypeCode',
-      //   label: 'showTypeName',
-      //   children: 'children',
-      //   clearable: 'true',
-      // },
-      cityProps: {
-        lazy: true,
-        lazyLoad: (node, resolve) => {
-          const { level, data, value } = node;
-          const params = {
-            productTypeCode: data?.productTypeCode || undefined,
-            code: value,
-          };
-          get_user_business_category(params).then((res) => {
-            if (res.code === 200) {
-              let { data } = res;
-              data = Array.isArray(data) ? data : [];
-              const _arrMap = data.map((item) => {
-                return {
-                  value: item.code,
-                  label: item.name,
-                  leaf: level >= 2,
-                  productTypeCode: item.productTypeCode,
-                };
-              });
-              resolve(_arrMap);
-            } else {
-              this.$message.warning(res.message);
-              resolve([]);
-            }
-          });
-        },
-      },
-      //交易产品分类数据
-      dealClassify: [
-        {
-          value: '选项1',
-          label: '黄金糕',
-        },
-        // {
-        //   value: '选项2',
-        //   label: '双皮奶',
-        // },
-      ],
-      //交易产品分类数据
-      dealCity: [
-        {
-          value: '选项1',
-          label: '黄金糕',
-        },
-        // {
-        //   value: '选项2',
-        //   label: '双皮奶',
-        // },
-      ],
       serviceAlreadyTableData: null, //已选择服务产品继续加购数组
       chooseProductDialog: false, //控制选择产品对话框显示隐藏
       productTableInfo: [], //统一表格数据存放
@@ -197,98 +98,132 @@ export default {
   },
   methods: {
     /**
-     * @description tab页数据请求  点击重新请求
+     * @description 清空综合筛选值事件
+     */
+    clearQuery() {
+      this.serveForm.searchKey = undefined;
+      this.getProductlist(this.activeName);
+    },
+    /**
+     * @description 清空分类选值事件
+     */
+    clearClass() {
+      this.serveForm.classifyCode = undefined;
+      this.serveForm.parentClassifyCode = undefined;
+      this.getProductlist(this.activeName);
+    },
+    /**
+     * @description 级联选择器改变
+     */
+    productPropsChange(val) {
+      console.log(val, 'val');
+      if (val) {
+        if (this.activeName == 'serve') {
+          this.serveForm.parentClassifyCode = val ? val[0] : undefined;
+          this.serveForm.classifyCode = val ? val[2] : undefined;
+        } else if (this.activeName == 'resource') {
+          this.resourceForm.parentClassifyCode = val ? val[0] : undefined;
+          this.resourceForm.classifyCode = val ? val[2] : undefined;
+        } else {
+          this.dealForm.parentClassifyCode = val ? val[0] : undefined;
+          this.dealForm.classifyCode = val ? val[2] : undefined;
+        }
+      } else {
+        this.getProductlist(this.activeName);
+      }
+    },
+    /**
+     * @description 获取产品分类信息接口
+     */
+    getCityClassify() {
+      get_user_website().then((res) => {
+        if (res.code === 200) {
+          res = res.data;
+          this.productCity = res?.list || [];
+          this.resourceCity = res?.list || [];
+          this.dealCity = res?.list || [];
+        } else {
+          this.$message.warning(res.message);
+        }
+      });
+    },
+    /**
+     * @description 获取产品分类信息接口
+     */
+    getProductClassify() {
+      get_user_website().then((res) => {
+        if (res.code === 200) {
+          res = res.data;
+          this.productClassify = res?.list || [];
+          this.resourceClassify = res?.list || [];
+          console.log(this.resourceClassify, 'this.resourceClassify');
+          this.dealClassify = res?.list || [];
+        } else {
+          this.$message.warning(res.message);
+        }
+      });
+    },
+    /**
+     * @description 改变用户授权的区域范围-服务产品
+     */
+    cityChange(code) {
+      if (code) {
+        this.serveForm.cityCode = code;
+      } else {
+        this.serveForm.cityCode = undefined;
+        this.getProductlist(this.activeName);
+      }
+    },
+    /**
+     * @description tab页切换 数据请求  点击重新请求
      */
     productTabClick(val) {
+      console.log(val.name, 'tabval');
       this.activeName = val.name;
-      console.log(this.activeName, 'activeName');
-      this.productTableInfo = [];
-      this.showPaginationFlag = false;
-      if (this.activeName == 'serve') {
-        this.getProductlist(this.activeName);
-      } else if (this.activeName == 'resource') {
-        // this.getProductlist(this.activeName);
-      } else {
-        // this.getProductlist(this.activeName);
-      }
+      this.pageData.pageNum = 1;
+      this.productPrice = '';
+      this.resourceForm.parentClassifyCode = val ? val[0] : undefined;
+      this.getProductClassify();
+      this.getProductlist(this.activeName);
+    },
+    /**
+     * @description 验证字符串是否是数字
+     * @param {any}
+     * @returns {Boolean}
+     */
+    checkNumber(data) {
+      console.log(data, 'data');
+      var reg = /^[0-9]+.?[0-9]*$/;
+      if (!reg.test(data)) return false;
     },
     /**
      * @description 服务产品搜索
      */
     searchService() {
-      if (this.activeName == 1) {
-        if (this.productForm.price.priceMin && !this.checkNumber(this.productForm.price.priceMin)) {
-          this.$message.warning('单价最小值格式不正确');
-          return false;
-        } else if (
-          this.productForm.price.priceMax &&
-          !this.checkNumber(this.productForm.price.priceMax)
-        ) {
-          this.$message.warning('单价最大值格式不正确');
-        } else if (
-          this.productForm.price.priceMax &&
-          this.productForm.price.priceMin &&
-          this.productForm.price.priceMin >= this.productForm.price.priceMax
-        ) {
-          this.$message.warning('请重新输入');
-          this.productForm.price.priceMin = null;
-          this.productForm.price.priceMax = null;
-        }
-      } else if (this.activeName == 2) {
-        if (
-          this.resourceForm.price.priceMin &&
-          !this.checkNumber(this.resourceForm.price.priceMin)
-        ) {
-          this.$message.warning('单价最小值格式不正确');
-          return false;
-        } else if (
-          this.resourceForm.price.priceMax &&
-          !this.checkNumber(this.resourceForm.price.priceMax)
-        ) {
-          this.$message.warning('单价最大值格式不正确');
-        } else if (
-          this.resourceForm.price.priceMax &&
-          this.resourceForm.price.priceMin &&
-          this.resourceForm.price.priceMin >= this.resourceForm.price.priceMax
-        ) {
-          this.$message.warning('请重新输入');
-          this.resourceForm.price.priceMin = null;
-          this.resourceForm.price.priceMax = null;
-        }
-      } else {
-        if (this.dealForm.price.priceMin && !this.checkNumber(this.dealForm.price.priceMin)) {
-          this.$message.warning('单价最小值格式不正确');
-          return false;
-        } else if (
-          this.dealForm.price.priceMax &&
-          !this.checkNumber(this.dealForm.price.priceMax)
-        ) {
-          this.$message.warning('单价最大值格式不正确');
-        } else if (
-          this.dealForm.price.priceMax &&
-          this.dealForm.price.priceMin &&
-          this.dealForm.price.priceMin >= this.dealForm.price.priceMax
-        ) {
-          this.$message.warning('请重新输入');
-          this.dealForm.price.priceMin = null;
-          this.dealForm.price.priceMax = null;
-        }
-      }
+      const flag = this.$refs[this.activeName + 'TwoInputRefs'].validateForm();
+      // console.log(flag, 'productflag');
+      this.productPrice = flag;
+      if (!flag) return;
+      this.getProductlist(this.activeName);
     },
     /**
-     * @description 服务产品重置表单
+     * @description 服务产品重置表单筛选值
      */
     resetService() {
-      if (this.activeName == 'serve') {
-        this.$refs.productFormRef.resetFields();
-        this.productForm.price = {};
-      } else if (this.activeName == 'resource') {
-        this.$refs.resourceFormRef.resetFields();
-        this.resourceForm.price = {};
-      } else {
-        this.$refs.dealFormRef.resetFields();
-        this.dealForm.price = {};
-      }
+      this.$refs[this.activeName + 'FormRef'].resetFields();
+      this.$refs[this.activeName + 'TwoInputRefs'].resetFields();
+      const MAP = {
+        serve: 'serveForm',
+        resource: 'resourceForm',
+        deal: 'dealForm',
+      };
+      this[MAP[this.activeName]].minPrice = undefined;
+      this[MAP[this.activeName]].maxPrice = undefined;
+      this[MAP[this.activeName]].parentClassifyCode = undefined;
+      console.log(this.activeName, 'this.activeName');
+      //将单价范围的值清空
+      this.productPrice = '';
+      this.getProductlist(this.activeName);
     },
     /**
      * @description 服务产品 全部移除数组数据
@@ -306,6 +241,7 @@ export default {
     OnChooseHandleServe(value, type) {
       this.tabType = type;
       console.log(value, type, '继续加购');
+
       if (type == 'serve') {
         if (Array.isArray(this.serviceAlreadyTableData)) {
           this.serviceAlreadyTableData.push(value);
@@ -321,7 +257,15 @@ export default {
           this.serviceAlreadyTableData.push(value);
         }
       }
+      for (let i = 0; i < this.serviceAlreadyTableData.length; i++) {
+        for (let j = 0; j < this.productTableInfo.length; j++) {
+          if (this.serviceAlreadyTableData[i].id == this.productTableInfo[j].id) {
+            this.$set(this.productTableInfo[j], 'isClick', true);
+          }
+        }
+      }
     },
+    //供 OnChooseHandleResource 调用
     normal(value) {
       if (Array.isArray(this.resourceAlreadyTableData)) {
         this.resourceAlreadyTableData.push(value);
@@ -354,26 +298,10 @@ export default {
     chooseBusinessItem(row) {
       this.$refs.confirmProductServeRef.openModal(this.activeName, row);
     },
-    /**
-     * @description 服务产品 改变当前页显示数量
-     */
-    sizeChange(val) {
-      console.log(val, '服务产品 改变当前页显示数量');
-      this.productForm.pagesize = val;
-      this.getProductlist();
-    },
-    /**
-     * @description 服务产品 改变当前页
-     */
-    currentChange(val) {
-      console.log(val, '服务产品 改变当前页');
-      this.productForm.currentPage = val;
-      this.getProductlist();
-    },
+
     /**
      * @description 确定选择产品
      */
-
     confirmProduct() {
       if (this.serviceAlreadyTableData) {
         this.$emit('continue-check-list', this.serviceAlreadyTableData);
@@ -386,106 +314,117 @@ export default {
      * @description 获取服务产品表格数据
      */
     getProductlist(tabName) {
-      let params = { pageSize: this.productForm.pagesize, pageNum: this.productForm.currentPage };
-      get_page(params)
+      let params = { ...this.pageData };
+      const MAP = {
+        serve: 'serveForm',
+        resource: 'resourceForm',
+        deal: 'dealForm',
+      };
+      const productPrice = this.productPrice;
+      if (productPrice) {
+        let price;
+        if (typeof productPrice === 'boolean') {
+          price = [undefined, undefined, undefined];
+        } else {
+          price = this.productPrice?.split('-');
+        }
+        this[MAP[this.activeName]].minPrice = price[0];
+        this[MAP[this.activeName]].maxPrice = price[1];
+      } else {
+        this[MAP[this.activeName]].minPrice = undefined;
+        this[MAP[this.activeName]].maxPrice = undefined;
+      }
+      params = { ...this[MAP[this.activeName]], ...this.pageData };
+      let path =
+        tabName == 'serve' ? get_page : tabName == 'resource' ? get_resource_page : get_deal_page;
+      path(params)
         .then((res) => {
           const { code, data, message } = res;
           if (code == 200) {
             this.showPaginationFlag = true;
-            console.log(data.records, '服务产品');
             data.records.forEach((item, index) => {
               item.index = index + 1;
             });
-            if (tabName == 'serve') {
-              this.productTableInfo = data.records;
-              this.productForm.pagesize = data.limit;
-              this.productForm.currentPage = data.currentPage;
-              this.total = Number(data.totalCount);
-              this.loading = false;
-              console.log('serve');
-            } else if (tabName == 'resource') {
-              console.log('resource');
-            } else {
-              console.log('deal');
+            //将交易列表中的attr 转换为数组
+            if (tabName == 'deal') {
+              data.records.forEach((item) => {
+                if (item.attr) {
+                  item.attr = item.attr.split('|');
+                }
+              });
             }
+            for (let i = 0; i < this.parentList.length; i++) {
+              for (let j = 0; j < data.records.length; j++) {
+                if (this.parentList[i].id == data.records[j].id) {
+                  this.$set(data.records[j], 'isClick', true);
+                }
+              }
+            }
+
+            console.log(
+              this.productTableInfo,
+              'this.productTableInfothis.productTableInfothis.productTableInfo',
+            );
+            this.productTableInfo = data.records;
+            this.total = Number(data.totalCount);
           } else {
             this.$message.warning(message);
           }
+          this.loading = false;
         })
         .catch(() => {
           this.loading = false;
         });
     },
     /**
-     * @description 关闭选择产品的弹框
+     * @description 选择产品的弹框关闭时的事件
      */
     closedChooseProductModal() {
       this.serviceAlreadyTableData = null;
-      this.$refs.productFormRef.resetFields();
+      this.$refs.serveFormRef.resetFields();
       this.$refs.resourceFormRef.resetFields();
       this.$refs.dealFormRef.resetFields();
-      this.productForm.price.priceMin = null;
-      this.productForm.price.priceMax = null;
-      this.resourceForm.price.priceMin = null;
-      this.resourceForm.price.priceMax = null;
-      this.dealForm.price.priceMin = null;
-      this.dealForm.price.priceMax = null;
+      this.serveForm.price = null;
+      this.resourceForm.price = null;
+      this.dealForm.price = null;
     },
     /**
-     * @description 等待调用的开启对话框事件
+     * @description 开启对话框事件
      */
-    openModal() {
+    openModal(parentList) {
+      //接收到父级传下来的数组
+      this.parentList = parentList;
       this.chooseProductDialog = true;
       this.loading = true;
       //获取主页产品表格数据
-      this.getProductlist('serve');
+      this.getProductlist('serve'); //获取产品列表数据
       this.getProductClassify(); //获取产品分类
       this.getCityClassify(); //获取城市分类
     },
     /**
-     * @description 等待子级触发关闭对话框事件
+     * @description 子级触发关闭对话框事件
      */
     closeModal(val) {
       console.log(val, 'val');
       this.chooseProductDialog = val;
     },
     /**
+     * @description 改变当前页显示数量
+     */
+    sizeChange(val) {
+      this.pageData.pageSize = val;
+      this.getProductlist(this.activeName);
+    },
+    /**
+     * @description 改变当前页
+     */
+    currentChange(val) {
+      this.pageData.pageNum = val;
+      this.getProductlist(this.activeName);
+    },
+    /**
      * @description 获取产品信息的子级数据
      */
     getServeInfo(val) {},
-    /**
-     * @description 获取产品分类信息接口
-     */
-    getProductClassify() {
-      get_user_website()
-        .then((res) => {
-          if (res.code === 200) {
-            res = res.data;
-            this.productClassify = res?.list || [];
-          } else {
-            this.$message.warning(res.message);
-          }
-        })
-        .catch(() => {
-          this.loading = false;
-        });
-    },
-    /**
-     * @description 获取产品分类信息接口
-     */
-    getCityClassify() {
-      get_user_website()
-        .then((res) => {
-          if (res.code === 200) {
-            res = res.data;
-            this.productCity = res?.list || [];
-          } else {
-            this.$message.warning(res.message);
-          }
-        })
-        .catch(() => {
-          this.loading = false;
-        });
-    },
   },
 };

@@ -23,7 +23,7 @@
       border-radius: $list-search-add-business-border-radius;
       cursor: pointer;
       user-select: none;
-      .add-business-icon,
+      .icon-edit,
       .add-business-name {
         color: $list-search-add-business-name-color;
         font-size: $list-search-add-business-name-font-size;
@@ -74,8 +74,13 @@
       p {
         flex-shrink: 0;
       }
-      &_number {
+      &_number,
+      .icon-rightoutline {
         color: $list-search-tab-warp-status-number-color;
+      }
+      & > i {
+        font-size: 10px;
+        margin-left: 2px;
       }
     }
   }
@@ -84,19 +89,21 @@
   .filter-list {
     @include filter-item();
     .filter-warp {
+      padding: 12px 0 12px 0;
       min-height: 92px;
     }
 
     .list-warp {
+      height: 42px;
       display: flex;
-      padding-top: $list-search-filter-list-warp-name-margin-top;
+      padding: 0;
       cursor: pointer;
       color: $list-search-filter-list-warp-name-color;
       &_name {
         flex-shrink: 0;
         width: $list-search-filter-list-warp-name-width;
         font-weight: $list-search-filter-list-warp-name-font-weight;
-        line-height: 26px;
+        line-height: 42px;
         font-size: $font-size-sm;
       }
       &_content {
@@ -122,7 +129,7 @@
     .list-more {
       display: flex;
       align-items: center;
-      margin-top: $list-search-filter-list-warp-name-margin-top;
+      // margin-top: $list-search-filter-list-warp-name-margin-top;
       &::before {
         width: calc((100%-84px) / 2);
         display: inline-block;
@@ -138,12 +145,20 @@
         background-color: #e5e5e5;
       }
       &_content {
+        display: flex;
+        align-items: center;
         box-sizing: border-box;
         cursor: pointer;
         color: $base-color;
         flex-shrink: 0;
         width: 84px;
         padding: $list-search-filter-list-more-padding;
+        & > span {
+          margin-right: 3px;
+        }
+        & > i {
+          font-size: 8px;
+        }
       }
     }
     .list-checked {

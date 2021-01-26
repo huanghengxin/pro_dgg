@@ -15,6 +15,9 @@
       justify-content: space-between;
       cursor: pointer;
 
+      .icon-plusoutline {
+        font-size: 8px;
+      }
       &_item {
         position: relative;
         display: inline-block;
@@ -131,6 +134,14 @@
 
       &_right {
         @include button-item();
+        .button-warp_item {
+          height: 28px;
+          font-size: 12px;
+          font-weight: 400;
+          color: #555555;
+          background: #ffffff;
+          border-radius: 2px;
+        }
       }
     }
 

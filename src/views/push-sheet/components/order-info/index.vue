@@ -20,7 +20,7 @@
         </div>
         <div class="order-info-item-header-apply">
           <!-- `checked` 为 true 或 false -->
-          <el-checkbox v-model="item.isApply" :disabled="item.orderType == 2" @change="checkChange"
+          <el-checkbox v-model="item.isApply" data-tid="checkChange" @change="checkChange"
             >是否申请合同</el-checkbox
           >
           <p v-if="item.isApply" class="order-info-item-header-apply-copy">
@@ -29,14 +29,14 @@
         </div>
         <div class="table">
           <el-table :data="item.orderTableData" style="width: 100%; margin-top: 12px">
-            <el-table-column type="index" width="55" label="序号"> </el-table-column>
-            <el-table-column prop="id" label="产品ID" width="180">
+            <el-table-column type="index" width="68" label="序号"> </el-table-column>
+            <el-table-column prop="id" label="产品ID" width="120">
               <template slot-scope="scope">
                 <p>
                   <show-tooltip :text="scope.row.id" :width="80" />
                 </p> </template
             ></el-table-column>
-            <el-table-column prop="name" label="产品名称">
+            <el-table-column prop="name" label="产品名称" width="200">
               <template slot-scope="scope">
                 <p>
                   <show-tooltip :text="scope.row.productName.name1" :width="160" />
@@ -46,33 +46,37 @@
                 </p>
               </template>
             </el-table-column>
-            <el-table-column prop="taskItem" label="任务项">
+            <el-table-column prop="taskItem" label="任务项" width="180">
               <template slot-scope="scope">
                 <div class="task">
-                  <div v-for="(iteson, i) in scope.row.taskItem" :key="i" class="task-item-content">
+                  <div
+                    v-for="(itemson, i) in scope.row.taskItem"
+                    :key="i"
+                    class="task-item-content"
+                  >
                     <div class="task-item-content_left">
                       <span>
                         {{ i + 1 + '.' }}
                       </span>
                       <show-tooltip
-                        :text="iteson.name"
+                        :text="itemson.name"
                         :width="100"
                         style="color: #222"
                       ></show-tooltip>
                     </div>
-                    <span v-if="iteson.price" class="task-item-content-price"
-                      >￥{{ iteson.price }}</span
+                    <span v-if="itemson.price" class="task-item-content-price"
+                      >￥{{ itemson.price }}</span
                     >
                   </div>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="city" label="产品城市"></el-table-column>
-            <el-table-column prop="price" label="产品单价"></el-table-column>
-            <el-table-column prop="discount" label="产品折扣"></el-table-column>
-            <el-table-column prop="number" label="数量"></el-table-column>
-            <el-table-column prop="subTotalPrice" label="小计金额"></el-table-column>
-            <el-table-column prop="product" label="关联产品">
+            <el-table-column prop="city" label="产品城市" width="120"></el-table-column>
+            <el-table-column prop="price" label="产品单价" width="120"></el-table-column>
+            <el-table-column prop="discount" label="产品折扣" width="96"></el-table-column>
+            <el-table-column prop="number" label="数量" width="68"></el-table-column>
+            <el-table-column prop="subTotalPrice" label="小计金额" width="120"></el-table-column>
+            <el-table-column prop="product" label="关联产品" width="120">
               <template slot-scope="scope">
                 <p>
                   <show-tooltip :text="scope.row.product" :width="80" />
@@ -117,21 +121,20 @@
           label-position="left"
         >
           <el-form-item label="客户名称：" prop="name">
-            <el-input v-model="signForm.name" maxlength="50"></el-input>
+            <el-input v-model="signForm.name" data-tid="nameInput" maxlength="50"></el-input>
           </el-form-item>
           <el-form-item label="E-MAIL：" prop="email" maxlength="50">
-            <el-input v-model="signForm.email"></el-input>
+            <el-input v-model="signForm.email" data-tid="emailInput"></el-input>
           </el-form-item>
           <el-form-item label="联系电话：" prop="phone">
-            <el-input v-model="signForm.phone" disabled></el-input>
+            <el-input v-model="signForm.phone" data-tid="phoneInput" disabled></el-input>
           </el-form-item>
           <el-form-item label="联系人：" prop="person" maxlength="50">
-            <el-input v-model="signForm.person"></el-input>
+            <el-input v-model="signForm.person" data-tid="personInput"></el-input>
           </el-form-item>
           <el-form-item label="客户地址：" maxlength="50">
-            <el-input v-model="signForm.address"></el-input>
+            <el-input v-model="signForm.address" data-tid="addressInput"></el-input>
           </el-form-item>
-          {{ productInfo }}
         </el-form>
       </div>
     </div>
@@ -360,11 +363,7 @@ export default {
     },
     checkChange(val) {
       console.log(val, 'val');
-      if (val) {
-        this.applyContract = true;
-      } else {
-        this.this.applyContract = false;
-      }
+      this.applyContract = val;
     },
   },
 };

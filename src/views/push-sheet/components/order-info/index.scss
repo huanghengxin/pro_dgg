@@ -7,11 +7,11 @@
     height: 40px;
     display: flex;
     align-items: center;
+    border-bottom: 1px solid #e5e5e5;
     &-titleWord {
       width: 90px;
       position: relative;
-      left: -20px;
-      text-align: center;
+      text-align: left;
       font-size: $font-size-lg;
       color: $black-2;
       font-weight: $font-weight-crm;
@@ -21,10 +21,9 @@
   @include reset-label-before();
   &-item {
     border-bottom: 1px solid $gray-10;
-    padding-bottom: 20px;
     &-header {
       font-size: 16px;
-      margin-top: 10px;
+      margin-top: 16px;
       &-text {
         width: 112px;
         color: $black-2;
@@ -35,7 +34,7 @@
         border-left: 2px solid #4974f5;
         font-size: $font-size-md;
         font-weight: $font-weight-crm;
-        margin-bottom: 6px;
+        margin-bottom: 12px;
       }
       &-introduce {
         display: flex;
@@ -83,7 +82,7 @@
     }
   }
   &-total {
-    padding: 16px 0;
+    padding: 32px 0 16px;
 
     &-titleWord {
       width: 90px;
@@ -95,7 +94,7 @@
       font-size: $font-size-md;
       color: $black-2;
       font-weight: $font-weight-crm;
-      margin-right: 10px;
+      margin-right: 12px;
     }
     &-content {
       height: 40px;
@@ -118,13 +117,13 @@
     width: 100%;
     color: $gray-14;
     font-size: $font-size-sm;
-    margin: 20px auto;
+    margin: 0 auto 16px;
     .hour {
       color: $black-2;
     }
   }
   &-sign {
-    padding: 16px 0;
+    padding: 16px 0 0;
     &-titleWord {
       width: 90px;
       position: relative;
@@ -142,9 +141,16 @@
       margin-top: 10px;
       align-items: center;
       padding-left: 10px;
+      border-bottom: 1px solid #e5e5e5;
       .el-input__inner {
         width: 400px;
         height: 32px;
+      }
+      .el-form-item__content {
+        line-height: 28px;
+      }
+      .el-form-item--small.el-form-item {
+        margin-bottom: 16px;
       }
       .el-form-item__label {
         color: $black-3;

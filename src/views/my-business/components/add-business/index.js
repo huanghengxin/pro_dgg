@@ -41,10 +41,16 @@ export default {
               trigger: 'blur',
             },
           ],
-          standbyName: [{ validator: this.checkStandbyName, trigger: 'blur' }],
+          standbyName: [
+            { validator: this.checkStandbyName, trigger: 'blur' },
+            { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
+          ],
         },
         contactNo: [{ validator: this.checkContactNo, trigger: 'blur' }], //次联系人号码验证
-        customerName: [{ required: true, validator: this.checkCtomerName, trigger: 'blur' }], //姓名
+        customerName: [
+          { required: true, validator: this.checkCtomerName, trigger: 'blur' },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
+        ], //姓名
         customerPhone: [{ required: true, validator: this.checkPhone, trigger: 'blur' }],
         customerRequire: [
           {

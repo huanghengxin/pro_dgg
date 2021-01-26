@@ -135,6 +135,7 @@ export default {
       /*计时器*/
       remainTime: 30, //弹框关闭剩余时间
       timer: null, //计时器
+      btnState: false, //防止按钮连续点击
     };
   },
   created() {
@@ -169,6 +170,10 @@ export default {
      * @description 点击按钮下一步 第一步
      */
     nextStep() {
+      if (this.btnState) {
+        this.btnState = false;
+      }
+      this.btnState = true;
       //this.$store.state.PushSheet.businessCode === 2为全部校验通过
       console.log(this.$store.state, 'this.$store.state');
       const businessCode = this.$store.state.pushSheet.businessCode;
@@ -200,6 +205,7 @@ export default {
       console.log(this.$refs['payinfoRef'].query, 'query');
       console.log(this.$refs['validateRef'].ruleForm, 'validateRef');
       this.active = 1; //跳转到第二步
+      this.btnState = false;
     },
     /**
      * @description 当订单处于确认订单时，显示上一步按钮  第二部

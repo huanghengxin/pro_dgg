@@ -10,15 +10,12 @@
   }
 }
 
-
-
 .manage {
   font-size: $font-size-md;
 
   .text {
     color: $black-2;
     height: 48px;
-
     &__txt {
       color: $base-color !important;
     }
@@ -28,28 +25,31 @@
     box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
     background-color: $white;
     box-sizing: border-box;
-    padding: 16px 0px 16px 20px;
-
-    .el-form-item {
-      margin-top: 12px 0 0 0;
-
-
+    padding: 16px 0px 0 20px;
+    .get-time {
+      height: 42px;
+      font-size: 12px !important;
       .el-form-item__label {
         color: $black-2;
         padding: 0;
-        font-weight: $font-weight-crm;
+        font-weight: $font-weight-crm !important;
+        font-size: 12px;
       }
-
+    }
+    .el-form-item {
+      margin: 12px 0 16px 0;
+      .el-form-item__label {
+        color: $black-2;
+        padding: 0;
+        font-weight: $font-weight-normal;
+      }
       .el-form-item__content {
-
-
         .el-input {
           width: 240px;
-          height: 32px !important;
-          line-height: 32px;
-
 
           .el-input__inner {
+            height: 32px;
+            border-radius: 2px;
             padding: 7px 12px;
             font-size: $font-size-13;
             letter-spacing: 0.46px;
@@ -59,7 +59,6 @@
     }
 
     .el-form-item:nth-child(4) {
-
       .el-form-item__content {
         margin-left: 44px;
         line-height: 1.6;
@@ -75,7 +74,6 @@
           vertical-align: middle;
           margin-left: 5px;
           margin-right: 8px;
-
         }
 
         .el-date-editor {
@@ -105,14 +103,11 @@
     }
   }
 
-
-
   &__main {
     box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
     background-color: $white;
     position: relative;
     margin-top: 12px;
-
 
     a {
       color: $base-color !important;

@@ -175,49 +175,6 @@ export const NO_ATTENTION = {
 };
 
 //商机详情更多操作
-export const NO_ATTENTION_MORE_HANDLE = [
-  { name: '基本信息修改', openModal: 'edit-base-info' },
-  // { name: '下单', openModal: 'push-sheet' },
-  { name: '恢复关注', openModal: 'reset-attention' },
-  // { name: '移交', openModal: 'cule-move-dialog' },
-];
-//商机详情更多操作
-export const MORE_HANDLE = [
-  { name: '基本信息修改', openModal: 'edit-base-info' },
-  { name: '邀约面谈', openModal: 'invite-interview' },
-  { name: '操作日志', openModal: 'handle-log' },
-  // { name: '下单', openModal: 'push-sheet' },
-  { name: '设置分组', openModal: 'set-group' },
-  { name: '暂不关注', code: 'BUS_ZBGZ', openModal: 'no-attention' },
-  {
-    name: '设置下次跟进时间',
-    openModal: 'set-next-follow-time',
-  },
-  { name: '无效商机', code: 'BUS_WXSJ', openModal: 'no-attention' },
-];
-//商机详情已签
-export const SIGNED_BUSINESS = [
-  { name: '基本信息修改', openModal: 'edit-base-info' },
-  { name: '邀约面谈', openModal: 'invite-interview' },
-  { name: '操作日志', openModal: 'handle-log' },
-  // { name: '下单', openModal: 'push-sheet' },
-  { name: '设置分组', openModal: 'set-group' },
-  {
-    name: '设置下次跟进时间',
-    openModal: 'set-next-follow-time',
-  },
-];
-export const MORE_HANDLE_COMPONENT = [
-  'invite-interview',
-  'set-group',
-  'no-attention',
-  'edit-base-info',
-  'handle-log',
-  'set-next-follow-time',
-];
-export const NO_ATTENTION_MORE_HANDLE_COMPONENT = ['edit-base-info'];
-
-//商机详情更多操作
 export const FOLLOW_RECORDS = [
   { name: '全部', code: '' },
   { name: '跟进', code: 'CRM_OPER_FOLLOW' },

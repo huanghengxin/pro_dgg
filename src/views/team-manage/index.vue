@@ -35,6 +35,7 @@
             :loading="selectLoading"
             popper-class="team-manage_select-remote"
             clearable
+            data-tid="plannerIdSelect"
             @change="selectChangeHandle"
             @clear="clearInput"
           >
@@ -50,7 +51,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="获取时间" label-width="58px">
+        <el-form-item label="获取时间" label-width="58px" class="get-time">
           <span
             v-for="(item, index) in enterTimeList"
             :key="index"
@@ -58,6 +59,7 @@
               'filter-item': true,
               'filter-item_active': index === enterTimeIndex,
             }"
+            data-tid="changeEnterTime"
             @click="changeEnterTime(item, index)"
           >
             {{ item.name }}
@@ -71,6 +73,7 @@
             :default-time="['00:00:00', '23:59:59']"
             start-placeholder="开始时间"
             end-placeholder="结束时间"
+            data-tid="sureTimesChange"
             @change="sureTimes"
           >
           </el-date-picker>
@@ -92,9 +95,9 @@
         v-loading="loading"
         :data="teamBusyList"
         size="small"
-        max-height="600"
         clear-sort
         :default-sort="{ prop: 'null', order: 'null' }"
+        data-tid="multipleTable"
         @selection-change="handleSelectionChange"
         @sort-change="sortList"
         @select-all="selectAllClick"
@@ -108,7 +111,7 @@
           <template slot-scope="scope">
             <router-link
               v-show="scope.row.customerName"
-              :to="'/business-details?businessId=' + (scope.row.id || '')"
+              :to="`/business-details?businessId=${scope.row.id || ''}&from=team-manage`"
             >
               <show-tooltip
                 v-if="scope.row.customerName"
@@ -201,7 +204,13 @@
         </el-table-column>
         <el-table-column min-width="70" label="操作" fixed="right">
           <template slot-scope="scope">
-            <p class="move" data-tid="remindHandleMove" @click="handleMove(scope.row)">移交</p>
+            <p
+              class="move"
+              :data-tid="'remindHandleMove' + scope.$index"
+              @click="handleMove(scope.row)"
+            >
+              移交
+            </p>
           </template>
         </el-table-column>
       </el-table>
@@ -210,7 +219,7 @@
         <el-pagination
           background
           :current-page="ruleForm.start"
-          :page-sizes="[10, 50, 100, 150]"
+          :page-sizes="[10, 20, 30, 40, 50]"
           :page-size="ruleForm.limit"
           layout="total, prev, pager, next, sizes, jumper"
           :total="total"

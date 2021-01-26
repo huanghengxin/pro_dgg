@@ -1,12 +1,12 @@
 <template>
   <div class="business-details">
     <div class="business-details_left">
-      <follow-records :business-id="businessId" />
-      <business-demand-info :business-id="businessId" />
+      <follow-records :business-id="businessId" :from="from" />
+      <business-demand-info :business-id="businessId" :from="from" />
     </div>
     <div class="business-details_right">
-      <business-info :business-id="businessId"></business-info>
-      <more-handle :business-id="businessId" />
+      <business-info :business-id="businessId" :from="from"></business-info>
+      <more-handle :business-id="businessId" :from="from" />
       <!-- <link-company :business-id="businessId" /> -->
     </div>
   </div>
@@ -32,11 +32,13 @@ export default {
   data() {
     return {
       businessId: '',
+      from: '',
     };
   },
   created() {
     let query = new getQueryString();
     this.businessId = query?.businessId;
+    this.from = query?.from;
   },
 };
 </script>

@@ -17,6 +17,7 @@
     &-title-text {
       height: 40px;
       width: 584px;
+      display: flex;
       background-color: $push-sheet-dialog-title-color;
       padding: $padding-dialog-title-base;
       box-sizing: border-box;

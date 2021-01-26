@@ -1,14 +1,11 @@
 /**
- * author kram 2019年6月13日
  * 验证类
  */
-
 import store from 'storejs';
 const phone = store.get('userInfo')?.mainAccount || '';
 //手机号验证新规则
 const regPhone = /^1[3-9]\d{9}$/;
-const nameReg = /^[\u4e00-\u9fa5a-zA-Z0-9\s-]{2,20}$/;
-
+// const nameReg = /^[\u4e00-\u9fa5a-zA-Z0-9\s-]{2,20}$/;
 const validatePhone = {
   methods: {
     checkPhone(rule, value, callback) {
@@ -32,8 +29,6 @@ const validatePhone = {
         callback('姓名不能为空');
       } else if (flag) {
         callback('手机号不能作为姓名');
-      } else if (!nameReg.test(value)) {
-        callback('长度在 2 到 20 字符');
       } else {
         callback();
       }
@@ -44,8 +39,6 @@ const validatePhone = {
       if (value) {
         if (flag) {
           callback('手机号不能作为姓名');
-        } else if (!nameReg.test(value)) {
-          callback('长度在 2 到 20 字符');
         } else {
           callback();
         }

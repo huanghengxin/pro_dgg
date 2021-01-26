@@ -12,12 +12,14 @@
       :disabled="setGroupListFrom.setGroupList.length > 9"
       size="mini"
       type="primary"
-      icon="el-icon-plus"
+      icon="iconfont-qds-crm icon-plusoutline"
+      data-tid="addGroupHandleClick"
       @click="addGroupHandleClick"
       >新建分组</el-button
     >
     <div class="set-group_info">
-      <i class="el-icon-warning-outline"></i><span>支持最多设置10个分组</span>
+      <i class="iconfont-qds-crm icon-attention"></i>
+      <span>支持最多设置10个分组</span>
     </div>
     <!-- 输入框 -->
     <el-form ref="ruleForm" label-position="left" size="small" :model="setGroupListFrom">
@@ -41,14 +43,16 @@
           size="small"
           icon="el-icon-delete"
           :disabled="disDeleteGroup"
-          data-tid="groupDeleteGroup"
+          data-tid="deleteGroup"
           @click="deleteGroup(item, index)"
         ></el-button>
       </el-form-item>
     </el-form>
     <!-- 弹层按钮 -->
     <span slot="footer" class="footer">
-      <el-button size="small" @click="dialogVisible = false">取消</el-button>
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
       <el-button
         type="primary"
         :loading="loading"

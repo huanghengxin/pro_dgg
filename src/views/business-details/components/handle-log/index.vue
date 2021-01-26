@@ -66,8 +66,16 @@
     </div>
     <!-- 弹层按钮 -->
     <span slot="footer" class="footer">
-      <el-button size="small" @click="dialogVisible = false">取消</el-button>
-      <el-button type="primary" size="small" @click="dialogVisible = false">确定</el-button>
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
+      <el-button
+        type="primary"
+        size="small"
+        data-tid="recordsCancelButton"
+        @click="dialogVisible = false"
+        >确定</el-button
+      >
     </span>
   </el-dialog>
 </template>

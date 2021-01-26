@@ -32,9 +32,10 @@
         <div class="warp-tabs_right">
           <slot>
             <el-button
+              v-if="from !== 'team-manage'"
               v-accControls:noAttention="noAttentionStatus"
               type="primary"
-              icon="el-icon-plus"
+              icon="iconfont-qds-crm icon-plusoutline"
               size="small"
               data-tid="demandEditDemandHandleClick"
               @click="editDemandHandleClick('add')"
@@ -63,6 +64,7 @@
           class="warp-top_right"
         >
           <span
+            v-if="from !== 'team-manage'"
             v-accControls:noAttention="noAttentionStatus"
             class="button-warp_item"
             data-tid="demandEditDemandHandleClick"
@@ -71,6 +73,7 @@
           >
           <span
             v-show="isShowDel"
+            v-if="from !== 'team-manage'"
             v-accControls:noAttention="noAttentionStatus"
             class="button-warp_item"
             data-tid="demandDelectDemandHandleClick"
@@ -141,6 +144,10 @@ export default {
     type: {
       type: Boolean,
       default: false,
+    },
+    from: {
+      type: String,
+      default: '',
     },
   },
   data() {

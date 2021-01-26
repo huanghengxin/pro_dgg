@@ -58,11 +58,14 @@
     </div>
 
     <span slot="footer" class="footer">
-      <el-button size="medium" @click="dialogVisible = false">取消</el-button>
+      <el-button size="medium" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
       <el-button
         type="primary"
         :loading="buttonLoading"
         size="medium"
+        data-tid="recordsCancelButton"
         @click="dialogVisible = false"
         >确定关联</el-button
       >

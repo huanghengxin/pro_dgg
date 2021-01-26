@@ -30,8 +30,15 @@
         个人库商机/线索在选择的时间内不执行掉库，请谨慎选择时间。</span
       >
       <span slot="footer" class="footer">
-        <el-button size="medium" @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" size="medium" :loading="loading" @click="onSubmitHandle"
+        <el-button size="medium" data-tid="recordsCancelBtn" @click="dialogVisible = false"
+          >取消</el-button
+        >
+        <el-button
+          type="primary"
+          size="medium"
+          :loading="loading"
+          data-tid="onSubmitHandle"
+          @click="onSubmitHandle"
           >确定</el-button
         >
       </span>

@@ -11,7 +11,10 @@
       <!-- 指定消化弹框  服务 -->
       <div v-if="productName == 'serve'" class="companySignUp">
         <p class="companySignUp-title-text">
-          {{ serveName }} <span class="text-color">￥{{ registerCompanyPrice }}</span>
+          <show-tooltip :text="serveName || '-'" :width="120" style="color: #222"></show-tooltip>
+          <span class="text-color">{{
+            registerCompanyPrice ? '￥' + registerCompanyPrice : '-'
+          }}</span>
         </p>
         <div class="companySignUp-skuBox">
           <span>SKU属性1:</span>
@@ -95,7 +98,10 @@
       <!-- 指定消化弹框  资源 -->
       <div v-else-if="productName == 'resource'" class="officeAddress">
         <p class="officeAddress-title-text">
-          孵化园办公地址 <span class="text-color">￥400.00</span>
+          {{ serveName }}
+          <span class="text-color">{{
+            registerCompanyPrice ? '￥' + registerCompanyPrice : '-'
+          }}</span>
         </p>
         <p class="officeAddress-product-info">产品信息</p>
         <div class="officeAddress-title">
@@ -143,7 +149,10 @@
       <!-- 指定消化弹框  交易 -->
       <div v-else class="companyTransfer">
         <p class="companyTransfer-title-text">
-          公司转让【成都】<span class="text-color">￥400.00</span>
+          {{ serveName
+          }}<span class="text-color">{{
+            registerCompanyPrice ? '￥' + registerCompanyPrice : '-'
+          }}</span>
         </p>
         <p class="companyTransfer-product-info">资源信息</p>
         <div class="companyTransfer-title">
@@ -212,8 +221,25 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button size="small" class="four-Word" @click="continueBuy">继续加购</el-button>
-      <el-button size="small" type="primary" @click="confirmSku">确 定</el-button>
+      <!-- 
+      服务产品 资源产品：
+      若当前产品未配置不支持加购，则展示“继续加购和“确认”操作；
+      若配置了不支持加购，则仅展示“确认”操作
+
+      交易产品：
+      交易产品仅支持单个下单，则仅展示“确认”操作 
+      -->
+      <el-button
+        v-if="productName != 'deal'"
+        size="small"
+        class="four-Word"
+        data-tid="continueBuy"
+        @click="continueBuy"
+        >继续加购</el-button
+      >
+      <el-button size="small" type="primary" data-tid="confirmSku" @click="confirmSku"
+        >确 定</el-button
+      >
     </span>
   </el-dialog>
 </template>

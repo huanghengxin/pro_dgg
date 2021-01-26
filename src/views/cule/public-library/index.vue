@@ -103,7 +103,6 @@
           clear-sort
           :default-sort="{ prop: 'null', order: 'null' }"
           :data="publicLibraryList"
-          max-height="600"
           @sort-change="sortList"
         >
           <template slot="empty">
@@ -185,18 +184,26 @@
               <div class="list-handle">
                 <p
                   class="list-handle_follow"
-                  data-tid="publicListHandleClick"
+                  :data-tid="'publicListHandleClick' + scope.$index"
                   @click="listHandleClick(scope.row)"
                 >
                   拾回
                 </p>
-                <el-dropdown trigger="click" @command="handleCommand">
+                <el-dropdown
+                  trigger="click"
+                  :data-tid="'handleCommand' + scope.$index"
+                  @command="handleCommand"
+                >
                   <p class="list-handle_more">更多操作</p>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item :command="{ component: 'callPhoneRef', item: scope.row }"
+                    <el-dropdown-item
+                      :data-tid="'callPhone' + scope.$index"
+                      :command="{ component: 'callPhoneRef', item: scope.row }"
                       >打电话</el-dropdown-item
                     >
-                    <el-dropdown-item :command="{ component: 'remarkRef', item: scope.row }"
+                    <el-dropdown-item
+                      :data-tid="'remark' + scope.$index"
+                      :command="{ component: 'remarkRef', item: scope.row }"
                       >备注</el-dropdown-item
                     >
                   </el-dropdown-menu>
@@ -210,7 +217,7 @@
             background
             :current-page="param.pageNum"
             :page-size="param.pageSize"
-            :page-sizes="[10, 50, 100, 150]"
+            :page-sizes="[10, 20, 30, 40, 50]"
             layout="total, prev, pager, next, sizes, jumper"
             :total="total"
             @size-change="handleSizeChange"

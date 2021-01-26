@@ -5,8 +5,11 @@ import {
   NO_ATTENTION_MORE_HANDLE_COMPONENT, //暂不关注
   NO_ATTENTION_MORE_HANDLE, //暂不关注组件名
   SIGNED_BUSINESS, //已签状态
-} from 'constants/constants';
-import InviteInterview from 'views/my-business/components/invite-interview';
+  SIGNED_BUSINESS_COMPONENT, //已签状态组件
+  MORE_TEAM_MANAGE, //经理
+  MORE_TEAM_MANAGE_COMPONENT, //经理
+} from 'constants/permission';
+import InviteInterview from 'views/my-business/components/invite-interview/index.vue';
 import SetGroup from 'views/my-business/components/set-group';
 import NoAttention from 'views/my-business/components/no-attention';
 import CuleMoveDialog from 'views/team-manage/components/cule-move-dialog';
@@ -27,6 +30,7 @@ export default {
   },
   props: {
     businessId: { type: String, default: '' },
+    from: { type: String, default: '' },
   },
   inject: ['reload'],
   data() {
@@ -35,12 +39,13 @@ export default {
       businessInfo: {},
     };
   },
-  created() {
+  mounted() {
     //监听基础信息获取数据后，打开基础信息的按钮限制
     this.$eventBus.$on('get-business-info', (value) => {
       if (Object.keys(value).length > 0) {
         this.isShow = true;
         this.businessInfo = value;
+        console.log('sdfsdfasasd', this.isShow);
       }
     });
   },
@@ -101,10 +106,16 @@ export default {
         });
     },
     genRenderNodeComponent() {
-      let moreHandleComponent =
-        this.businessInfo.noAttention == 1
-          ? NO_ATTENTION_MORE_HANDLE_COMPONENT
-          : MORE_HANDLE_COMPONENT;
+      let moreHandleComponent;
+      if (this.from === 'team-manage') {
+        moreHandleComponent = MORE_TEAM_MANAGE_COMPONENT;
+      } else if (this.businessInfo.noAttention == 1) {
+        moreHandleComponent = NO_ATTENTION_MORE_HANDLE_COMPONENT;
+      } else if (this.businessInfo.bizStatus == 'CRM_BIZ_STATUS_ORDER') {
+        moreHandleComponent = SIGNED_BUSINESS_COMPONENT;
+      } else {
+        moreHandleComponent = MORE_HANDLE_COMPONENT;
+      }
       return (
         <div>
           {moreHandleComponent.map((item) => {
@@ -114,12 +125,16 @@ export default {
       );
     },
     genRenderNode() {
-      let moreHandle =
-        this.businessInfo.bizStatus == 'CRM_BIZ_STATUS_ORDER'
-          ? SIGNED_BUSINESS
-          : this.businessInfo.noAttention == 1
-          ? NO_ATTENTION_MORE_HANDLE
-          : MORE_HANDLE;
+      let moreHandle;
+      if (this.from === 'team-manage') {
+        moreHandle = MORE_TEAM_MANAGE;
+      } else if (this.businessInfo.noAttention == 1) {
+        moreHandle = NO_ATTENTION_MORE_HANDLE;
+      } else if (this.businessInfo.bizStatus == 'CRM_BIZ_STATUS_ORDER') {
+        moreHandle = SIGNED_BUSINESS;
+      } else {
+        moreHandle = MORE_HANDLE;
+      }
       return (
         <div>
           {moreHandle.map((item) => {
@@ -140,7 +155,7 @@ export default {
     },
   },
   render() {
-    const node = this.isShow ? (
+    const node = (
       <div class="more-handle">
         <div class="title">更多操作</div>
         <div class="button-warp" onClick={this.openModalHandleClick}>
@@ -148,9 +163,7 @@ export default {
         </div>
         {this.genRenderNodeComponent()}
       </div>
-    ) : (
-      ''
     );
-    return node;
+    return this.isShow ? node : '';
   },
 };

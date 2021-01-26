@@ -1,7 +1,7 @@
 <template>
   <div class="more-rquire">
     <div v-for="(item, index) in litterRequireList" :key="index + 'need'">
-      <div v-if="requireId" @click="handleNeedDetails(requireId)">
+      <div v-if="requireId" data-tid="handleNeedDetails" @click="handleNeedDetails(requireId)">
         <show-tooltip
           tooltip-class="text-decoration"
           :text="handleIntentionName(item)"
@@ -16,7 +16,8 @@
       data-tid="dynamicLoadMore"
       @click="loadMore"
     >
-      更多<i :class="isArrow ? 'el-icon-arrow-down' : 'el-icon-arrow-right'"></i>
+      更多
+      <i :class="['iconfont-qds-crm', isArrow ? 'icon-downoutline' : 'icon-rightoutline']"></i>
     </span>
   </div>
 </template>
@@ -132,6 +133,9 @@ export default {
   &_blue {
     color: #4974f5;
     cursor: pointer;
+    & > i {
+      font-size: 8px;
+    }
   }
 }
 </style>

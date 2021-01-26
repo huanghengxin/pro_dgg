@@ -7,14 +7,7 @@
     width="620px"
     @close="diologHandleClose"
   >
-    <el-form
-      ref="ruleForm"
-      label-position="left"
-      size="small"
-      label-width="70px"
-      :model="ruleForm"
-      :rules="rules"
-    >
+    <el-form ref="ruleForm" label-position="left" size="small" label-width="70px" :model="ruleForm">
       <el-form-item class="from-content" label="备注：" prop="content">
         <el-input
           v-model="ruleForm.content"
@@ -24,13 +17,16 @@
           :maxlength="200"
           show-word-limit
           resize="none"
+          data-tid="contentInput"
           placeholder="请输入客户的需求说明"
         ></el-input>
       </el-form-item>
     </el-form>
     <!-- 弹层按钮 -->
     <span slot="footer" class="footer">
-      <el-button size="small" @click="dialogVisible = false">取消</el-button>
+      <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+        >取消</el-button
+      >
       <el-button
         type="primary"
         size="small"
@@ -49,22 +45,11 @@ import './index.scss';
 export default {
   name: 'EditRemark',
   data() {
-    const validateContent = (rule, value, callback) => {
-      value = value?.trim();
-      if (!value) {
-        callback('内容不能为空');
-      } else {
-        callback();
-      }
-    };
     return {
       dialogVisible: false,
       loading: false,
       ruleForm: {
         content: '',
-      },
-      rules: {
-        content: [{ required: true, validator: validateContent, trigger: 'blur' }],
       },
       businessId: '',
     };

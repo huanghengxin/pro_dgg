@@ -25,11 +25,13 @@ class FilterTime {
   sevenStartTime() {
     return dayjs()
       .subtract(6, 'day')
+      .startOf('day')
       .format(this.format);
   }
   threeStartTime() {
     return dayjs()
       .subtract(2, 'day')
+      .startOf('day')
       .format(this.format);
   }
   thirtyStartTime() {

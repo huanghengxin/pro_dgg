@@ -22,12 +22,13 @@
     padding: 16px 0px 16px 20px;
 
     &-from {
-      margin-top: 12px;
-
+      height: 42px;
       &:first-child {
         margin-top: 0;
       }
-
+      span {
+        margin: 8px 0;
+      }
       .lable {
         font-size: $font-size-sm;
         color: $black-2;

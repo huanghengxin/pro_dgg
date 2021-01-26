@@ -17,7 +17,13 @@
         <p class="main__txtc">失败原因可能为：接收人库容量已满、接收人已有移交的客户！</p>
       </div>
       <span slot="footer" class="footer">
-        <el-button type="primary" size="medium" @click="dialogVisible = false">确定</el-button>
+        <el-button
+          type="primary"
+          size="medium"
+          data-tid="recordsCancelButton"
+          @click="dialogVisible = false"
+          >确定</el-button
+        >
       </span>
     </el-dialog>
   </div>

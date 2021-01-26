@@ -73,9 +73,18 @@ export default {
       }
     },
   },
+  activated() {
+    this.getBusStateNumber();
+    this.getFilterList();
+  },
   created() {
     //获取商机动态
     this.getBusStateNumber();
+    // const { tab_active = 'TODAY_FOLLOW', tab_index = 0 } = history.state;
+    // if (tab_active) {
+    //   this.activeTabField = tab_active;
+    //   this.tabActive = tab_index;
+    // }
     this.init();
   },
   mounted() {
@@ -361,6 +370,14 @@ export default {
       this.showNode = false;
       this.tabActive = index;
       this.activeTabField = code;
+      // history.pushState(
+      //   {
+      //     tab_active: code,
+      //     tab_index: index,
+      //   },
+      //   '',
+      //   location.href,
+      // );
       this.showMoreFilterField[code] = false;
       this.initDefaultField();
       this.$eventBus.$emit('my-business_transfer-params', [

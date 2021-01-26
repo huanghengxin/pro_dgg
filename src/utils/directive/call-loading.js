@@ -6,7 +6,6 @@
 
 const callLoading = {
   update(el, binding) {
-    console.log('sssssssssssssssssssssss', el);
     const value = binding.value;
     if (value) {
       el.classList.add('call-loading-color');

@@ -1,5 +1,9 @@
 @import 'assets/scss/mixins/base.scss';
 .edit-base-info {
+  .el-input__inner {
+    height: 32px;
+    border-radius: 2px;
+  }
   .el-form-item__content {
     line-height: 32px;
   }
@@ -71,7 +75,7 @@
     }
   }
   .new-add {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     .el-form-item__content {
       display: flex;
       width: max-content;
@@ -104,6 +108,9 @@
   }
   .el-textarea {
     width: 420px;
+  }
+  .from-content {
+    margin-bottom: 20px;
   }
   .from-low {
     .el-form-item__content {

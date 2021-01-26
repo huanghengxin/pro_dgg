@@ -43,6 +43,10 @@ export default {
       type: String,
       default: '',
     },
+    from: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {

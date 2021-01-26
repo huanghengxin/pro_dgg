@@ -18,6 +18,7 @@
             :inactive-value="2"
             active-color="#4974F5"
             inactive-color="#B9B9B9"
+            data-tid="changeSwitchboard"
             @change="changeSwitchboard"
           >
           </el-switch>
@@ -31,7 +32,11 @@
       <div class="explain">
         <div class="explain__title">
           <div class="explain__title-txt1">规则说明</div>
-          <el-button type="primary" :disabled="switchboardStatus === 2" @click="savePlatformRule"
+          <el-button
+            type="primary"
+            data-tid="savePlatformRule"
+            :disabled="!edit"
+            @click="savePlatformRule"
             >保存</el-button
           >
         </div>
@@ -91,7 +96,7 @@
                     v-model="scope.row.val1"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data1.' + scope.$index + '.val2'" :rules="rules.val2">
@@ -99,7 +104,7 @@
                     v-model="scope.row.val2"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data1.' + scope.$index + '.val3'" :rules="rules.val3">
@@ -107,7 +112,7 @@
                     v-model="scope.row.val3"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data1.' + scope.$index + '.val4'" :rules="rules.val4">
@@ -115,7 +120,7 @@
                     v-model="scope.row.val4"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item prop="val5">
@@ -123,7 +128,7 @@
                     v-model="scope.row.val5"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
               </template>
@@ -132,11 +137,12 @@
               <template slot-scope="scope">
                 <el-switch
                   v-model="scope.row.status"
-                  :disabled="switchboardStatus === 2 || scope.row.id === ''"
+                  :disabled="scope.row.id === '' || !edit"
                   :active-value="1"
                   :inactive-value="2"
                   active-color="#4974F5"
                   inactive-color="#B9B9B9"
+                  :data-tid="'changeSwitch' + scope.$index"
                   @change="changeSwitch(scope.$index, scope.row)"
                 >
                 </el-switch>
@@ -178,7 +184,8 @@
                     v-model="scope.row.val1"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    data-tid="val1Input"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data2.' + scope.$index + '.val2'" :rules="rules.val2">
@@ -186,7 +193,8 @@
                     v-model="scope.row.val2"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    data-tid="val2Input"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data2.' + scope.$index + '.val3'" :rules="rules.val3">
@@ -194,7 +202,8 @@
                     v-model="scope.row.val3"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    data-tid="val3Input"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data2.' + scope.$index + '.val4'" :rules="rules.val4">
@@ -202,7 +211,8 @@
                     v-model="scope.row.val4"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    data-tid="val4Input"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
                 <el-form-item prop="val5">
@@ -210,7 +220,8 @@
                     v-model="scope.row.val5"
                     type="text"
                     class="val"
-                    :disabled="switchboardStatus === 2"
+                    data-tid="val5Input"
+                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
               </template>

@@ -70,7 +70,7 @@
           <span class="infoList-text"> 下单区域： </span>
           <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules">
             <el-form-item prop="area">
-              <el-select v-model="ruleForm.area" placeholder="请选择">
+              <el-select v-model="ruleForm.area" data-tid="areaSelect" placeholder="请选择">
                 <el-option
                   v-for="itemChild in areaList"
                   :key="itemChild.value"
@@ -190,7 +190,10 @@
         </el-table-column>
         <el-table-column label="操作" width="105">
           <template slot-scope="scope">
-            <span style="color: #436eee; cursor: pointer" @click="chooseBusinessItem(scope.row)"
+            <span
+              style="color: #436eee; cursor: pointer"
+              data-tid="chooseBusinessItem"
+              @click="chooseBusinessItem(scope.row)"
               >选择</span
             >
           </template>
@@ -215,7 +218,7 @@
 import { getQueryString } from 'utils/helper';
 import ShowTooltip from 'components/show-tooltip';
 import SvgIcon from 'components/svg-icon';
-import { get_user_website, get_user_business_category } from 'api/common';
+import { get_user_website } from 'api/common';
 import { myBizList, get_business_info } from 'api/push-sheet';
 import './index.scss';
 export default {
@@ -224,18 +227,6 @@ export default {
     SvgIcon,
   },
   data() {
-    // var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\d{8})$/;
-    // var checkphoneNo = (rule, value, callback) => {
-    //   if (!Number(value)) {
-    //     return callback(new Error('请输入数字值'));
-    //   } else {
-    //     if (!myreg.test(value)) {
-    //       return callback(new Error('请输入正确的手机号'));
-    //     } else {
-    //       callback();
-    //     }
-    //   }
-    // };
     return {
       loading: false,
       //商机表单
@@ -247,11 +238,7 @@ export default {
         customerName: null,
       },
       content: '', //综合搜索
-      total: 40,
-      // businessFormRules: {
-      //   phoneNo: [{ validator: checkphoneNo, trigger: 'blur' }],
-      //   // query: [{ required: true, message: '请输入客户名称/商机编号', trigger: 'blur' }],
-      // },
+      total: 0,
       selectedInfo: null, //商机选中数据
       /*控制显示属性*/
       showLinkBusinessDialog: false, //控制商机对话框显示隐藏
@@ -349,7 +336,6 @@ export default {
         .then((res) => {
           const { code, data, message } = res;
           if (code == 200) {
-            this.loading = false;
             this.businseeTableData = data.records;
             this.businessForm.limit = Number(data.limit);
             this.businessForm.start = Number(data.currentPage);
@@ -357,6 +343,7 @@ export default {
           } else {
             this.$message.warning(message);
           }
+          this.loading = false;
         })
         .catch(() => {
           this.loading = false;
@@ -387,7 +374,6 @@ export default {
       params.page = this.page;
       get_business_info(params).then((res) => {
         this.selectedInfo = res;
-        console.log(this.selectedInfo, 'bizDetailInfo');
       });
     },
 
@@ -433,7 +419,6 @@ export default {
       this.$store.commit('pushSheet/editBusinessData', row);
       this.$emit('change-status', 1);
       this.selectedInfo = row;
-      sessionStorage.setItem('isClicked', true);
       this.showLinkBusinessDialog = false;
     },
     /**
@@ -453,14 +438,12 @@ export default {
     // 校验数据
     validateForm() {
       let flag = false;
-      // console.log(this.$refs['ruleFormRef']);
       let ref = this.$refs['ruleFormRef'];
       if (!ref) return;
       if (Array.isArray(ref)) {
         ref = ref[0];
       }
       ref.validate((valid) => {
-        console.log(valid, 'business', this.$refs['ruleFormRef']);
         if (valid) {
           flag = true;
         } else {

@@ -5,15 +5,14 @@
       <search-button
         :value="searchInputValue[activeTabField]"
         placeholder="请输入姓名/联系号码/商机编号查询"
-        data-tid="searchHandleInput"
         @on-blur="handleInput"
         @search="handleSearch"
         @clear="clearInputHandle"
       ></search-button>
       <router-link to="/add-business">
         <div class="add-business">
-          <i class="el-icon-edit add-business-icon"></i
-          ><span class="add-business-name">录入商机</span>
+          <i class="iconfont-qds-crm icon-edit"></i>
+          <span data-tid="inputBusiness" class="add-business-name">录入商机</span>
         </div>
       </router-link>
     </div>
@@ -35,6 +34,7 @@
             >{{ item.name }}</span
           >
           <el-tooltip
+            data-tid="searchTooltip"
             :open-delay="400"
             effect="dark"
             :content="item.tooltip"
@@ -45,12 +45,12 @@
           </el-tooltip>
         </div>
       </div>
-      <div class="warp-status" @click="dynamicBusiness">
+      <div class="warp-status" data-tid="dynamicBusiness" @click="dynamicBusiness">
         <p>
           新增&nbsp;<span class="warp-status_number">{{ stateNumber }}</span
           >&nbsp;条商机动态，去查看
         </p>
-        <i class="el-icon-d-arrow-right arrow_right"></i>
+        <i class="iconfont-qds-crm icon-rightoutline"></i>
       </div>
     </div>
     <!-- 筛选 -->
@@ -96,6 +96,7 @@
                 <template v-for="(child, index) in getFilterType[key]">
                   <div :key="child.code" class="item-warp">
                     <div
+                      data-tid="getFilterTypeChild"
                       :data-index="index"
                       :data-code="key"
                       :data-item_name="child.text"
@@ -117,7 +118,7 @@
                       range-separator="-"
                       start-placeholder="开始日期"
                       end-placeholder="结束日期"
-                      data-tid="searchChangeHandle"
+                      data-tid="searchDateChangeHandle"
                       @change="changeHandle(key)"
                     >
                     </el-date-picker>
@@ -130,15 +131,14 @@
       </transition-group>
       <div class="list-more">
         <span class="list-more_content" @click="showMoreHandleClick"
-          ><span>{{ showMoreFilterField[activeTabField] ? '收起' : '展开' }}</span
-          ><i
+          ><span>{{ showMoreFilterField[activeTabField] ? '收起' : '展开' }}</span>
+          <i
             :class="[
-              'el-icon-d-arrow-right',
-              'arrow_right',
-              showMoreFilterField[activeTabField] ? 'icon-up' : 'icon-down',
+              'iconfont-qds-crm',
+              showMoreFilterField[activeTabField] ? 'icon-doublefold' : 'icon-doubleunfold',
             ]"
-          ></i
-        ></span>
+          ></i>
+        </span>
       </div>
     </div>
   </div>

@@ -61,6 +61,7 @@
           show-word-limit
           resize="none"
           :placeholder="dialogInfo.placeholder2"
+          data-tid="dialogInfoInput"
         ></el-input>
       </el-form-item>
     </el-form>
@@ -68,7 +69,9 @@
     <span slot="footer" class="footer">
       <span class="footer-info" v-html="dialogInfo.footerInfo(num)"></span>
       <div>
-        <el-button size="small" @click="dialogVisible = false">取消</el-button>
+        <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+          >取消</el-button
+        >
         <el-button
           type="primary"
           size="small"

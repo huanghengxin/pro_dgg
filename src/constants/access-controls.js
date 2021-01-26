@@ -1,5 +1,5 @@
 /**
- * @description 权限控制
+ * @description 商机列表权限控制
  */
 
 //详情中权限判断

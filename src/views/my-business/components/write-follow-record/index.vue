@@ -7,6 +7,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="820px"
+      data-tid="writeFollowRrecord"
       @close="diologHandleClose"
     >
       <el-form
@@ -29,7 +30,7 @@
             placeholder="请输入跟进内容"
           ></el-input>
         </el-form-item>
-        <div class="quick-note" @click="noteHanleClick">
+        <div class="quick-note" data-tid="noteHanleClick" @click="noteHanleClick">
           <span
             v-for="(item, index) in quickNoteList"
             :key="item.code"
@@ -51,6 +52,7 @@
             format="yyyy-MM-dd HH:mm"
             :picker-options="pickerOptions"
             :default-time="nowTime"
+            data-tid="focusHandleDateClick"
             @focus="focusHandle"
           >
           </el-date-picker>
@@ -66,14 +68,22 @@
               >
               </el-option>
             </el-select>
-            <div v-show="showSetGroup" class="quick-note_group-add" @click="addGroupHandleClick">
-              无可用分组，去新建<i class="el-icon-arrow-right arrow_right"></i>
+            <div
+              v-show="showSetGroup"
+              class="quick-note_group-add"
+              data-tid="addGroupHandleClick"
+              @click="addGroupHandleClick"
+            >
+              无可用分组，去新建
+              <i class="iconfont-qds-crm icon-rightoutline"></i>
             </div>
           </div>
         </el-form-item>
       </el-form>
       <span slot="footer" class="footer">
-        <el-button size="small" @click="dialogVisible = false">取消</el-button>
+        <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
+          >取消</el-button
+        >
         <el-button
           :loading="loading"
           type="primary"

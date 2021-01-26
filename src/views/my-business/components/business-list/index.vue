@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="list-base-box">
-      <el-button class="list-base-box-button" size="small" type="primary" @click="callUp('bus')"
+      <el-button
+        class="list-base-box-button"
+        size="small"
+        type="primary"
+        data-tid="businessCallUp"
+        @click="callUp('bus')"
         >打电话</el-button
       >
     </div>
@@ -12,7 +17,6 @@
         v-loading="loading"
         :data="tableData.data"
         style="width: 100%"
-        max-height="600"
         @sort-change="sortHandleChange"
       >
         <template slot="empty">
@@ -23,7 +27,7 @@
           <template slot-scope="scope">
             <div>
               <router-link
-                :to="'/business-details?businessId=' + (scope.row.id || '')"
+                :to="`/business-details?businessId=${scope.row.id || ''}&from=my-business`"
                 class="router-link"
               >
                 <show-tooltip :text="scope.row.customerName" :width="120"></show-tooltip>
@@ -100,7 +104,13 @@
         <el-table-column label="操作" fixed="right" width="140" class-name="list-last">
           <template slot-scope="scope">
             <div v-if="scope.row.noAttention != 1" class="list-handle">
-              <p class="list-handle_follow" @click="listHandleClick(scope.row, 'write')">写跟进</p>
+              <p
+                class="list-handle_follow"
+                :data-tid="'listHandleClick' + scope.$index"
+                @click="listHandleClick(scope.row, 'write')"
+              >
+                写跟进
+              </p>
 
               <el-dropdown
                 v-show="activeTabcode !== 'SIGN_ORDER'"
@@ -109,19 +119,26 @@
               >
                 <p class="list-handle_more">更多操作</p>
                 <el-dropdown-menu slot="dropdown" key="el-dropdown-menu">
-                  <el-dropdown-item :command="{ component: 'callPhoneRef', item: scope.row }"
+                  <el-dropdown-item
+                    :data-tid="'callPone' + scope.$index"
+                    :command="{ component: 'callPhoneRef', item: scope.row }"
                     >打电话</el-dropdown-item
                   >
                   <!-- <el-dropdown-item :command="{ component: 'pushSheetRef', item: scope.row }"
                   >推单</el-dropdown-item
                 > -->
-                  <el-dropdown-item :command="{ component: 'setGroupRef', item: scope.row }"
+                  <el-dropdown-item
+                    :data-tid="'setGroup' + scope.$index"
+                    :command="{ component: 'setGroupRef', item: scope.row }"
                     >设置分组</el-dropdown-item
                   >
-                  <el-dropdown-item :command="{ component: 'inviteInterviewRef', item: scope.row }"
+                  <el-dropdown-item
+                    data-tid="inviteInterview"
+                    :command="{ component: 'inviteInterviewRef', item: scope.row }"
                     >邀约面谈</el-dropdown-item
                   >
                   <el-dropdown-item
+                    :data-tid="'noAttention' + scope.$index"
                     :command="{
                       component: 'noAttentionRef',
                       item: { code: 'BUS_ZBGZ', busId: scope.row.id },
@@ -129,6 +146,7 @@
                     >暂不关注</el-dropdown-item
                   >
                   <el-dropdown-item
+                    :data-tid="'noUse' + scope.$index"
                     :command="{
                       component: 'noAttentionRef',
                       item: { code: 'BUS_WXSJ', busId: scope.row.id },
@@ -139,6 +157,7 @@
               </el-dropdown>
               <p
                 v-show="activeTabcode === 'SIGN_ORDER'"
+                :data-tid="'listHandleCallUp' + scope.$index"
                 class="list-handle_follow"
                 @click="callPhone(scope.row)"
               >
@@ -146,7 +165,13 @@
               </p>
             </div>
             <div v-else>
-              <p class="list-handle_follow" @click="resetAttention(scope.row.id)">恢复关注</p>
+              <p
+                class="list-handle_follow"
+                data-tid="resetAttention"
+                @click="resetAttention(scope.row.id)"
+              >
+                恢复关注
+              </p>
             </div>
           </template>
         </el-table-column>
@@ -154,8 +179,9 @@
 
       <div class="pagination-footer">
         <el-pagination
-          :page-sizes="[10, 50, 100, 150]"
+          :page-sizes="[10, 20, 30, 40, 50]"
           background
+          data-tid="handlePagination"
           layout="total, prev, pager, next,sizes,  jumper"
           :total="tableData.total"
           @size-change="handleSizeChange"
@@ -164,18 +190,10 @@
         </el-pagination>
       </div>
       <!-- 弹层组件 -->
-      <write-follow-record
-        ref="writeFollowRecordRef"
-        data-tid="listContactSubmit"
-        @on-submit="onSubmitHandle"
-      />
-      <set-group ref="setGroupRef" data-tid="listContactSubmit" @on-submit="onSubmitHandle" />
-      <invite-interview
-        ref="inviteInterviewRef"
-        data-tid="listContactSubmit"
-        @on-submit="onSubmitHandle"
-      />
-      <no-attention ref="noAttentionRef" data-tid="listContactSubmit" @on-submit="onSubmitHandle" />
+      <write-follow-record ref="writeFollowRecordRef" @on-submit="onSubmitHandle" />
+      <set-group ref="setGroupRef" @on-submit="onSubmitHandle" />
+      <invite-interview ref="inviteInterviewRef" @on-submit="onSubmitHandle" />
+      <no-attention ref="noAttentionRef" @on-submit="onSubmitHandle" />
       <show-more-require ref="showMoreRequireRef" :is-sign-order="params.type" />
     </div>
   </div>
@@ -192,7 +210,7 @@ import ShowTooltip from 'components/show-tooltip';
 import SvgIcon from 'components/svg-icon';
 import WriteFollowRecord from '../write-follow-record';
 import SetGroup from '../set-group';
-import InviteInterview from '../invite-interview';
+import InviteInterview from '../invite-interview/index.vue';
 import { PREDICT_DROP_TYPE_MAP } from 'constants/type';
 // import { accControlsList } from 'constants/access-controls';
 import NoAttention from '../no-attention';
@@ -239,7 +257,7 @@ export default {
   computed: {
     params() {
       return {
-        type: 'TODAY_FOLLOW',
+        type: history.state.tab_active ? history.state.tab_active : 'TODAY_FOLLOW',
         ...this.paramsData,
         start: this.start,
         limit: this.limit,
@@ -254,6 +272,9 @@ export default {
       immediate: true,
       deep: true,
     },
+  },
+  activated() {
+    this.getListData(this.params);
   },
   mounted() {
     this.$eventBus.$on('my-business_transfer-params', (val) => {
@@ -272,6 +293,7 @@ export default {
       this.$set(this, 'paramsData', obj);
     });
   },
+
   beforeDestroy() {
     this.$eventBus.$off('my-business_transfer-params');
   },
@@ -372,7 +394,6 @@ export default {
         .then((res) => {
           if (res.code === 200) {
             res = res.data;
-            console.log(res);
             this.tableData.data = Object.freeze(res.records) || [];
             this.tableData.total = res.totalCount * 1 || 0;
           } else {

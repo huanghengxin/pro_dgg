@@ -8,12 +8,13 @@
     >
       <div class="designee-person-searchBox">
         <el-input v-model="designneForm.query" placeholder="商户名称/店员姓名"></el-input>
-        <el-button size="small" type="primary">搜索</el-button>
+        <el-button size="small" type="primary" data-tid="searchPerson">搜索</el-button>
       </div>
       <el-table
         v-loading="loading"
         :data="designeeTableInfo"
         style="width: 100%"
+        data-tid="sortHandleChange"
         @sort-change="sortHandleChange"
       >
         <el-table-column prop="assistantName" label="店员姓名"></el-table-column>
@@ -23,7 +24,10 @@
         <el-table-column prop="taskNum" label="在办任务数" sortable="custom"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span style="color: #436eee; cursor: pointer" @click="chooseDesignner(scope.row)"
+            <span
+              style="color: #436eee; cursor: pointer"
+              data-tid="chooseDesignner"
+              @click="chooseDesignner(scope.row)"
               >选择</span
             >
           </template>

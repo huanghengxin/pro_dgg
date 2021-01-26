@@ -3,7 +3,12 @@
     <div class="product">
       <div class="product-title">
         <p class="titleWord">产品信息</p>
-        <el-button type="primary" size="small" class="product-title_button" @click="chooseProduct"
+        <el-button
+          type="primary"
+          size="small"
+          class="product-title_button"
+          data-tid="chooseProduct"
+          @click="chooseProduct"
           >选择商品</el-button
         >
       </div>
@@ -13,7 +18,7 @@
       </div>
       <div v-if="setProductTableInfo.productTableInfo.length > 0" class="product-content">
         <div class="computedPrice">
-          <el-button size="small" class="delBtn" @click="delAll">删除</el-button>
+          <el-button size="small" class="delBtn" data-tid="delAll" @click="delAll">删除</el-button>
           <p class="computedPrice-text">
             产品总金额：<span class="computedPrice-text_redcolor">￥{{ total }}</span>
           </p>
@@ -110,9 +115,8 @@
             <el-table-column prop="areaCode" label="产品城市" width="100"> </el-table-column>
             <el-table-column label="产品单价" align="right" header-align="right" width="140">
               <template slot-scope="scope">
-                ￥
                 <show-tooltip
-                  :text="scope.row.referencePrice || '-'"
+                  :text="'￥' + scope.row.referencePrice || '-'"
                   :width="80"
                   style="color: #222"
                 ></show-tooltip>
@@ -127,6 +131,7 @@
                   >
                     <el-input
                       v-model.trim="scope.row.goodsExecutionsNumber"
+                      data-tid="goodsExecutionsNumberInput"
                       @keyup.enter.native="keyup"
                       @blur="discountInput(scope.row)"
                     ></el-input>
@@ -153,10 +158,22 @@
               </template>
             </el-table-column>
             <el-table-column prop="memberPrice" label="优惠金额" width="123">
-              {{ memberPrice ? '￥' + memberPrice : '-' }}
+              <div>
+                <show-tooltip
+                  :text="'￥' + memberPrice || '-'"
+                  :width="80"
+                  style="color: #222"
+                ></show-tooltip>
+              </div>
             </el-table-column>
             <el-table-column prop="subTotalPrice" label="小计金额" width="140">
-              {{ subTotalPrice ? '￥' + subTotalPrice : '-' }}
+              <div>
+                <show-tooltip
+                  :text="'￥' + subTotalPrice || '-'"
+                  :width="80"
+                  style="color: #222"
+                ></show-tooltip>
+              </div>
             </el-table-column>
             <el-table-column label="服务主体" width="200">
               <template slot-scope="scope">
@@ -167,18 +184,20 @@
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" label="操作" width="200">
+            <el-table-column label="操作" width="200">
               <template slot-scope="scope">
                 <el-button
                   v-if="scope.row.number == 1"
                   type="text"
                   size="small"
+                  data-tid="linkResource"
                   @click="linkResource(scope.$index, scope.row)"
                   >关联资源</el-button
                 >
                 <el-button
                   type="text"
                   size="small"
+                  data-tid="delAddressClick"
                   @click="
                     delAddressClick(
                       scope.$index,
@@ -188,7 +207,11 @@
                   "
                   >删除</el-button
                 >
-                <el-button type="text" size="small" @click="editTaskItem(scope.row.id)"
+                <el-button
+                  type="text"
+                  size="small"
+                  data-tid="editTaskItem"
+                  @click="editTaskItem(scope.row.id)"
                   >指定消化</el-button
                 >
               </template>
@@ -213,7 +236,12 @@
       width="1200px"
       :close-on-click-modal="false"
     >
-      <el-tabs v-model="linkTabsActiveName" type="card" @tab-click="productTabClick">
+      <el-tabs
+        v-model="linkTabsActiveName"
+        type="card"
+        data-tid="productTabClick"
+        @tab-click="productTabClick"
+      >
         <el-tab-pane label="地址资源" name="1">
           <el-form
             ref="linkAddressFormRef"
@@ -226,6 +254,7 @@
               <el-input
                 v-model="linkAddressForm.query"
                 clearable
+                data-tid="query"
                 placeholder="产品编号/产品名称"
               ></el-input>
             </el-form-item>
@@ -234,18 +263,22 @@
                 <input
                   v-model="linkAddressForm.price.priceMin"
                   maxlength="5"
+                  data-tid="priceMin"
                   class="border-none-right"
                 />
                 <span>-</span>
                 <input
                   v-model="linkAddressForm.price.priceMax"
                   maxlength="5"
+                  data-tid="priceMax"
                   class="border-none-left"
                 />
               </div>
             </el-form-item>
             <div class="linkAddressForm-flexBox-item">
-              <el-button type="primary" size="small" @click="searchAddress">搜索</el-button>
+              <el-button type="primary" size="small" data-tid="searchAddress" @click="searchAddress"
+                >搜索</el-button
+              >
             </div>
           </el-form>
         </el-tab-pane>
@@ -269,7 +302,11 @@
               </el-select>
             </el-form-item>
             <el-form-item class="linkAddressForm-flexBox-item" label="后四位:" prop="query">
-              <el-select v-model="numForm.afterFour" placeholder="请选择">
+              <el-select
+                v-model="numForm.afterFour"
+                data-tid="afterFourSelect"
+                placeholder="请选择"
+              >
                 <el-option
                   v-for="item in dealClassify"
                   :key="item.value"
@@ -281,13 +318,25 @@
             </el-form-item>
             <el-form-item label="单价范围:" class="linkAddressForm-flexBox-item" prop="price">
               <div class="linkAddressForm-flexBox-item-input-box">
-                <input v-model="numForm.price.priceMin" maxlength="5" class="border-none-right" />
+                <input
+                  v-model="numForm.price.priceMin"
+                  data-tid="priceMinInput"
+                  maxlength="5"
+                  class="border-none-right"
+                />
                 <span>-</span>
-                <input v-model="numForm.price.priceMax" maxlength="5" class="border-none-left" />
+                <input
+                  v-model="numForm.price.priceMax"
+                  data-tid="priceMaxInput"
+                  maxlength="5"
+                  class="border-none-left"
+                />
               </div>
             </el-form-item>
             <div class="linkAddressForm-flexBox-item">
-              <el-button type="primary" size="small" @click="searchAddress">搜索</el-button>
+              <el-button type="primary" size="small" data-tid="searchAddress" @click="searchAddress"
+                >搜索</el-button
+              >
             </div>
           </el-form>
         </el-tab-pane>
@@ -299,7 +348,13 @@
         <el-table-column prop="price" label="价格"> </el-table-column>
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="addressClick(scope.row)">选择</el-button>
+            <el-button
+              type="text"
+              size="small"
+              data-tid="addressClick"
+              @click="addressClick(scope.row)"
+              >选择</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
