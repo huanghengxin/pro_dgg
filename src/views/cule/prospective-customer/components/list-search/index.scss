@@ -1,0 +1,17 @@
+@import 'assets/scss/mixins/base';
+
+.search-list {
+  &__item {
+    height: 48px;
+    span {
+      margin: 12px 0;
+    }
+    .lable {
+      font-size: $font-size-sm;
+      color: $black-2;
+      margin-right: 42px;
+      font-weight: $font-weight-crm;
+    }
+    @include filter-item();
+  }
+}

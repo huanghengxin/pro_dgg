@@ -30,6 +30,13 @@ const lifeCycle = () => {
     async mount(props) {
       console.log('主应用下发的props', props);
       Vue.use(props.install);
+      const showTooltip = `.show-tooltip {
+        cursor: pointer;
+        min-width: 142px !important;
+        max-width: 400px !important;
+        line-height: 22px;
+      }`;
+      Vue.prototype.$mainService?.addStyle(showTooltip);
       // 注册方法到vue原型中
       // Vue.prototype.$mainService = props.service;
       // 注册应用间通信

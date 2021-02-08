@@ -44,6 +44,7 @@ export default {
         startTime: '', //判断开始时间
         endTime: '', //判断结束时间
       },
+      timeId: '',
     };
   },
   watch: {
@@ -81,23 +82,26 @@ export default {
     /**
      * @description
      */
-    recordsResetList(val) {
-      if (this.publicLibraryList?.length == 1 && this.param.start != 1 && val) {
-        this.param.start--;
-      }
-      setTimeout(() => {
-        this.getSeasLibraryList(this.param);
-      }, 2000);
-    },
+    // recordsResetList(val) {
+    //   if (this.publicLibraryList?.length == 1 && this.param.start != 1 && val) {
+    //     this.param.start--;
+    //   }
+    //   setTimeout(() => {
+    //     this.getSeasLibraryList(this.param);
+    //   }, 2000);
+    // },
     resetList(val) {
-      if (
-        this.publicLibraryList?.length == 1 &&
-        this.param.start != 1 &&
-        val?.success == this.param.pageNum
-      ) {
-        this.param.start--;
-      }
-      this.getSeasLibraryList(this.param);
+      this.timeId = setTimeout(() => {
+        if (
+          this.publicLibraryList?.length == 1 &&
+          this.param.start != 1 &&
+          val?.success == this.param.pageNum
+        ) {
+          this.param.start--;
+        }
+        this.getSeasLibraryList(this.param);
+        this.timeId = null;
+      }, 2000);
     },
     /**
      * @description 数据字典线索来源
@@ -124,6 +128,7 @@ export default {
         lastRemarkTime: '2',
       };
       if (map[val.prop]) {
+        console.log(val, 'val');
         if (val.order) {
           this.param.orderBy = map[val.prop];
           this.param.isAsc = val.order === 'descending' ? 1 : 0;
@@ -242,7 +247,7 @@ export default {
                 if (this.publicLibraryList?.length == 1 && this.param.start != 1) {
                   this.param.start--;
                 }
-                this.getSeasLibraryList(this.param);
+                this.resetList();
                 this.$message({
                   type: 'success',
                   message: '拾回成功!',
@@ -300,7 +305,7 @@ export default {
      */
     selectAllClick(row) {
       if (this.limit <= 50) {
-        this.multipleSelectionId = row?.map(function(val) {
+        this.multipleSelectionId = row?.map(function (val) {
           return val.id;
         });
       } else {
@@ -314,7 +319,7 @@ export default {
      * @description 多选
      */
     handleSelectionChange(val) {
-      this.multipleSelectionId = val.map(function(val) {
+      this.multipleSelectionId = val.map(function (val) {
         return val.id;
       });
     },
@@ -331,5 +336,8 @@ export default {
       }
       this.$refs['multipCuleRetrieveDialog'].openModal(this.multipleSelectionId);
     },
+  },
+  beforeDestroy() {
+    clearTimeout(this.timeId);
   },
 };

@@ -1,0 +1,26 @@
+.relieveCooperation {
+  .relieveReason {
+    width: 440px;
+    height: 120px;
+    .el-form-item__label {
+      width: 95px;
+    }
+    .el-form-item__content {
+      margin-left: 95px;
+    }
+    .el-textarea__inner {
+      height: 120px;
+      font-size: 13px;
+      color: #999;
+      textarea {
+        height: 120px;
+        min-height: 120px;
+      }
+    }
+  }
+  .footer {
+    button {
+      padding: 7px 13px 8px 12px;
+    }
+  }
+}

@@ -98,9 +98,9 @@ export default {
     onSubmitHandle(id) {
       this.switchDialog = true;
       if (id) {
-        this.getGroupList({ groupId: id });
+        this.getGroupList({ groupId: id }, 'edit');
       } else {
-        this.getGroupList();
+        this.getGroupList(undefined, 'edit');
       }
     },
     /**
@@ -148,7 +148,7 @@ export default {
     /**
      * @description 获取分组数据方法
      */
-    getGroupList(item) {
+    getGroupList(item, type) {
       // this.showSetGroup = true;
       get_business_groups().then((res) => {
         if (res.code === 200) {
@@ -160,8 +160,14 @@ export default {
                 groupId: item.id,
               };
             }) || [];
-          this.ruleForm.groupId =
-            this.groupList.find((it) => it.groupId === item?.groupId)?.groupId || '';
+          if (item) {
+            this.ruleForm.groupId =
+              this.groupList.find((it) => it.groupId === item?.groupId)?.groupId || '';
+          }
+          if (type === 'edit') {
+            const index = res?.findIndex((item) => item.id === this.groupId);
+            this.$eventBus.$emit('edit-on-submit_update-list-search', index);
+          }
           if (this.groupList.length === 0) {
             this.disabled = true;
           } else {

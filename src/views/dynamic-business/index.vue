@@ -9,7 +9,7 @@
           placeholder="请输入姓名/联系方式/商机编号查询"
           data-tid="dynamicHandleInputValue"
           @search="searchUser"
-          @on-input="handleInputValue"
+          @clear="handleInputValue"
         ></search-button>
       </div>
       <!-- 时间选择 -->
@@ -245,7 +245,7 @@ export default {
                 }
                 setTimeout(() => {
                   this.getTable();
-                }, 3000);
+                }, 2000);
               } else {
                 this.getTable();
                 this.$message({
@@ -344,6 +344,7 @@ export default {
       };
       const result = await get_dictionary_data_by_parent_code(paramCode);
       const obj = result.data?.reduce((acc, cur) => {
+        console.log(acc, cur, '22121');
         acc[cur.code] = cur.name;
         return acc;
       }, {});

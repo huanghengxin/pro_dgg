@@ -5,7 +5,7 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="480px"
-    @close="diologHandleClose"
+    @closed="diologHandleClose"
   >
     <el-form
       ref="ruleForm"
@@ -71,31 +71,35 @@ export default {
      * @description 提交表单
      */
     submitHandleClick() {
-      const ruleForm = this.ruleForm;
-      const params = {
-        bizId: this.businessId,
-        nextFollowTime: ruleForm.nextFollowTime
-          ? dayjs(ruleForm.nextFollowTime).format('YYYY-MM-DD HH:mm') + ':00'
-          : '',
-      };
-      this.loading = true;
-      set_next_follow_time(params)
-        .then((res) => {
-          if (res.code === 200) {
-            this.$message.success('操作成功');
-            this.$eventBus.$emit('edit-on-submit_update-business-info');
-            this.dialogVisible = false;
-          } else {
-            this.$message.warning(res.message);
-            if (res.code === 5002) {
-              this.$router.go(-1);
-            }
-          }
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
-        });
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          const ruleForm = this.ruleForm;
+          const params = {
+            bizId: this.businessId,
+            nextFollowTime: ruleForm.nextFollowTime
+              ? dayjs(ruleForm.nextFollowTime).format('YYYY-MM-DD HH:mm') + ':00'
+              : '',
+          };
+          this.loading = true;
+          set_next_follow_time(params)
+            .then((res) => {
+              if (res.code === 200) {
+                this.$message.success('操作成功');
+                this.$eventBus.$emit('edit-on-submit_update-business-info');
+                this.dialogVisible = false;
+              } else {
+                this.$message.warning(res.message);
+                if (res.code === 5002) {
+                  this.$router.go(-1);
+                }
+              }
+              this.loading = false;
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+        }
+      });
     },
     /**
      * @description 供父组件调用打开弹层

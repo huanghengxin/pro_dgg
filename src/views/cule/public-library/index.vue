@@ -135,6 +135,7 @@
                 :require-item="scope.row.requireNameStr"
                 :require-progress="scope.row.requireProgress"
                 is-separate
+                :width-num="98"
                 :require-id="scope.row.id"
                 @open-details="handleNeedDetails"
               />

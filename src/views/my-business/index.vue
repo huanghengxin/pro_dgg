@@ -15,13 +15,15 @@ export default {
     ListSearch,
     BusinessList,
   },
+  inject: ['reload'],
   beforeRouteLeave(to, from, next) {
-    if (to.path == '/business-details') {
-      //缓存
-      from.meta.keepAlive = true;
+    //缓存
+    if (to.path == '/my-business/business-details') {
+      if (!from.meta.keepAlive) from.meta.keepAlive = true;
     } else {
+      this.reload();
       //不缓存
-      from.meta.keepAlive = false;
+      // from.meta.keepAlive = false;
     }
     next();
   },

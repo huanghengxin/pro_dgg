@@ -28,8 +28,16 @@
       </el-form-item>
       <!-- 性别行！ -->
       <el-form-item label="性别：" prop="customerSex">
-        <el-radio v-model="ruleForm.customerSex" :label="1" class="content-radio-man">男</el-radio>
-        <el-radio v-model="ruleForm.customerSex" :label="0">女</el-radio>
+        <el-radio
+          v-model="ruleForm.customerSex"
+          :label="1"
+          class="content-radio-man"
+          data-tid="content-radio-man"
+          >男</el-radio
+        >
+        <el-radio v-model="ruleForm.customerSex" :label="0" data-tid="content-radio-woman"
+          >女</el-radio
+        >
       </el-form-item>
       <!-- 手机行！ -->
       <el-form-item label="手机号码：" prop="customerPhone" class="content-phone">
@@ -80,6 +88,7 @@
               type="text"
               placeholder="请输入手机号码"
               class="other-input"
+              :data-tid="'contactNo' + index"
               maxlength="11"
             />
             <el-button
@@ -87,7 +96,7 @@
               plain
               size="medium"
               icon="el-icon-delete"
-              data-tid="delPhone"
+              :data-tid="'delPhone' + index"
               :disabled="ruleForm.phoneArray.length > 0 && Boolean(item.id)"
               @click="delPhone(index)"
             ></el-button>
@@ -100,6 +109,7 @@
           ref="customerRequireRef"
           v-model="ruleForm.customerRequire"
           placeholder="请选择客户需求"
+          data-tid="customerRequire"
           :props="props"
         ></el-cascader>
       </el-form-item>
@@ -111,22 +121,24 @@
           :texts="texts"
           show-text
           class="content-level"
+          data-tid="intentionGrade"
         >
         </el-rate>
       </el-form-item>
       <!-- 业务区域： -->
       <el-form-item label="业务区域：" prop="areaCode">
-        <el-select v-model="ruleForm.areaCode" class="content-beiyong-select">
+        <el-select v-model="ruleForm.areaCode" data-tid="areaCode" class="content-beiyong-select">
           <el-option
-            v-for="item in areaList"
+            v-for="(item, index) in areaList"
             :key="item.value"
             :label="item.value"
             :value="item.key"
+            :data-tid="'value' + index"
           ></el-option>
         </el-select>
       </el-form-item>
       <!-- 备注行！ -->
-      <el-form-item label="备注：">
+      <el-form-item label="备注：" data-tid="remark">
         <el-input
           v-model="ruleForm.remark"
           v-emoji="'textarea'"
@@ -146,6 +158,7 @@
             maxlength="20"
             clearable
             type="text"
+            data-tid="standbyName"
             placeholder="请输入联系人姓名"
           />
         </el-form-item>
@@ -155,11 +168,12 @@
             :disabled="isDisabledStand"
             maxlength="11"
             clearable
+            data-tid="standbyPhone"
             type="text"
             placeholder="请输入手机号码"
           />
         </el-form-item>
-        <el-select v-model="ruleForm.contactPerson.standbySex">
+        <el-select v-model="ruleForm.contactPerson.standbySex" data-tid="standbySex">
           <el-option label="请选择" :value="2"></el-option>
           <el-option label="男" :value="1"></el-option>
           <el-option label="女" :value="0"></el-option>

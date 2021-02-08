@@ -144,13 +144,13 @@ export default {
      */
     getCountInterview() {
       let params = {
+        queryTime: this.time ? this.time : undefined,
         bizId: this.businessId,
       };
       count_interview(params).then((res) => {
         if (res.code === 200) {
           this.total.invite = res.data.noInterviewCount;
           this.total.interview = res.data.interviewedCount;
-          console.log('', this.total);
         } else {
           this.$message.warning(res.message);
         }
@@ -190,6 +190,7 @@ export default {
             } else {
               this.$message.warning(res.message);
             }
+            this.getCountInterview();
             this.getInviteInterviewList();
             this.loading = false;
           });
@@ -233,6 +234,7 @@ export default {
         this.isReachBottom = true;
         this.pageNum++;
         if (this.tabActive == 1) {
+          this.getCountInterview();
           this.getInviteInterviewList();
         } else {
           this.getFollowRecordsList();
@@ -319,6 +321,7 @@ export default {
     changeTimeHandle() {
       this.reset();
       if (this.tabActive == 1) {
+        this.getCountInterview();
         this.getInviteInterviewList();
       } else {
         this.getFollowRecordsList();
@@ -332,6 +335,7 @@ export default {
       this.reset();
       this.time = val ? ThreeMonthAgo : '';
       if (this.tabActive == 1) {
+        this.getCountInterview();
         this.getInviteInterviewList();
       } else {
         this.getFollowRecordsList();

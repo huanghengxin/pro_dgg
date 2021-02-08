@@ -16,6 +16,8 @@ import CuleMoveDialog from 'views/team-manage/components/cule-move-dialog';
 import HandleLog from '../handle-log';
 import EditBaseInfo from '../edit-base-info';
 import SetNextFollowTime from '../set-next-follow-time';
+import InitiateCooperation from '../initiate-cooperation/index.vue';
+
 import { recoverInattention } from 'api/common';
 export default {
   name: 'MoreHandle',
@@ -27,6 +29,7 @@ export default {
     HandleLog,
     SetNextFollowTime,
     CuleMoveDialog,
+    InitiateCooperation,
   },
   props: {
     businessId: { type: String, default: '' },
@@ -43,9 +46,10 @@ export default {
     //监听基础信息获取数据后，打开基础信息的按钮限制
     this.$eventBus.$on('get-business-info', (value) => {
       if (Object.keys(value).length > 0) {
+        console.log(value, 'value');
         this.isShow = true;
         this.businessInfo = value;
-        console.log('sdfsdfasasd', this.isShow);
+        // console.log('isShow', this.isShow);
       }
     });
   },
@@ -54,6 +58,7 @@ export default {
   },
   methods: {
     openModalHandleClick(e) {
+      // console.log(e.target.dataset, 'e.target.dataset');
       const dataset = e.target.dataset;
       const component = dataset.component;
       if (component) {
@@ -69,6 +74,7 @@ export default {
             this.$refs[component].openModal({ code, busId: this.businessId });
             break;
           default:
+            // console.log(this.$refs, 'this.$refs[component]');
             this.$refs[component].openModal(this.businessInfo);
             break;
         }

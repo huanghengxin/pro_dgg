@@ -81,16 +81,6 @@ class Api {
           type: 'error',
         });
         reject(error);
-        // // 逻辑错误，按实际业务需求处理，默认弹窗提示
-        // if (error.response) {
-        //   if (error.response.status === 401) {
-        //     // TODO: 401逻辑
-        //   } else {
-        //     reject(error.response.data);
-        //   }
-        // } else {
-        //reject(error);
-        // }
       });
   }
 }

@@ -85,7 +85,7 @@ export default {
       dialogVisible: false,
       loading: false,
       groupId: '',
-      busGroupId: '',
+      // busGroupId: '',
       setGroupListFrom: {
         setGroupList: [],
       },
@@ -139,14 +139,14 @@ export default {
     openModal(list, id) {
       this.setGroupListFrom.setGroupList = list.concat();
       this.dialogVisible = true;
-      this.busGroupId = id;
+      // this.busGroupId = id;
     },
     /**
      * @description 弹层关闭抛出事件,重置表单数据
      */
     diologHandleClose() {
       this.$emit('on-submit', this.groupId);
-      this.busGroupId = '';
+      // this.busGroupId = '';
       this.$refs.ruleForm.resetFields();
       this.setGroupListFrom.setGroupList = [];
     },
@@ -164,11 +164,11 @@ export default {
                 groupId: item.id,
               };
             }) || [];
-          if (type) {
-            const index = res?.findIndex((item) => item.id === this.busGroupId);
-            console.log('ssssssssssssssssssss', index, this.busGroupId);
-            this.$eventBus.$emit('edit-on-submit_update-list-search', index);
-          }
+          // if (type) {
+          //   const index = res?.findIndex((item) => item.id === this.busGroupId);
+          //   console.log('ssssssssssssssssssss', index, this.busGroupId);
+          //   this.$eventBus.$emit('edit-on-submit_update-list-search', index);
+          // }
         } else {
           this.$message.warning(res.message);
         }
@@ -179,30 +179,40 @@ export default {
      * @param {Number} 当前点击的索引
      */
     deleteGroup(item, index) {
-      if (item.groupId) {
-        this.disDeleteGroup = true;
-        this.loading = true;
-        const params = {
-          groupId: item.groupId,
-        };
-        delete_business_group(params)
-          .then((res) => {
-            if (res.code === 200) {
-              this.groupId = '';
-              this.$eventBus.$emit('edit-on-submit_update-business-info');
-              this.getGroupList('delete');
-              this.disDeleteGroup = false;
-            } else {
-              this.$message.warning(res.message);
-            }
-            this.loading = false;
-          })
-          .catch(() => {
-            this.loading = false;
-          });
-      } else {
-        this.setGroupListFrom.setGroupList.splice(index, 1);
-      }
+      this.$messageBox
+        .confirm('是否确定删除分组?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          closeOnClickModal: false,
+        })
+        .then(() => {
+          if (item.groupId) {
+            this.disDeleteGroup = true;
+            this.loading = true;
+            const params = {
+              groupId: item.groupId,
+            };
+            delete_business_group(params)
+              .then((res) => {
+                if (res.code === 200) {
+                  this.groupId = '';
+                  this.$eventBus.$emit('edit-on-submit_update-business-info');
+                  this.setGroupListFrom.setGroupList.splice(index, 1);
+                  // this.getGroupList('delete');
+                  this.disDeleteGroup = false;
+                } else {
+                  this.$message.warning(res.message);
+                }
+                this.loading = false;
+              })
+              .catch(() => {
+                this.loading = false;
+              });
+          } else {
+            this.setGroupListFrom.setGroupList.splice(index, 1);
+          }
+        });
     },
   },
 };

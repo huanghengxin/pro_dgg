@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "14369232",
+      "name": "icon_excel",
+      "font_class": "icon_excel",
+      "unicode": "e6d7",
+      "unicode_decimal": 59095
+    },
+    {
+      "icon_id": "17699715",
+      "name": "informationcircle",
+      "font_class": "surface_informationcircle",
+      "unicode": "e6e2",
+      "unicode_decimal": 59106
+    },
+    {
+      "icon_id": "19707581",
+      "name": "success",
+      "font_class": "success1",
+      "unicode": "e761",
+      "unicode_decimal": 59233
+    },
+    {
+      "icon_id": "17966671",
+      "name": "notice",
+      "font_class": "notice",
+      "unicode": "e755",
+      "unicode_decimal": 59221
+    },
+    {
+      "icon_id": "17573580",
+      "name": "Urgelighting",
+      "font_class": "Urgelighting",
+      "unicode": "e726",
+      "unicode_decimal": 59174
+    },
+    {
       "icon_id": "17573533",
       "name": "offlinesign",
       "font_class": "offlinesign",

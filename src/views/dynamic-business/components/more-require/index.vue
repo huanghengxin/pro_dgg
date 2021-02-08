@@ -5,10 +5,10 @@
         <show-tooltip
           tooltip-class="text-decoration"
           :text="handleIntentionName(item)"
-          :width="240"
+          :width="widthNum"
         ></show-tooltip>
       </div>
-      <show-tooltip v-else :text="handleIntentionName(item)" :width="240"></show-tooltip>
+      <show-tooltip v-else :text="handleIntentionName(item)" :width="widthNum"></show-tooltip>
     </div>
     <span
       v-show="requireList.length > 3"
@@ -55,6 +55,10 @@ export default {
     requireId: {
       type: String,
       default: '',
+    },
+    widthNum: {
+      type: Number,
+      default: 240,
     },
   },
   data() {
@@ -120,6 +124,10 @@ export default {
     },
     loadMore() {
       this.isArrow = true;
+      if (this.requireId) {
+        this.handleNeedDetails(this.requireId);
+        return;
+      }
       this.parentLoadMore(this.requireList);
     },
     closedMore() {

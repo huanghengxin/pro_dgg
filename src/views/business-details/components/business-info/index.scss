@@ -49,6 +49,9 @@
   }
   .record-info {
     @include flex-center_content(space-between);
+    .iconfont-qds-crm {
+      cursor: pointer;
+    }
   }
   .phone-info {
     display: flex;

@@ -213,10 +213,7 @@ export default {
             .then((res) => {
               if (res.code === 200) {
                 this.$message.success('操作成功');
-                if (this.publicLibraryList?.length == 1 && this.param.pageNum != 1) {
-                  this.param.pageNum--;
-                }
-                this.getPublicLibraryList(this.param);
+                this.resetList(true);
               } else {
                 this.$message.warning(res.message);
               }

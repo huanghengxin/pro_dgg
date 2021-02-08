@@ -18,16 +18,6 @@
       </div>
     </div>
 
-    <div class="button-box">
-      <el-button
-        size="small"
-        class="list-base-box-button"
-        type="primary"
-        @click="multiplCuleHandleRetrieve"
-        >拾回</el-button
-      >
-    </div>
-
     <div class="seas__main">
       <div class="seas__main-warp list-base-ui">
         <!-- 不要修改table ref属性值，会影响批量打电话 -->
@@ -75,7 +65,12 @@
           </el-table-column>
           <el-table-column label="意向业务" min-width="180">
             <template v-if="scope.row.intentionType" slot-scope="scope">
-              <more-require :require-item="scope.row.intentionType" :symbol="'|'" is-separate />
+              <more-require
+                :require-item="scope.row.intentionType"
+                :width-num="166"
+                :symbol="'|'"
+                is-separate
+              />
             </template>
             <span v-else>暂无数据</span>
           </el-table-column>
@@ -165,7 +160,7 @@
     <library-records
       ref="libraryRecordsRef"
       data-tid="recordRecordsResetList"
-      @reset-list="recordsResetList"
+      @reset-list="resetList"
     />
     <show-more-require ref="showMoreRequireRefs" />
   </div>

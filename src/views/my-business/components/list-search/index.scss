@@ -89,15 +89,14 @@
   .filter-list {
     @include filter-item();
     .filter-warp {
-      padding: 12px 0 12px 0;
+      padding: 6px 0 12px 0;
       min-height: 92px;
     }
 
     .list-warp {
-      height: 42px;
       display: flex;
-      padding: 0;
-      cursor: pointer;
+      align-items: baseline;
+      padding-top: 6px;
       color: $list-search-filter-list-warp-name-color;
       &_name {
         flex-shrink: 0;
@@ -164,13 +163,15 @@
     .list-checked {
       @include flex-center_align();
       margin-top: $list-search-filter-list-checked-clear-margin-top;
-      cursor: pointer;
       height: $list-search-filter-list-checked-height;
       background: $list-search-filter-list-checked-background;
       .el-tag--small,
       &_name,
       &_clear {
         font-size: $list-search-filter-list-checked-font-size;
+      }
+      .checked-tag_item {
+        cursor: pointer;
       }
       &_name {
         width: $list-search-filter-list-checked-name-width;
@@ -186,6 +187,7 @@
         }
       }
       &_clear {
+        cursor: pointer;
         @include flex-center();
         span {
           @include flex-center();

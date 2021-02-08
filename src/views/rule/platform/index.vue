@@ -70,26 +70,26 @@
             <template slot="empty">
               <svg-icon key="item-warp" type="nodata" icon="icon-icon_nodata" />
             </template>
-            <el-table-column label="规则名称" min-width="92">
+            <el-table-column label="规则名称" min-width="82">
               <template slot-scope="scope">
                 <show-tooltip
                   v-if="scope.row.name"
                   :text="scope.row.name"
-                  :width="82"
+                  :width="72"
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column label="规则内容" min-width="362">
+            <el-table-column label="规则内容" min-width="334">
               <template slot-scope="scope">
                 <show-tooltip
                   v-if="scope.row.description"
                   :text="scope.row.description"
-                  :width="362"
+                  :width="324"
                   :tooltip-line-clamp="2"
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column prop="val1" label="值" min-width="430" class-name="list-input">
+            <el-table-column prop="val1" label="值" min-width="420" class-name="list-input">
               <template slot-scope="scope">
                 <el-form-item :prop="'data1.' + scope.$index + '.val1'" :rules="rules.val1">
                   <el-input
@@ -133,7 +133,7 @@
                 </el-form-item>
               </template>
             </el-table-column>
-            <el-table-column label="当前状态" min-width="80">
+            <el-table-column label="当前状态" min-width="76">
               <template slot-scope="scope">
                 <el-switch
                   v-model="scope.row.status"
@@ -158,26 +158,26 @@
             <template slot="empty">
               <svg-icon key="item-warp" type="nodata" icon="icon-icon_nodata" />
             </template>
-            <el-table-column label="规则名称" min-width="92">
+            <el-table-column label="规则名称" min-width="82">
               <template slot-scope="scope">
                 <show-tooltip
                   v-if="scope.row.name"
                   :text="scope.row.name"
-                  :width="82"
+                  :width="72"
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column label="规则内容" min-width="362">
+            <el-table-column label="规则内容" min-width="334">
               <template slot-scope="scope">
                 <show-tooltip
                   v-if="scope.row.description"
                   :text="scope.row.description"
-                  :width="352"
+                  :width="324"
                   :tooltip-line-clamp="2"
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column class-name="list-input" prop="val1" label="值" min-width="430">
+            <el-table-column class-name="list-input" prop="val1" label="值" min-width="420">
               <template slot-scope="scope">
                 <el-form-item :prop="'data2.' + scope.$index + '.val1'" :rules="rules.val1">
                   <el-input
@@ -226,7 +226,7 @@
                 </el-form-item>
               </template>
             </el-table-column>
-            <el-table-column min-width="80"></el-table-column>
+            <el-table-column min-width="76"></el-table-column>
           </el-table>
         </el-form>
       </div>

@@ -7,6 +7,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="480px"
+      @close="diologHandleClose"
     >
       <div class="main">
         <p class="main__text">
@@ -47,6 +48,11 @@ export default {
   computed: {},
   created() {},
   methods: {
+    diologHandleClose() {
+      this.success = '';
+      this.total = '';
+      this.failCules = '';
+    },
     /**
      * @description 供父组件调用打开弹层方法
      * @param {Object} 点击当前列表项

@@ -33,15 +33,12 @@
   },
   "dependencies": {
     "@fe/common": "0.0.8",
-    "@fe/sp-im-pc": "^0.2.16",
     "async": "^3.2.0",
     "axios": "^0.21.1",
     "dayjs": "^1.9.6",
     "element-ui": "^2.14.1",
-    "mitt": "^2.1.0",
     "single-spa": "^5.6.1",
     "single-spa-vue": "^2.0.0",
-    "sip.js": "^0.7.8",
     "vuex": "^3.6.0",
     "yarn": "^1.22.10"
   },

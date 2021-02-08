@@ -16,6 +16,7 @@
   .text {
     color: $black-2;
     height: 48px;
+
     &__txt {
       color: $base-color !important;
     }
@@ -25,10 +26,12 @@
     box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
     background-color: $white;
     box-sizing: border-box;
-    padding: 16px 0px 0 20px;
+    padding: 22px 0px 0px 20px;
+
     .get-time {
       height: 42px;
       font-size: 12px !important;
+
       .el-form-item__label {
         color: $black-2;
         padding: 0;
@@ -36,13 +39,16 @@
         font-size: 12px;
       }
     }
+
     .el-form-item {
-      margin: 12px 0 16px 0;
+      margin-top: 12px 20px 0 0;
+
       .el-form-item__label {
         color: $black-2;
         padding: 0;
         font-weight: $font-weight-normal;
       }
+
       .el-form-item__content {
         .el-input {
           width: 240px;
@@ -93,6 +99,10 @@
         }
       }
     }
+    .biz-status {
+      margin-left: 16px;
+      margin-right: 16px;
+    }
   }
 
   .button-box {
@@ -102,7 +112,9 @@
       padding: 7px 15px;
     }
   }
-
+  .list-base-ui {
+    margin-top: 12px;
+}
   &__main {
     box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
     background-color: $white;

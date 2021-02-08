@@ -11,6 +11,13 @@
     background-color: transparent;
   }
 }
+.dialog-fade-leave-active {
+  animation: dialog-fade-out 0s;
+}
+
+// .el-fade-in-linear-leave-active {
+//   transition: opacity 0ms linear;
+// }
 
 //级联组件菜单最小高度
 .el-cascader-menu {

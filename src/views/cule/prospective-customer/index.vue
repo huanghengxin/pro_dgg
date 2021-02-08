@@ -1,37 +1,49 @@
 <template>
   <div class="prospective">
     <div class="prospective__search">
-      <div class="prospective__search-from">
-        <span class="lable">线索来源</span>
+      <div class="prospective__search-from search-base-component">
+        <search-button
+          show-word-limit
+          placeholder="请输入姓名/联系方式/商机编号查询"
+          data-tid="prospectiveHandleInputValue"
+          @search="searchUser"
+          @clear="handleInputValue"
+        ></search-button>
+      </div>
+      <div class="prospective__search-from first-search-from">
         <span
-          v-for="item in culeFrom"
+          v-for="item in clueSourceList"
           :key="item.id"
           :class="{
-            'filter-item': true,
-            'filter-item_active': item.code === active.culeFrom,
+            'tabs-item': true,
+            'tabs-item_active': item.code === param.clueSourceType,
           }"
           data-tid="customerChangeCuleFrom"
-          @click="changeCuleFrom(item)"
+          @click="filterTag(item, 'clueSourceType')"
         >
           {{ item.name }}
         </span>
       </div>
-      <div class="prospective__search-from">
-        <span class="lable">线索状态</span>
-        <span
-          v-for="(item, index) in clueStatusList"
-          :key="item.code"
-          :class="{
-            'filter-item': true,
-            'filter-item_active': item.code === active.clueStatus,
-          }"
-          data-tid="customerChangeCuleStatus"
-          @click="changeCuleStatus(item, index)"
-        >
-          {{ item.name }}
-        </span>
+      <div class="search-box">
+        <list-search
+          v-if="clueImpowerList.length > 0 && param.clueSourceType === 'QDS_ClUE_SOURCE_IM'"
+          :search-data="clueImpowerList"
+          lable="号码授权"
+          :active="param.clueImpower"
+          active-type="clueImpower"
+          @active-handle="onActiveHandle"
+        />
+        <list-search
+          v-if="clueStatusList.length > 0"
+          :search-data="clueStatusList"
+          lable="是否联系"
+          :active="param.clueStatus"
+          active-type="clueStatus"
+          @active-handle="onActiveHandle"
+        />
       </div>
     </div>
+
     <div class="prospective__main">
       <div class="prospective__main-warp list-base-ui">
         <!-- 不要修改table ref属性值，会影响批量打电话 -->
@@ -61,7 +73,31 @@
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
-          <el-table-column label="联系号码" min-width="180">
+          <el-table-column
+            v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
+            label="信息来源"
+            min-width="180"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.customerPhone">
+                <p>
+                  <el-tag>{{ scope.row.customerPhone }}</el-tag>
+                </p>
+              </div>
+              <span v-else>暂无数据</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="客户号码" min-width="180">
+            <template slot-scope="scope">
+              <span v-if="scope.row.customerPhone">{{ scope.row.customerPhone }}</span>
+              <span v-else>暂无数据</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
+            label="联系号码"
+            min-width="180"
+          >
             <template slot-scope="scope">
               <span v-if="scope.row.customerPhone">{{ scope.row.customerPhone }}</span>
               <span v-else>暂无数据</span>
@@ -73,10 +109,17 @@
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
+          <el-table-column label="获取时间" sortable="custom" min-width="180">
+            <template slot-scope="scope">
+              <span v-if="scope.row.clueStatus">{{ scope.row.clueStatus | statusFormat }}</span>
+              <span v-else>暂无数据</span>
+            </template>
+          </el-table-column>
           <el-table-column label="意向业务" min-width="180">
             <template slot-scope="scope">
               <more-require
                 v-if="scope.row.intentionType"
+                :width-num="166"
                 :require-item="scope.row.intentionType"
                 :symbol="'|'"
                 is-separate
@@ -127,11 +170,20 @@
             <template slot-scope="scope">
               <div class="list-handle">
                 <p
+                  v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
                   class="list-handle_follow"
                   :data-tid="'customerListHandleClick' + scope.$index"
-                  @click="listHandleClick(scope.row)"
+                  @click="callPhone(scope.row)"
                 >
-                  写跟进
+                  打电话
+                </p>
+                <p
+                  v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_IM'"
+                  class="list-handle_follow"
+                  :data-tid="'ChatHandleClick' + scope.$index"
+                  @click="listChatClick(scope.row)"
+                >
+                  在线聊
                 </p>
                 <el-dropdown
                   trigger="click"
@@ -141,6 +193,18 @@
                   <p class="list-handle_more">更多操作</p>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
+                      :data-tid="'handleFollowRef' + scope.$index"
+                      :command="{ component: 'handleFollowRef', item: scope.row }"
+                      >写跟进</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
+                      :data-tid="'ChatHandleClick' + scope.$index"
+                      :command="{ component: 'callPhoneRef', item: scope.row }"
+                      >在线聊</el-dropdown-item
+                    >
+                    <el-dropdown-item
+                      v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_IM'"
                       :data-tid="'callPhoneRef' + scope.$index"
                       :command="{ component: 'callPhoneRef', item: scope.row }"
                       >打电话</el-dropdown-item
@@ -150,6 +214,20 @@
                       :command="{ component: 'conversionRef', item: scope.row }"
                       >转商机</el-dropdown-item
                     >
+                    <el-dropdown-item
+                      v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
+                      :data-tid="'noUse' + scope.$index"
+                      :command="{
+                        component: 'noAttentionRef',
+                        item: { code: 'CULE_WXSJ', busId: scope.row.id },
+                      }"
+                      >无效</el-dropdown-item
+                    >
+                    <!-- <el-dropdown-item
+                      :data-tid="'InvalidRef' + scope.$index"
+                      :command="{ component: 'InvalidRef', item: scope.row }"
+                      >无效</el-dropdown-item
+                    > -->
                   </el-dropdown-menu>
                 </el-dropdown>
               </div>
@@ -178,273 +256,12 @@
     />
     <more-follow-record ref="moreFollowRecordRef" />
     <show-more-require ref="showMoreRequireRefs" />
+    <no-attention ref="noAttentionRef" @on-submit="onSubmitHandle" />
   </div>
 </template>
 
 <script>
 import './index.scss';
-import MoreRequire from 'views/dynamic-business/components/more-require';
-import ShowMoreRequire from 'views/dynamic-business/components/show-more-require';
-import ShowTooltip from 'components/show-tooltip';
-import WriteFollowDailog from './components/write-follow-dailog';
-import MoreFollowRecord from './components/more-follow-record';
-
-import SvgIcon from 'components/svg-icon';
-import callMixins from 'utils/mixins/callMixins';
-import { filterTime as filterTimeDate } from 'utils/helper'; // 使用日期过滤
-import { get_my_potential_customer_lists } from 'api/cule';
-import { get_dictionary_data_by_parent_code } from 'api/common';
-export default {
-  components: {
-    ShowTooltip,
-    WriteFollowDailog,
-    MoreFollowRecord,
-    SvgIcon,
-    ShowMoreRequire,
-    MoreRequire,
-  },
-  filters: {
-    statusFormat(val) {
-      const map = {
-        QDS_ClUE_STATUS_NOT: '未联系',
-        QDS_ClUE_STATUS_ALREADY: '已联系',
-      };
-      return map[val];
-    },
-    filterTime(val) {
-      return val ? filterTimeDate(val) : '';
-    },
-  },
-  mixins: [callMixins],
-  provide() {
-    return {
-      parentLoadMore: this.loadMore,
-    };
-  },
-  data() {
-    return {
-      dialogVisible: false,
-      len: 3,
-      moreNeed: [],
-      loading: false,
-      currentComponent: '',
-      currentComponentItem: null,
-      culeFrom: [], //线索来源数据字典
-      clueStatusList: [],
-      active: {
-        culeFrom: 'QDS_ClUE_SOURCE_IM',
-        clueStatus: 'QDS_ClUE_STATUS_NOT',
-      },
-      sattfs: [], //员工
-      businessStatue: [], //商机状态
-      potentialCustomerList: [], //列表数据
-      total: 0,
-      param: {
-        start: 1,
-        limit: 10,
-        clueSourceType: 'QDS_ClUE_SOURCE_IM',
-        clueStatus: 'QDS_ClUE_STATUS_NOT',
-        orderBy: '1', //排序字段 orderBy
-        isAsc: 0,
-      },
-    };
-  },
-  created() {
-    this.getTeamBusyList(this.param);
-    this.getDictionary('QDS_ClUE_SOURCE');
-    this.getDictionary('QDS_ClUE_STATUS');
-  },
-  mounted() {},
-  methods: {
-    /**
-     * @description 点击更多-加载更多
-     * @param {Object}
-     */
-    loadMore(val) {
-      this.$refs.showMoreRequireRefs.openModal(val);
-    },
-    /**
-     * @description 监听子组件的事件跟进响应成功后刷新列表
-     */
-    submitHandle() {
-      if (
-        this.active.clueStatus === 'QDS_ClUE_STATUS_NOT' &&
-        this.potentialCustomerList?.length == 1 &&
-        this.param.start != 1
-      ) {
-        this.param.start--;
-      }
-      this.getTeamBusyList(this.param);
-    },
-    /**
-     * @description 排序查询
-     */
-    sortList(val) {
-      const map = {
-        lastRemarkTime: '1',
-      };
-      if (map[val.prop]) {
-        if (val.order) {
-          this.param.orderBy = map[val.prop];
-          this.param.isAsc = val.order === 'descending' ? 1 : 0;
-        } else {
-          this.param.orderBy = '1';
-          this.param.isAsc = 0;
-        }
-      }
-      this.getTeamBusyList(this.param);
-    },
-    /**
-     * @description 清楚排序
-     */
-    sortClear() {
-      this.$refs.tableRef.clearSort();
-      this.param.isAsc = 0;
-      this.param.orderBy = '1';
-    },
-    /**
-     * @description 线索来源
-     * @param {String} 点击的选项
-     */
-    changeCuleFrom(item) {
-      this.param.clueSourceType = item.code;
-      this.active.culeFrom = item.code;
-      this.param.start = 1;
-      this.getTeamBusyList(this.param);
-    },
-    /**
-     * @description 线索状态
-     * @param {String} 点击的选项
-     */
-    changeCuleStatus(item) {
-      this.active.clueStatus = item.code;
-      this.param.clueStatus = item.code;
-      this.param.start = 1;
-      this.sortClear();
-      this.getTeamBusyList(this.param);
-    },
-    /**
-     * @description 打电话需要刷新页面方法
-     */
-    flowRefresh() {
-      this.submitHandle();
-    },
-    /**
-     * @description 框架上打电话方法
-     * @param {String} 商机id
-     */
-    callPhone(item) {
-      if (item && item.customerPhone) {
-        this.callMixins('clue', item, 'one');
-      } else {
-        this.$message.warning('该线索未授权电话号码');
-      }
-    },
-    /**
-     * @description 点击操作栏下拉选项
-     * @param {String} 点击的选项
-     */
-    handleCommand(command) {
-      switch (command.component) {
-        case 'callPhoneRef':
-          this.callPhone(command.item);
-          break;
-        default:
-          if (command.item && command.item.customerPhone) {
-            this.$messageBox
-              .confirm('您是否继续转商机?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-                customClass: 'message-box-min-height',
-              })
-              .then(() => {
-                this.$router.push(
-                  `/add-business?clueId=${command.item.id}&type=${this.param.clueSourceType}`,
-                );
-              })
-              .catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消转商机!',
-                });
-              });
-          } else {
-            this.$message({
-              type: 'warning',
-              message: '该线索用户未授权，不能跳转商机!',
-            });
-          }
-          break;
-      }
-    },
-    /**
-     * @description 更多更近
-     *
-     * @param {Object} 当前点击行
-     */
-    hanleMoreRemark(row) {
-      this.$refs['moreFollowRecordRef'].openModal(row);
-    },
-    /**
-     * @description 写跟进点击事件，打开弹层
-     * @param {Object} 当前点击行
-     */
-    listHandleClick(row) {
-      this.$refs['writeFollowDailogRef'].openModal(row, this.param.clueSourceType);
-    },
-    /**
-     * @description 数据字典线索来源
-     */
-    async getDictionary(code) {
-      const param = {
-        parentCode: code,
-      };
-      const result = await get_dictionary_data_by_parent_code(param);
-      if (result.code === 200) {
-        if (code === 'QDS_ClUE_SOURCE') {
-          this.culeFrom = result.data || [];
-        }
-        if (code === 'QDS_ClUE_STATUS') {
-          this.clueStatusList = result.data || [];
-        }
-      } else {
-        this.$message.warning(result.message);
-      }
-    },
-    /**
-     * @description 潜在客户列表数据
-     * @returns {Object} 返回数据
-     */
-    getTeamBusyList(param) {
-      this.loading = true;
-      get_my_potential_customer_lists(param)
-        .then((result) => {
-          if (result.code === 200) {
-            this.param.total = result.data.totalCount * 1;
-            this.potentialCustomerList = result.data.records;
-            this.loading = false;
-          } else {
-            this.loading = false;
-            this.$message.warning(result.message);
-          }
-        })
-        .catch(() => {
-          this.loading = false;
-        });
-    },
-    /**
-     * @description 分页
-     */
-    handleSizeChange(val) {
-      this.param.limit = val;
-      this.param.start = 1;
-      this.getTeamBusyList(this.param);
-    },
-    handleCurrentChange(val) {
-      this.param.start = val;
-      this.getTeamBusyList(this.param);
-    },
-  },
-};
+import ProspectiveCustomer from './prospective-customer';
+export default ProspectiveCustomer;
 </script>

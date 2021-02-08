@@ -14,9 +14,7 @@ export default {
    * @description 过滤单位
    */
   filters: {
-    getTimeName: function (val) {
-      // if (value == 'TIAO') return '条';
-      // if (value == 'GE') return '个';
+    getTimeName: function(val) {
       const map = {
         U_N_DAYS: '天',
         U_MINUTE: '分钟',
@@ -44,6 +42,8 @@ export default {
       getRuleList: { data1: [] },
       getStaffList: { data2: [] },
       edit: true,
+      start: '',
+      end: '',
     };
   },
   computed: {},
@@ -52,8 +52,10 @@ export default {
     this.init();
   },
   mounted() {
-    this.getHeight();
-    window.addEventListener('resize', this.getHeight);
+    this.$nextTick(() => {
+      this.getHeight();
+      window.addEventListener('resize', this.getHeight);
+    });
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.getHeight);
@@ -64,7 +66,10 @@ export default {
      */
     getHeight() {
       const top = this.$refs.merchant.getBoundingClientRect().top;
-      this.merchantHeight = window.innerHeight - top;
+      this.merchantHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight - top;
     },
     async init() {
       // 商户规则后台数据
@@ -76,15 +81,14 @@ export default {
       }
       // 数据字典
       const dictionaryTree = (await this.getDictionary().catch()) || {};
-      console.log(dictionaryTree, 'shuju ');
       this.loading = false;
       this.unitCode = dictionaryTree.rule_date_code || [];
-      let libraryMap = dictionaryTree.rule_biz_db_code.reduce((acc, cur) => {
+      let libraryMap = dictionaryTree.rule_biz_db_code?.reduce((acc, cur) => {
         acc[cur.code] = cur.name;
         return acc;
       }, {});
       // libraryCode
-      let dateMap = dictionaryTree.rule_date_code.reduce((acc, cur) => {
+      let dateMap = dictionaryTree.rule_date_code?.reduce((acc, cur) => {
         acc[cur.code] = cur.name;
         return acc;
       }, {});
@@ -112,25 +116,24 @@ export default {
       const boarded = await rules_switch_boarded(param);
       if (boarded.code === 200) {
         this.switchboardStatus = boarded.data.status;
-        if (this.switchboardStatus === 1) {
-          this.edit = true;
-        } else {
-          this.start = boarded.data.val1;
-          this.editAble(this.start);
-        }
+        this.switchboardEndDate(boarded.data.val2, boarded.data.val1);
       } else {
         this.$message.warning(boarded.message);
       }
     },
     /**
-     * @description  当前时间和开关开启时间的判断
+     * @description 总开关结束时间范围内
      */
-    editAble(startDateStr) {
-      var curDate = dayjs(new Date()).format('YYYY-MM-DD');
-      let startTime = dayjs(new Date(startDateStr)).format('YYYY-MM-DD');
-      if (curDate < startTime) {
+    switchboardEndDate(endDateStr = null, startDateStr = null) {
+      if (!dayjs(endDateStr).isValid() || !dayjs(startDateStr).isValid()) return;
+      let curDate = dayjs().valueOf();
+      let dateEnd = dayjs(endDateStr).valueOf();
+      let dateStart = dayjs(startDateStr).valueOf();
+      if (curDate < dateStart || curDate > dateEnd) {
+        // this.switchboardStatus = 1;
         this.edit = true;
       } else {
+        // this.switchboardStatus = 2;
         this.edit = false;
       }
     },
@@ -139,13 +142,11 @@ export default {
      */
     handleDataList(unitCodeMap, _codeList, data) {
       const reg = /【单位】|【X】库|【X】自然日|上限/g;
-      console.log(_codeList[10], '151515151');
+
       for (const item1 of _codeList) {
         if (item1.ext1.trim() !== 'Y') {
-          console.log(111111);
           continue;
         }
-        console.log(222222);
         const unit = unitCodeMap[item1.code.trim()];
         if (typeof unit == 'undefined') {
           continue;

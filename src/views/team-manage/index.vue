@@ -12,7 +12,7 @@
             @clear="clearInput"
           ></el-input>
         </el-form-item>
-        <el-form-item label="商机状态：" label-width="70px" prop="bizStatus">
+        <el-form-item label="商机状态：" label-width="70px" prop="bizStatus" class="biz-status">
           <el-select v-model="ruleForm.bizStatus" clearable placeholder="不限" @clear="clearInput">
             <el-option
               v-for="item in businessStatue"
@@ -37,7 +37,7 @@
             clearable
             data-tid="plannerIdSelect"
             @change="selectChangeHandle"
-            @clear="clearInput"
+            @blur="handleBlue"
           >
             <el-option
               v-for="item in peopleList"
@@ -107,11 +107,13 @@
         </template>
         <el-table-column type="selection" min-width="44" class-name="list-selection">
         </el-table-column>
-        <el-table-column class="list-name" fixed="left" label="姓名" min-width="150">
+        <el-table-column class="list-name" fixed="left" label="姓名" min-width="180">
           <template slot-scope="scope">
             <router-link
               v-show="scope.row.customerName"
-              :to="`/business-details?businessId=${scope.row.id || ''}&from=team-manage`"
+              :to="`/team-manage/business-details?businessId=${
+                scope.row.id || ''
+              }&from=team-manage`"
             >
               <show-tooltip
                 v-if="scope.row.customerName"
@@ -126,8 +128,10 @@
                 disabled-void-color="transparent"
               ></el-rate>
             </div>
-            <div v-show="scope.row.bizSource">
-              <span class="from">{{ scope.row.bizSource | fromFormat }}</span>
+            <div v-show="scope.row.sourceName">
+              <span class="from">
+                {{ scope.row.sourceName }}
+              </span>
             </div>
           </template>
         </el-table-column>
@@ -195,6 +199,7 @@
         <el-table-column label="客户需求" min-width="180">
           <template v-if="scope.row.requireName" slot-scope="scope">
             <more-require
+              :width-num="166"
               :require-item="scope.row.requireName"
               :require-progress="scope.row.requireProgress"
               is-separate

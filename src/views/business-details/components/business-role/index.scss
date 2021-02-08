@@ -1,0 +1,214 @@
+.business-role {
+  box-shadow: $defalut-box-shadow;
+  background-color: $base-business-info-background-color;
+  margin-top: $more-handle-title-margin-top;
+  padding: 16px 20px;
+  .role {
+    font-size: $font-size-md;
+    color: $black-2;
+    border-bottom: 1px solid $gray-10;
+    padding-bottom: $font-size-md;
+    font-weight: $font-weight-crm;
+  }
+  .el-tabs {
+    .el-tabs__nav-wrap::after {
+      height: 1px;
+    }
+    .el-tabs__content {
+      .el-tab-pane {
+        .accendant-item {
+          height: 100px;
+          display: flex;
+          justify-content: space-between;
+          padding: 16px 0;
+          &-left {
+            width: 40px;
+            height: 40px;
+            img {
+              width: 40px;
+              height: 40px;
+            }
+          }
+          &-content {
+            width: calc(100% - 56px);
+            height: 69px;
+            &-name {
+              font-size: $font-size-md;
+              font-weight: $font-weight-crm;
+              color: $black-2;
+            }
+            .common {
+              width: 68px;
+              height: 20px;
+              padding: 4px;
+              font-size: $font-size-sm;
+              font-weight: $font-weight-noraml;
+              border-radius: 2px;
+              -webkit-border-radius: 2px;
+              -moz-border-radius: 2px;
+              -ms-border-radius: 2px;
+              -o-border-radius: 2px;
+            }
+            &-box {
+              &-name {
+                font-size: $font-size-md;
+                font-weight: $font-weight-crm;
+                color: $black-2;
+              }
+              .common {
+                width: 68px;
+                height: 20px;
+                padding: 4px;
+                font-size: $font-size-sm;
+                font-weight: $font-weight-noraml;
+                border-radius: 2px;
+                -webkit-border-radius: 2px;
+                -moz-border-radius: 2px;
+                -ms-border-radius: 2px;
+                -o-border-radius: 2px;
+              }
+            }
+            &-cooperator {
+              color: $base-color;
+              background-color: #f5f8ff;
+              border: 1px solid $base-color;
+            }
+            &-cosponsor {
+              color: #67c239;
+              background-color: #f1fcee;
+              border: 1px solid #67c239;
+            }
+            &-brand {
+              font-size: 12px;
+              font-weight: $font-weight-noraml;
+              color: $gray;
+              margin-top: 4px;
+            }
+            &-number {
+              font-size: 14px;
+              font-weight: $font-weight-noraml;
+              color: $black-2;
+              margin-top: 8px;
+            }
+          }
+          &-right {
+            width: 314px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            // &-date {
+            // width: 80px;
+            // margin-right: 21px;
+            // }
+            &-ring {
+              span {
+                color: $black-2;
+                margin-right: 6px;
+              }
+              color: $base-color;
+            }
+          }
+        }
+        .cooperationInfo {
+          border: 1px solid $gray-10;
+          &-titleInfo {
+            width: 780px;
+            height: 80px;
+            background-color: $gray-13;
+            padding: 16px 20px;
+            font-size: $font-size-md;
+            font-weight: $font-weight-noraml;
+            color: $gray;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            &-leftCont {
+              width: 500px;
+              &-require {
+                span {
+                  color: $black-2;
+                  font-weight: $font-weight-crm;
+                }
+              }
+              &-proportion {
+                margin-top: 8px;
+                span {
+                  font-weight: $font-weight-crm;
+                  color: $black-2;
+                }
+                &-tip {
+                  color: $gray-11 !important;
+                  font-weight: $font-weight-normal !important;
+                }
+              }
+            }
+            &-contentCont {
+              width: 186px;
+              .common-button {
+                height: 32px;
+                padding: 7px;
+                font-size: $font-size-sm;
+                color: $base-color;
+                border-radius: 2px;
+                border: 1px solid $base-color;
+                -webkit-border-radius: 2px;
+                -moz-border-radius: 2px;
+                -ms-border-radius: 2px;
+                -o-border-radius: 2px;
+                text-align: center;
+                cursor: pointer;
+              }
+              &-grabSingleBox {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                &-grabSingleText {
+                  color: $red;
+                  margin-right: 12px;
+                }
+                &-priceApply {
+                  width: 96px;
+                }
+              }
+              &-onlineTalkBox {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                &-onlineTalk {
+                  width: 60px;
+                  margin-right: 12px;
+                }
+                &-cancel {
+                  width: 71px;
+                  margin-right: 6px;
+                }
+              }
+              &-success {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                color: #67c239;
+                i {
+                  margin-right: 2px;
+                }
+              }
+              .icon-tip {
+                cursor: pointer;
+              }
+            }
+            &-rightCont {
+              width: 132px;
+            }
+          }
+          .proportion-item {
+            padding-left: 20px;
+            padding-right: 20px;
+          }
+        }
+      }
+    }
+    .el-tabs__item {
+      font-weight: $font-weight-crm;
+    }
+  }
+}

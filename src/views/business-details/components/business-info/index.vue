@@ -38,7 +38,7 @@
     <div class="business-info_item-small">
       <span class="item-label">商机编号：</span><span>{{ businessInfo.bizNo }}</span>
     </div>
-    <div v-callLoading="callLoading" class="business-info_item-small phone-info">
+    <div class="business-info_item-small phone-info">
       <span class="item-label">手机号码：</span>
       <div v-if="businessInfo.customerPhone">
         <div>
@@ -53,6 +53,7 @@
           ></i>
           <i
             v-if="from !== 'team-manage'"
+            v-callLoading="callLoading"
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
             data-tid="infoBusinessInfoCall"
@@ -65,7 +66,7 @@
           </span>
           <i
             v-if="from !== 'team-manage'"
-            class="iconfont-qds-crm icon-view phone-info_icon"
+            class="iconfont-qds-crm icon-view1 phone-info_icon"
             data-tid="infoShowModalHandleClick"
             @click="showModalHandleClick('showPhoneRef', item.contactNoFull)"
           ></i>
@@ -217,6 +218,7 @@ export default {
     return {
       businessInfo: {},
       loading: false,
+      busInfo: {},
     };
   },
   computed: {

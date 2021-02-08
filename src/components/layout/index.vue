@@ -2,67 +2,25 @@
   <el-container>
     <el-container>
       <el-header v-if="!SP_MICRO_FE">
-        <span v-if="fullName" class="userImg">
-          <img src="src/assets/image/avatar.jpeg" alt="" />
-        </span>
-        <!-- 引入图片的两种方式 -->
-        <!-- <img :src="logo" />
-        <img src="../../assets/images/logo.png" /> -->
-        <span v-if="fullName">您好！{{ fullName }}</span>
         <el-dropdown trigger="click" @command="handleCommand">
-          <i class="el-icon-s-operation"></i>
+          <div>
+            <span v-if="fullName" class="userImg">
+              <img src="src/assets/image/avatar.jpeg" alt="" />
+            </span>
+            <span v-if="fullName">您好！{{ fullName }}</span
+            ><i class="el-icon-s-operation"></i>
+          </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="a">登出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
-
-      <!-- <div v-if="!SP_MICRO_FE" class="callBox"> -->
-      <!-- <div v-if="flag" class="callOutBox"> -->
-      <!-- <Call :sip-config="sipConfig" @biz-item="playCall"></Call> -->
-      <!-- <Call :sip-config="sipConfig" @biz-item="playCall"></Call>
-          <div style="margin: 8px 0 0 2px"> -->
-      <!-- 
-              <el-button @click="handCall">拨打电话</el-button>
-              <el-button @click="handleAddPhoneNumber">批量添加号码</el-button>
-              <el-button @click="playCall">添加号码</el-button>
-              <el-button @click="handleAddPhoneNumber">批量添加号码</el-button>
-              -->
-      <!-- </div> -->
-      <!-- </div> -->
-      <!-- </div> -->
-      <!-- <div v-if="!SP_MICRO_FE" class="asideBox"> -->
-      <!-- <div class="asideBox-callUp asideBox-commonSty" @click="callUp">
-          <span class="el-icon-phone"></span>
-          <span>打电话</span>
-        </div>
-        <div class="asideBox-imCheat asideBox-commonSty" @click="imCheat">
-          <span class="el-icon-chat-dot-square"></span>
-          <span>IM聊天</span>
-        </div> -->
-      <!-- <chat-warp
-          ref="im-warp"
-          :visible="cheatFlag"
-          :user-type="iMConfig.userType"
-          :user-id="iMConfig.userId"
-          :token="iMConfig.token"
-          :secret="iMConfig.secret"
-          :app-key="iMConfig.appKey"
-          :sys-code="iMConfig.sysCode"
-          :chat-warp-height="600"
-          :on-close="
-            () => {
-              cheatFlag = false;
-            }
-          "
-        /> -->
-      <!-- </div> -->
       <div v-if="!SP_MICRO_FE && !isShowMenu" class="back-button" @click="handleClick">
         <el-button type="primary"><i class="el-icon-arrow-left"></i></el-button>
       </div>
       <el-main style="width: 1200px; margin: 0 auto">
         <div v-if="!SP_MICRO_FE && isShowMenu" class="el-main_menu">
-          <el-menu default-active="1-1">
+          <el-menu default-active="1-1" active-text-color="#4974F5">
             <el-submenu index="1">
               <template slot="title">商机</template>
               <el-menu-item-group>
@@ -74,7 +32,6 @@
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-
             <el-submenu index="2">
               <template slot="title">线索</template>
               <el-menu-item-group>
@@ -87,9 +44,11 @@
                 <el-menu-item index="2-3">
                   <router-link to="/clue-seas-library" tag="div">线索公海库</router-link>
                 </el-menu-item>
-                <!-- <el-menu-item index="2-4">
-                  <router-link to="/referral-customer" tag="div">转介绍客户</router-link>
-                </el-menu-item> -->
+                <el-menu-item index="2-4">
+                  <router-link to="/cooperation-alliance-clients" tag="div"
+                    >合作联盟客户</router-link
+                  >
+                </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
             <el-submenu index="3">
@@ -100,6 +59,27 @@
                 </el-menu-item>
                 <el-menu-item index="3-2">
                   <router-link to="/merchant" tag="div">规则设置（商户）</router-link>
+                </el-menu-item>
+                <el-submenu index="3-3">
+                  <template slot="title">关黑限流</template>
+                  <el-menu-item index="3-3-1">
+                    <router-link to="/close-black-current-limit" tag="div"
+                      >关黑限流进行中</router-link
+                    >
+                  </el-menu-item>
+                  <el-menu-item index="3-3-2">
+                    <router-link to="/close-black-handle-record" tag="div">操作记录</router-link>
+                  </el-menu-item>
+                </el-submenu>
+                <el-menu-item index="3-4">
+                  <router-link to="/cooperation-platform" tag="div"
+                    >合作联盟规则（平台）</router-link
+                  >
+                </el-menu-item>
+                <el-menu-item index="3-5">
+                  <router-link to="/cooperation-merchant" tag="div"
+                    >合作联盟规则（商户）</router-link
+                  >
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
@@ -139,25 +119,11 @@
 </template>
 
 <script>
-// import store from 'storejs';
-// import CONFIG from '@/config';
-// import layoutCall from 'utils/mixins/layoutCall';
-// import Call from 'components/call/index';
 export default {
-  components: {
-    // Call,
-  },
-  // mixins: [layoutCall],
   data() {
     return {
       SP_MICRO_FE: window.SP_MICRO_FE,
       isShowMenu: true,
-      // multipleSelection: [],
-      // selectedIds: [],
-      // bizItem: {}, //商机列表传来的数据
-      //im数据
-      // cheatFlag: false,
-      // iMConfig: {},
     };
   },
   computed: {
@@ -165,73 +131,35 @@ export default {
       return this.$store.state.user.fullName;
     },
   },
-  watch: {
-    $route: {
-      handler(val) {
-        this.isShowMenu = !['/business-details', '/add-business'].includes(val.path);
-        if (val.path === '/login') {
-          this.$store.commit('user/SET_FULLNAME', '');
-        }
-      },
-      immediate: true,
-    },
-    // flag: {
-    //   handler(newVal, oldVal) {
-    //     console.log('new:' + newVal, 'old:' + oldVal);
-    //   },
-    //   deep: true,
-    //   immediate: true,
-    // },
+  mounted() {
+    if (!this.SP_MICRO_FE) {
+      this.$watch(
+        '$route',
+        (val) => {
+          this.isShowMenu = ![
+            '/my-business/business-details',
+            '/team-manage/business-details',
+            '/add-business',
+            '/error-list',
+          ].includes(val.path);
+          if (val.path === '/login') {
+            this.$store.commit('user/SET_FULLNAME', '');
+          }
+        },
+        { immediate: true },
+      );
+    }
   },
   created() {
     if (!this.SP_MICRO_FE) {
-      // this.iMConfig = Object.freeze({
-      //   userId: store.get('mchInfo').mchUserId,
-      //   userType: store.get('userType'),
-      //   token: store.get('token'),
-      //   secret: CONFIG.SECRET,
-      //   appKey: CONFIG.APPKEY,
-      //   sysCode: CONFIG.SYS_CODE,
-      // });
       this.$store.commit('user/SET_FULLNAME');
     }
   },
-  mounted() {
-    if (!this.SP_MICRO_FE) {
-      // //接收到从商机列表传来的数据 是否多选数据
-      // const _this = this;
-      // _this.$eventBus.$on('transfer-data', (val, ids) => {
-      //   console.log(val.length, ids, 'val1 '); //val 多选商机数据
-      //   _this.multipleSelection = val; //多选数据
-      //   _this.selectedIds = ids; //多选ids
-      //   // _this.flagShow = true;
-      //   if (val && val.length > 0) {
-      //     _this.handleAddPhoneNumber();
-      //   } else {
-      //     _this.handCall();
-      //   }
-      // });
-      // //监听businessList多选数据
-      // _this.$eventBus.$on('aside-call-up', (val, ids) => {
-      //   console.log(val, '监听多选数据改变');
-      //   _this.multipleSelection = val; //多选数据
-      //   _this.selectedIds = ids; //多选ids
-      //   //   that.flagShow = true;
-      // });
-    }
-  },
+
   methods: {
     handleClick() {
       this.$router.go(-1);
     },
-    // //右侧-打电话
-    // callUp() {
-    //   this.$eventBus.$emit('aside-more-call-mixins', 1);
-    // },
-    // //右侧IM
-    // imCheat() {
-    //   this.cheatFlag = !this.cheatFlag;
-    // },
     /**
      * @description 退出登录
      */

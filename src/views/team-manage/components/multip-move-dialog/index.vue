@@ -42,6 +42,7 @@
               popper-class="multip-move-select-remote"
               data-tid="platFormSelectChange"
               @change="selectChangeHandle"
+              @blur="handleBlue"
             >
               <el-option
                 v-for="item in peopleList"
@@ -59,7 +60,7 @@
       </div>
 
       <span slot="footer" class="footer">
-        <span class="note">接收人库容量已满!接收人已有客户可能会导致商机移交失效!</span>
+        <span class="note">接收人库容量已满!接收人已有客户可能会导致商机移交失败!</span>
         <div>
           <el-button size="medium" data-tid="recordsCancelButton" @click="dialogVisible = false"
             >取消</el-button
@@ -121,16 +122,25 @@ export default {
       loading: false,
       userName: '',
       mchDetailId: '',
+      defaultPeopleList: [],
     };
   },
   computed: {},
   created() {},
   methods: {
+    handleBlue(e) {
+      if (this.peopleList.length === 0) {
+        this.peopleList = this.defaultPeopleList;
+      }
+    },
     /**
      * @description 陪谈人搜索选中方法
      * @param {Object} 选中得对象
      */
     selectChangeHandle(val) {
+      if (val === '') {
+        this.peopleList = this.defaultPeopleList;
+      }
       this.safftId = val;
     },
     /**
@@ -152,11 +162,14 @@ export default {
       }
       this.getPeopleList(params);
     },
-    getPeopleList(params) {
+    getPeopleList(params, type) {
       get_mch_user_info_list(params)
         .then((res) => {
           if (res.code === 200) {
             this.peopleList = res.data.records || [];
+            if (type) {
+              this.defaultPeopleList = res.data.records;
+            }
             this.selectLoading = false;
           } else {
             this.$message.warning(res.message);
@@ -191,11 +204,14 @@ export default {
       this.businessIdArr = arr || [];
       this.dialogVisible = true;
       this.mchDetailId = store.get('mchInfo')?.mchDetailId || '';
-      this.getPeopleList({
-        mchDetailId: this.mchDetailId,
-        start: 1,
-        limit: 1000,
-      });
+      this.getPeopleList(
+        {
+          mchDetailId: this.mchDetailId,
+          start: 1,
+          limit: 1000,
+        },
+        'default',
+      );
     },
     /**
      * @description 点击提交请求接口

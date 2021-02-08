@@ -29,18 +29,6 @@ export default {
     filterTime(val) {
       return val ? filterTimeDate(val) : '';
     },
-    fromFormat(val) {
-      const map = {
-        CRM_GET_WAY_MOVE: '移交',
-        CRM_GET_WAY_REFERRAL: '转介绍',
-        CRM_GET_WAY_PICK: '拾回',
-        CRM_GET_WAY_SELF_DEV: '自开发',
-        CRM_GET_WAY_CLUE_CONVERT: '线索转商机',
-        CRM_GET_WAY_ALLOCATION: 'IBOSS系统人工分配',
-        INVALID: '标记商机无效进入到公共库/无效库',
-      };
-      return map[val];
-    },
   },
   data() {
     return {
@@ -70,24 +58,30 @@ export default {
         plannerId: '',
         start: 1,
       },
-      // searchPage: 1,
+      result: [],
+      source: {},
       userName: '',
       selectLoading: false,
-      len: 3,
       mchDetailId: '',
       timeType: '',
+      defaultPeopleList: [],
     };
   },
-  created() {
-    this.getDictionary('CRM_BIZ_STATUS');
-    this.getDictionary('QDS_PAGE_TIME_SEARCH_THREE');
+  async created() {
+    this.getDictionary('CRM_BIZ_STATUS') || {};
+    this.getDictionary('QDS_PAGE_TIME_SEARCH_THREE') || {};
+    this.source = (await this.getDictionary('CRM_GET_WAY')) || {};
     this.getTeamBusyList();
     this.mchDetailId = store.get('mchInfo')?.mchDetailId || '';
-    this.getPeopleList({
-      mchDetailId: this.mchDetailId,
-      start: 1,
-      limit: 1000,
-    });
+    this.getPeopleList(
+      {
+        mchDetailId: this.mchDetailId,
+        start: 1,
+        limit: 1000,
+        userCenterAuthStatus: '',
+      },
+      'default',
+    );
   },
   mounted() {},
   methods: {
@@ -110,6 +104,11 @@ export default {
     clearInput() {
       this.getTeamBusyList();
     },
+    handleBlue(e) {
+      if (this.peopleList.length === 0) {
+        this.peopleList = this.defaultPeopleList;
+      }
+    },
     /**
      * @description 弹窗时间重新刷新列表
      */
@@ -126,6 +125,7 @@ export default {
         mchDetailId: this.mchDetailId,
         start: 1,
         limit: 999999,
+        userCenterAuthStatus: '',
       };
 
       const regPhone = /^1[3-9]\d{9}$/;
@@ -136,12 +136,15 @@ export default {
       }
       this.getPeopleList(params);
     },
-    getPeopleList(params) {
+    getPeopleList(params, type) {
       get_mch_user_info_list(params)
         .then((res) => {
           if (res.code === 200) {
             res = res.data;
             this.peopleList = res.records || [];
+            if (type) {
+              this.defaultPeopleList = res.records;
+            }
             this.selectLoading = false;
           } else {
             this.$message.warning(res.message);
@@ -154,6 +157,9 @@ export default {
      * @param {Object} 选中得对象
      */
     selectChangeHandle(val) {
+      if (val === '') {
+        this.peopleList = this.defaultPeopleList;
+      }
       this.ruleForm.plannerId = val;
       this.sortClear();
     },
@@ -184,9 +190,9 @@ export default {
       this.timeType = item?.ext2;
       this.enterTimeIndex = index;
       if (item?.ext2 && item?.ext2 !== 'custom') {
-        const result = new FilterTime(item.ext2).time;
-        this.ruleForm.startTime = result[0];
-        this.ruleForm.endTime = result[1];
+        this.result = new FilterTime(item.ext2).time;
+        this.ruleForm.startTime = this.result[0];
+        this.ruleForm.endTime = this.result[1];
         this.ruleForm.start = 1;
         if (this.times?.length > 0) {
           this.times = [];
@@ -257,16 +263,24 @@ export default {
       };
       const result = await get_dictionary_data_by_parent_code(param);
       if (result.code === 200) {
-        if (code === 'CRM_BIZ_STATUS') {
-          this.businessStatue = result.data;
-        }
-        if (code === 'QDS_PAGE_TIME_SEARCH_THREE') {
-          this.enterTimeList = result.data;
+        switch (code) {
+          case 'CRM_BIZ_STATUS':
+            this.businessStatue = result.data;
+            break;
+          case 'QDS_PAGE_TIME_SEARCH_THREE':
+            this.enterTimeList = result.data;
+            break;
+          default:
+            return result.data.reduce((acc, cur) => {
+              acc[cur.code] = cur.name;
+              return acc;
+            }, {});
         }
       } else {
         this.$message.warning(result.message);
       }
     },
+
     /**
      * @description 商机列表
      * @returns {Object} 返回数据
@@ -295,14 +309,19 @@ export default {
         .then((result) => {
           if (result.code === 200) {
             this.total = result.data.totalCount * 1;
-            this.teamBusyList = result.data.records;
+            this.teamBusyList = result.data.records.map((item) => {
+              return {
+                ...item,
+                sourceName: this.source[item.bizSource],
+              };
+            });
             this.loading = false;
           } else {
             this.$message.warning(result.message);
             this.loading = false;
           }
         })
-        .catch((result) => {
+        .catch(() => {
           this.loading = false;
         });
     },
@@ -332,7 +351,7 @@ export default {
      */
     selectAllClick(row) {
       if (this.limit <= 50) {
-        this.multipleSelectionList = row?.map(function(val) {
+        this.multipleSelectionList = row?.map(function (val) {
           return { bizId: val.id, plannerId: val.plannerId };
         });
       } else {
@@ -346,7 +365,7 @@ export default {
      * @description 选择框
      */
     handleSelectionChange(val) {
-      this.multipleSelectionList = val?.map(function(val) {
+      this.multipleSelectionList = val?.map(function (val) {
         return { bizId: val.id, plannerId: val.plannerId };
       });
     },

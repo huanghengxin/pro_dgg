@@ -38,14 +38,14 @@ export default {
           callback();
         } else {
           if (!reg.test(value)) {
-            callback(new Error('您只能输入小于9999的正整数'));
+            callback(new Error('数值≤9999正整数'));
           }
           callback();
         }
       } else {
         var reg1 = /^[0-9][0-9]{0,3}$/;
         if (!reg1.test(value)) {
-          callback(new Error('您只能输入小于9999的正整数'));
+          callback(new Error('数值≤9999正整数'));
         }
         callback();
       }
@@ -94,17 +94,19 @@ export default {
   },
   computed: {
     getLibraryRule() {
-      return (this.ruleList || []).reduce((cur, acc) => {
-        cur[acc.ruleCode] = acc;
-        return cur;
-      }, {});
+      return (
+        this.ruleList?.reduce((cur, acc) => {
+          cur[acc.ruleCode] = acc;
+          return cur;
+        }, {}) || {}
+      );
     },
     /**
      * @description 规则列表数据
      */
     getRuleList() {
       const arr =
-        (this.libraryRule || []).map((item) => {
+        this.libraryRule?.map((item) => {
           const { status, val1 = '', val2 = '', val3 = '', val4 = '', val5 = '', id = '' } =
             this.getLibraryRule[item.code] || {};
           return {
@@ -122,7 +124,7 @@ export default {
     },
     getStaffList() {
       const arr =
-        (this.staffRule || []).map((item) => {
+        this.staffRule?.map((item) => {
           const { val1 = '', val2 = '', val3 = '', val4 = '', val5 = '', id = '' } =
             this.getLibraryRule[item.code] || {};
           return {
@@ -139,8 +141,10 @@ export default {
     },
   },
   mounted() {
-    this.getHeight();
-    window.addEventListener('resize', this.getHeight);
+    this.$nextTick(() => {
+      this.getHeight();
+      window.addEventListener('resize', this.getHeight);
+    });
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.getHeight);
@@ -152,7 +156,7 @@ export default {
     const dictionaryTree = (await this.getDictionary()) || {};
     // 库流转规则
     this.libraryRule =
-      dictionaryTree.lz_code.map((item) => {
+      dictionaryTree.lz_code?.map((item) => {
         return {
           name: item.name,
           code: item.code,
@@ -161,7 +165,7 @@ export default {
       }) || [];
     // 规划师上限
     this.staffRule =
-      dictionaryTree.sx_code.map((item) => {
+      dictionaryTree.sx_code?.map((item) => {
         return {
           name: item.name,
           code: item.code,
@@ -173,7 +177,8 @@ export default {
     // 数据字典库编码
     this.libraryCode = dictionaryTree.rule_biz_db_code || [];
     // 总开关
-    this.switchCode = dictionaryTree.rule_code[1].code || {};
+    const rule_code = dictionaryTree.rule_code;
+    this.switchCode = Array.isArray(rule_code) ? rule_code[1]?.code : '';
     // 平台总开关后台数据
     this.getSwitchboard();
   },
@@ -208,7 +213,10 @@ export default {
      */
     getHeight() {
       const top = this.$refs.platform.getBoundingClientRect().top;
-      this.platformHeight = window.innerHeight - top;
+      this.platformHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight - top;
     },
     /**
      * @description 监听保存关闭时间弹窗
@@ -217,18 +225,32 @@ export default {
       this.switchboardStatus = 2;
       this.getSwitchboard();
     },
-    /**
-     * @description 总开关结束时间范围内
-     */
-    switchboardEndDate(endDateStr) {
-      var curDate = dayjs(new Date()).format('YYYY-MM-DD');
-      let endDate = dayjs(new Date(endDateStr)).format('YYYY-MM-DD');
-      if (curDate <= endDate) {
-        return true;
-      }
-      return false;
-    },
 
+    /**
+     * @description  当前时间和开关开启时间的判断
+     */
+    editAble(startDateStr = null) {
+      if (!dayjs(startDateStr).isValid()) return;
+      let curDate = dayjs().valueOf();
+      let startTime = dayjs(startDateStr).valueOf();
+      if (curDate < startTime) {
+        this.edit = true;
+      } else {
+        this.edit = false;
+      }
+    },
+    switchboardEndDate(endDateStr = null, startDateStr = null) {
+      if (!dayjs(endDateStr).isValid() || !dayjs(endDateStr).isValid()) return;
+      let curDate = dayjs().valueOf();
+      let dateEnd = dayjs(endDateStr).valueOf();
+      let dateStart = dayjs(startDateStr).valueOf();
+      if (curDate < dateStart || curDate > dateEnd) {
+        this.edit = true;
+      } else {
+        this.switchboardStatus = 2;
+        this.edit = false;
+      }
+    },
     /**
      * @description 总开关
      */
@@ -241,10 +263,9 @@ export default {
       if (Change === 2) {
         this.$refs.closeAllRuleDialog.openModal(obj);
       }
-      console.log(this.switchboardEndDate(this.end));
-      if (Change === 1 && this.switchboardEndDate(this.end)) {
+      if (Change === 1) {
         this.$messageBox
-          .confirm('未到设置的开启时间，请确认是否提前开启掉库？', '开启流转规则', {
+          .confirm('请确认是否开启掉库？', '开启流转规则', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
@@ -423,13 +444,9 @@ export default {
         .then((res) => {
           if (res.code === 200) {
             this.switchboardStatus = res.data.status;
-            if (this.switchboardStatus === 1) {
-              this.edit = true;
-            } else {
-              this.start = res.data.val1;
-              this.editAble(this.start);
-            }
+            this.start = res.data.val1;
             this.end = res.data.val2;
+            this.switchboardEndDate(this.end, this.start);
             this.switchboardId = res.data.id;
           } else {
             this.$message.warning(res.message);
@@ -438,18 +455,6 @@ export default {
         .catch(() => {
           this.loading = false;
         });
-    },
-    /**
-     * @description  当前时间和开关开启时间的判断
-     */
-    editAble(startDateStr) {
-      var curDate = dayjs(new Date()).format('YYYY-MM-DD');
-      let startTime = dayjs(new Date(startDateStr)).format('YYYY-MM-DD');
-      if (curDate < startTime) {
-        this.edit = true;
-      } else {
-        this.edit = false;
-      }
     },
   },
 };

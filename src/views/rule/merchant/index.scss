@@ -7,6 +7,7 @@
 
   .list-input .cell {
     overflow: visible;
+
   }
 
   .fixation {
@@ -144,10 +145,6 @@
           margin-bottom: 0;
           width: 86px !important;
 
-          .el-form-item__error {
-            z-index: 100000000000000;
-          }
-
           .val2 {
             width: 120px;
             font-size: $font-size-sm;
@@ -177,7 +174,8 @@
 
 
           .el-form-item__error {
-            width: 86px;
+            width: 188px;
+            z-index: 1000000000000000000 !important;
           }
         }
       }

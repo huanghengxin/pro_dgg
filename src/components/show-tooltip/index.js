@@ -37,7 +37,7 @@ export default {
         const width = node?.getBoundingClientRect().width;
         body.removeChild(node);
         node = null;
-        this.showTooltip = width > this.width * this.tooltipLineClamp ? true : false;
+        this.showTooltip = width >= this.width * this.tooltipLineClamp ? true : false;
         if (this.tooltipLineClamp > 1) {
           this.contentWidth = this.width + 'px';
         }

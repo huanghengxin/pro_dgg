@@ -98,8 +98,7 @@
         <template v-if="attributeList.length">
           <p v-for="item in attributeList" :key="item.attriNameCode" class="warp-bottom_attr">
             <span>
-              <em>{{ item.attriName }}</em
-              ><em>{{ item.attriValue || '未选择' }}</em>
+              <em>{{ item.attriName }}：</em><em>{{ item.attriValue || '未选择' }}</em>
             </span>
           </p>
         </template>
@@ -192,7 +191,6 @@ export default {
       }
     },
   },
-
   created() {
     //监听基础信息获取数据后，打开基础信息的按钮限制
     this.$eventBus.$on('get-business-info', (value) => {

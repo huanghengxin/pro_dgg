@@ -50,6 +50,7 @@ import {
   Image,
   InfiniteScroll,
   MenuItemGroup,
+  Upload,
 } from 'element-ui';
 
 export default {
@@ -100,6 +101,7 @@ export default {
     V.use(Col);
     V.use(Row);
     V.use(Image);
+    V.use(Upload);
     V.use(MenuItemGroup);
     V.use(InfiniteScroll);
     V.use(Loading.directive);

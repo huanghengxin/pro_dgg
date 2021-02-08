@@ -27,7 +27,9 @@
           <template slot-scope="scope">
             <div>
               <router-link
-                :to="`/business-details?businessId=${scope.row.id || ''}&from=my-business`"
+                :to="
+                  `/my-business/business-details?businessId=${scope.row.id || ''}&from=my-business`
+                "
                 class="router-link"
               >
                 <show-tooltip :text="scope.row.customerName" :width="120"></show-tooltip>
@@ -118,7 +120,7 @@
                 @command="handleCommand"
               >
                 <p class="list-handle_more">更多操作</p>
-                <el-dropdown-menu slot="dropdown" key="el-dropdown-menu">
+                <el-dropdown-menu slot="dropdown" key="el-dropdown-menu" data-tid="dropdown">
                   <el-dropdown-item
                     :data-tid="'callPone' + scope.$index"
                     :command="{ component: 'callPhoneRef', item: scope.row }"
@@ -257,7 +259,8 @@ export default {
   computed: {
     params() {
       return {
-        type: history.state.tab_active ? history.state.tab_active : 'TODAY_FOLLOW',
+        // type: history.state.tab_active ? history.state.tab_active : 'TODAY_FOLLOW',
+        type: 'TODAY_FOLLOW',
         ...this.paramsData,
         start: this.start,
         limit: this.limit,
@@ -274,30 +277,36 @@ export default {
     },
   },
   activated() {
+    this.handleEventBus();
     this.getListData(this.params);
   },
   mounted() {
-    this.$eventBus.$on('my-business_transfer-params', (val) => {
-      let searchInput = val[2];
-      //判断tab切换，需要清空排序
-      if (val[3] === 'clearSort' || searchInput) {
-        this.$refs.tableRef.clearSort();
-      }
-      //判断是否是综合筛选，综合筛选需要清空之前得筛选项
-      if (searchInput) {
-        this.paramsData = {};
-      }
-      this.start = 1;
-      this.activeTabcode = val[1];
-      let obj = Object.assign({}, val[0], { type: val[1] }, searchInput);
-      this.$set(this, 'paramsData', obj);
-    });
+    this.handleEventBus();
   },
-
   beforeDestroy() {
     this.$eventBus.$off('my-business_transfer-params');
   },
+  deactivated() {
+    this.$eventBus.$off('my-business_transfer-params');
+  },
   methods: {
+    handleEventBus() {
+      this.$eventBus.$on('my-business_transfer-params', (val) => {
+        let searchInput = val[2];
+        //判断tab切换，需要清空排序
+        if (val[3] === 'clearSort' || searchInput) {
+          this.$refs.tableRef.clearSort();
+        }
+        //判断是否是综合筛选，综合筛选需要清空之前得筛选项
+        if (searchInput) {
+          this.paramsData = {};
+        }
+        this.start = 1;
+        this.activeTabcode = val[1];
+        let obj = Object.assign({}, val[0], { type: val[1] }, searchInput);
+        this.$set(this, 'paramsData', obj);
+      });
+    },
     /**
      * @description 打电话需要刷新页面方法
      */

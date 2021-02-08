@@ -158,9 +158,14 @@
         color: $black-2;
 
         th {
+          padding: 24px 0 !important;
           color: $black-2;
           font-size: $font-size-md;
           font-weight: $font-weight-crm;
+        }
+
+        td {
+          padding: 24px 0 !important;
         }
 
         .cell {
@@ -211,7 +216,9 @@
 
 
           .el-form-item__error {
-            width: 86px;
+            width: 74px;
+            top: 90% !important;
+            font-size: 8px;
           }
         }
 

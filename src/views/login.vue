@@ -112,12 +112,12 @@ export default {
       activeName: 'passwd',
       loading: false,
       phoneForm: {
-        phone: '18512811263',
+        phone: '17765488997',
         captcha: '123456',
       },
 
       ruleForm: {
-        account: '18512811263',
+        account: '17765488997',
         password: '123456',
         platformType: 'COMDIC_PLATFORM_QIDASHUN',
       },

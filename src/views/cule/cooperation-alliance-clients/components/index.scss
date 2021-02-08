@@ -1,0 +1,39 @@
+@import 'assets/scss/mixins/base';
+.tab-container {
+  display: flex;
+  user-select: none;
+  margin-top: $list-search-tab-warp-margin-top;
+  height: $list-search-tab-warp-height;
+  border-bottom: $list-search-tab-warp-border-bottom;
+  &_item {
+    display: flex;
+    justify-content: space-between;
+    &-box {
+      flex-shrink: 0;
+      @include flex-center_align();
+      margin-right: $list-search-tab-warp-item-margin-right;
+      cursor: pointer;
+      &_active {
+        border-bottom: $list-search-tab-warp-item-border-bottom;
+      }
+      &_name {
+        font-weight: $list-search-tab-warp-item-name-font-weight;
+      }
+      &_icon {
+        width: $list-search-tab-warp-item-icon-width;
+        height: $list-search-tab-warp-item-icon-height;
+        margin-left: $list-search-tab-warp-item-icon-margin-left;
+      }
+    }
+  }
+}
+@include filter-item();
+.filter-container {
+  display: flex;
+  align-items: baseline;
+  &_title {
+    width: 90px;
+  }
+  &_item {
+  }
+}

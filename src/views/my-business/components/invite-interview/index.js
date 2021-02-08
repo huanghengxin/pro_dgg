@@ -97,7 +97,6 @@ export default {
     },
     /**
      * @description 陪谈人搜索选中方法
-     * @param {Object} 选中得对象
      */
     selectChangeHandle(val) {
       if (val === '') {
@@ -205,9 +204,8 @@ export default {
      * @param {Object} 点击当前列表项
      */
     openModal(item) {
-      this.nextTime = dayjs()
-        .add(5, 'm')
-        .valueOf(); //打开弹框记录当前时间下一个小时的时间进行对比
+      debugger;
+      this.nextTime = dayjs().add(5, 'm').valueOf(); //打开弹框记录当前时间下一个小时的时间进行对比
       this.businessInfo = Object.freeze(item || {}); //商机信息
       this.dialogVisible = true;
       this.getResourceList();

@@ -303,7 +303,7 @@ export default {
                 if (this.query?.type === 'PUSH_SHEET') {
                   path = 'push-sheet';
                 } else {
-                  path = 'business-details';
+                  path = 'my-business/business-details';
                 }
                 res && this.$router.replace(`/${path}?businessId=` + res);
               } else {

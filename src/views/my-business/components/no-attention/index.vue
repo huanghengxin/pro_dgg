@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="dialogInfo.title"
+    :title="activeDialog === 'BUS_WXSJ' ? dialogInfo.title : dialogInfo.title2"
     custom-class="no-attention"
     :visible.sync="dialogVisible"
     width="620px"
@@ -16,7 +16,7 @@
       :model="ruleForm"
     >
       <el-form-item
-        v-if="activeDialog === 'BUS_WXSJ'"
+        v-if="activeDialog === 'BUS_WXSJ' || activeDialog === 'CULE_WXSJ'"
         :label="dialogInfo.label1"
         prop="noAttention"
       >
@@ -155,7 +155,11 @@ export default {
   },
   computed: {
     dialogInfo() {
-      return NO_ATTENTION[this.activeDialog || 'BUS_ZBGZ'];
+      if (this.activeDialog === 'BUS_WXSJ' || this.activeDialog === 'CULE_WXSJ') {
+        return NO_ATTENTION['BUS_WXSJ'];
+      } else {
+        return NO_ATTENTION['BUS_ZBGZ'];
+      }
     },
   },
   methods: {
@@ -178,7 +182,7 @@ export default {
     openModal(item) {
       this.activeDialog = item.code;
       this.businessId = item.busId;
-      if (this.activeDialog === 'BUS_WXSJ') {
+      if (this.activeDialog === 'BUS_WXSJ' || this.activeDialog === 'CULE_WXSJ') {
         this.getNoAttentionOption();
         this.getNum();
       }
@@ -261,6 +265,24 @@ export default {
         type,
       };
       if (this.activeDialog === 'BUS_ZBGZ') {
+        get_storage_by_type(params).then((res) => {
+          if (res.code === 200) {
+            res = res.data;
+            const num = Number(res.capacity) - Number(res.used);
+            this.num = num < 0 ? 0 : num;
+            if (this.num === 0) {
+              this.$message.info('剩余的暂不关注数量为0');
+              this.dialogVisible = false;
+              return;
+            }
+            this.dialogVisible = true;
+          } else {
+            this.$message.warning(res.message);
+          }
+        });
+      } else if (this.activeDialog === 'CULE_WXSJ') {
+        this.dialogVisible = true;
+        // 换成线索接口
         get_storage_by_type(params).then((res) => {
           if (res.code === 200) {
             res = res.data;

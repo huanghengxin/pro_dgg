@@ -103,7 +103,10 @@ export default {
             }}
             onBlur={() => {
               this.blurHandle('one');
-              if (this.status && this.oneInput !== '') this.oneInput = parseFloat(this.oneInput);
+              if (this.status && this.twoInput !== '') {
+                this.oneInput = parseFloat(this.oneInput);
+                this.twoInput = parseFloat(this.twoInput);
+              }
             }}
             onInput={(e) => {
               this.oneInput = e.target.value.trim();
@@ -119,7 +122,10 @@ export default {
             }}
             onBlur={() => {
               this.blurHandle('two');
-              if (this.status && this.twoInput !== '') this.twoInput = parseFloat(this.twoInput);
+              if (this.status && this.twoInput !== '') {
+                this.oneInput = parseFloat(this.oneInput);
+                this.twoInput = parseFloat(this.twoInput);
+              }
             }}
             onInput={(e) => {
               this.twoInput = e.target.value.trim();

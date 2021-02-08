@@ -8,9 +8,11 @@ const callLoading = {
   update(el, binding) {
     const value = binding.value;
     if (value) {
-      el.classList.add('call-loading-color');
+      //禁止父级div点击事件
+      el.parentNode.classList.add('call-loading-color');
+      // el.classList.replace('icon-dianhua')
     } else {
-      el.classList.remove('call-loading-color');
+      el.parentNode.classList.remove('call-loading-color');
     }
   },
 };

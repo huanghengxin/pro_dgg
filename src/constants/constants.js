@@ -148,9 +148,11 @@ export const defaultMapFilterList = {
 };
 //暂不关注和无效商机
 export const NO_ATTENTION = {
+  //无效线索弹层
   //无效商机弹层
   BUS_WXSJ: {
     title: '无效商机',
+    title2: '无效线索',
     label1: '无效原因：',
     label2: '无效原因：',
     placeholder1: '请选择无效原因',
@@ -199,7 +201,7 @@ export const RECORD_FIELD_INVITE = [
 
 // 商机详情跟进记录 面谈
 export const RECORD_FIELD_INTERVIEW = [
-  { time: '发起时间：', code: 'createTime' },
+  { time: '面谈时间：', code: 'confirmCompleteTime' },
   { name: '面谈人：', code: 'inviterName', jobNum: 'inviterNo' },
   { name: '面谈类型：', code: 'inviteType' },
   { name: '面谈地点：', code: 'inviteAddress' },
@@ -259,4 +261,17 @@ export const PRODUCTION_ORDER_DETAILS = [
   { name1: '生产单状态：', code1: 'productionStatus', name2: '截止时间：', code2: 'finishTime' },
   { name1: '产品名称：', code1: 'productionName' },
   { name1: '', code1: 'remark' },
+];
+
+export const CULE_SOURCE_LIST = [
+  { code: 'QDS_ClUE_SOURCE_STAY', name: '留资线索' },
+  { code: 'QDS_ClUE_SOURCE_IM', name: 'IM线索' },
+];
+export const CULE_IMPOWER_LIST = [
+  { code: 'QDS_ClUE_IMPOWER_NOT', name: '未授权' },
+  { code: 'DS_ClUE_IMPOWER_YES', name: '已授权' },
+];
+export const CULE_STATUS_LIST = [
+  { code: 'QDS_ClUE_STATUS_NOT', name: '未联系' },
+  { code: 'QDS_ClUE_STATUS_ALREADY', name: '已联系' },
 ];

@@ -1,17 +1,16 @@
 <template>
-  <div>
-    <el-dialog
-      :visible.sync="dialogVisible"
-      custom-class="needs-details-dialog"
-      :close-on-click-modal="false"
-      width="620px"
-      :show-close="false"
-    >
-      <business-demand-info :width="620" :business-id="clubid" type
-        ><i class="el-icon-close" data-tid="needsCloseHandleClick" @click="closeHandleClick"></i
-      ></business-demand-info>
-    </el-dialog>
-  </div>
+  <el-dialog
+    :visible.sync="dialogVisible"
+    custom-class="needs-details-dialog"
+    :close-on-click-modal="false"
+    width="620px"
+    :show-close="false"
+    @closed="dialogColsed"
+  >
+    <business-demand-info :width="620" :business-id="clubid" type
+      ><i class="el-icon-close" data-tid="needsCloseHandleClick" @click="closeHandleClick"></i
+    ></business-demand-info>
+  </el-dialog>
 </template>
 
 <script>
@@ -33,6 +32,9 @@ export default {
   computed: {},
   created() {},
   methods: {
+    dialogColsed() {
+      this.$eventBus.$emit('closed-more');
+    },
     closeHandleClick() {
       this.dialogVisible = false;
       this.clubid = '';

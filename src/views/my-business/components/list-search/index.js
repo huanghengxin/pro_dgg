@@ -80,11 +80,6 @@ export default {
   created() {
     //获取商机动态
     this.getBusStateNumber();
-    // const { tab_active = 'TODAY_FOLLOW', tab_index = 0 } = history.state;
-    // if (tab_active) {
-    //   this.activeTabField = tab_active;
-    //   this.tabActive = tab_index;
-    // }
     this.init();
   },
   mounted() {
@@ -279,11 +274,9 @@ export default {
             res = res.data;
             this.showNode = true;
             const activeTabField = this.activeTabField;
-            if (isDelete < 0) {
-              this.$set(this.filterType[activeTabField], 'groupId', undefined);
-            }
             const item = defaultMapFilterList[activeTabField];
             for (const key in item) {
+              this.$set(this.filterType[activeTabField], item[key], undefined);
               let items = res[key]?.items || [];
               if (items.length > 0) {
                 if (key === 'BIZ_GROUP_CODE') {
@@ -370,14 +363,6 @@ export default {
       this.showNode = false;
       this.tabActive = index;
       this.activeTabField = code;
-      // history.pushState(
-      //   {
-      //     tab_active: code,
-      //     tab_index: index,
-      //   },
-      //   '',
-      //   location.href,
-      // );
       this.showMoreFilterField[code] = false;
       this.initDefaultField();
       this.$eventBus.$emit('my-business_transfer-params', [

@@ -49,13 +49,13 @@
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column label="规则内容" min-width="410">
+            <el-table-column label="规则内容" min-width="430">
               <template slot-scope="scope">
                 <div class="max">
                   <show-tooltip
                     v-if="scope.row.description"
                     :text="scope.row.description"
-                    :width="370"
+                    :width="420"
                     :tooltip-line-clamp="2"
                   ></show-tooltip>
                   <el-tag
@@ -67,7 +67,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column class-name="list-input" prop="val1" label="值" min-width="300">
+            <el-table-column class-name="list-input" prop="val1" label="值" min-width="280">
               <template slot-scope="scope">
                 <el-form-item
                   :prop="'data1.' + scope.$index + '.val1'"
@@ -76,7 +76,13 @@
                   <el-input
                     v-model="scope.row.val1"
                     :placeholder="scope.row.max"
-                    :disabled="!scope.row.max || !edit || scope.row.status === 2"
+                    :disabled="
+                      !scope.row.max ||
+                      !edit ||
+                      scope.row.status === 2 ||
+                      scope.row.ruleCode === 'LZ_PRE_DROP_MSG' ||
+                      scope.row.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE'
+                    "
                     type="text"
                     :data-tid="'val1Input' + scope.$index"
                     class="val1"
@@ -126,13 +132,13 @@
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column label="规则内容" min-width="410">
+            <el-table-column label="规则内容" min-width="430">
               <template slot-scope="scope">
                 <div class="max">
                   <show-tooltip
                     v-if="scope.row.description"
                     :text="scope.row.description"
-                    :width="370"
+                    :width="420"
                     :tooltip-line-clamp="2"
                   ></show-tooltip>
                   <el-tag v-if="scope.row.max" type="info" effect="dark"
@@ -141,7 +147,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column class-name="list-input" prop="val1" label="值" min-width="300">
+            <el-table-column class-name="list-input" prop="val1" label="值" min-width="280">
               <template slot-scope="scope">
                 <el-form-item
                   :prop="'data2.' + scope.$index + '.val1'"

@@ -37,12 +37,13 @@
                 :popper-append-to-body="false"
                 reserve-keyword
                 value-key="mchUserId"
-                placeholder="请搜索选择收人"
+                placeholder="请搜索选择接收人"
                 :remote-method="remoteMethod"
                 :loading="selectLoading"
                 popper-class="cule-move-select-remote"
                 data-tid="platFormSelectChange"
                 @change="selectChangeHandle"
+                @blur="handleBlue"
               >
                 <el-option
                   v-for="item in peopleList"
@@ -60,7 +61,7 @@
         </el-form>
       </div>
       <span slot="footer" class="footer">
-        <span class="note">接收人库容量已满!接收人已有客户可能会导致商机移交失效!</span>
+        <span class="note">接收人库容量已满!接收人已有客户可能会导致商机移交失败!</span>
         <div>
           <el-button size="medium" data-tid="recordsCancelButton" @click="dialogVisible = false"
             >取消</el-button
@@ -128,11 +129,20 @@ export default {
       selectLoading: false,
       peopleList: [],
       res: '',
+      defaultPeopleList: [],
     };
   },
   computed: {},
   created() {},
   methods: {
+    /**
+     * @description
+     */
+    handleBlue(e) {
+      if (this.peopleList.length === 0) {
+        this.peopleList = this.defaultPeopleList;
+      }
+    },
     /**
      * @description 失效商机事件方法
      */
@@ -144,6 +154,9 @@ export default {
      * @param {Object} 选中得对象
      */
     selectChangeHandle(val) {
+      if (val === '') {
+        this.peopleList = this.defaultPeopleList;
+      }
       this.safftId = val;
     },
     /**
@@ -165,11 +178,14 @@ export default {
       }
       this.getPeopleList(params);
     },
-    getPeopleList(params) {
+    getPeopleList(params, type) {
       get_mch_user_info_list(params)
         .then((res) => {
           if (res.code === 200) {
             this.peopleList = res.data.records || [];
+            if (type) {
+              this.defaultPeopleList = res.data.records;
+            }
             this.selectLoading = false;
           } else {
             this.$message.warning(res.message);
@@ -227,17 +243,19 @@ export default {
      * @param {Object} 点击当前列表项
      */
     openModal(item) {
-      console.log('ssss', item);
       this.businessDetail = item;
       this.businessId = item.id;
       this.rowPlannerId = item.plannerId;
       this.dialogVisible = true;
       this.mchDetailId = store.get('mchInfo')?.mchDetailId || '';
-      this.getPeopleList({
-        mchDetailId: this.mchDetailId,
-        start: 1,
-        limit: 1000,
-      });
+      this.getPeopleList(
+        {
+          mchDetailId: this.mchDetailId,
+          start: 1,
+          limit: 1000,
+        },
+        'default',
+      );
     },
     hanleNeedDetail() {
       let requireList = this.businessDetail?.requireName?.split(',');
