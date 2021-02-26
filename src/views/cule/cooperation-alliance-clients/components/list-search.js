@@ -1,4 +1,3 @@
-import { get_shujuzidian } from 'api/cooperation-in-page';
 import { store, mutations } from './observable';
 import './index.scss';
 export default {
@@ -33,7 +32,9 @@ export default {
       //请求参数
       listSearchLoading: false,
       tabActive: this.tabActiveProp, //当前选中tab页
-      curPageActive: 'waitAccept',
+      curPageActive: '',
+      dateFlag: false, //控制自定义时间显示隐藏
+      datetime: '',
     };
   },
   computed: {
@@ -45,7 +46,9 @@ export default {
     },
   },
   created() {
+    this.curPageActive = this.tabActiveItem.curPageActive;
     mutations.setFieldParams(this.tabActiveProp, 'acceptStatus', 'waitAccept');
+    console.log(this.tabActiveProp, 'this.tabActiveProp');
   },
   methods: {
     /**
@@ -73,15 +76,38 @@ export default {
         </div>
       );
     },
-
+    /**
+     * @description 渲染自定义时间
+     */
+    genDateTime() {
+      return (
+        <div class="date-picker">
+          <el-date-picker
+            value={this.datetime}
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            data-tid="dynamicSureDate"
+            onInput={this.sureDate}
+          />
+        </div>
+      );
+    },
     /**
      * @description 渲染筛选项
      */
     genFilterItem() {
       const tabActiveItem = this.tabActiveItem;
       const curPageActive = this.curPageActive;
-      const filter = tabActiveItem.filter[curPageActive];
-      const filterItem = tabActiveItem.filterItem[curPageActive];
+      let filter, filterItem;
+      if (Array.isArray(tabActiveItem.filter)) {
+        filter = tabActiveItem.filter;
+        filterItem = tabActiveItem.filterItem;
+      } else {
+        filter = tabActiveItem.filter[curPageActive];
+        filterItem = tabActiveItem.filterItem[curPageActive];
+      }
       return filter.map((item) => {
         return (
           <div class="filter-container">
@@ -99,6 +125,7 @@ export default {
                 </div>
               );
             })}
+            {this.dateFlag && item.code == 'acceptTime' ? this.genDateTime() : ''}
           </div>
         );
       });
@@ -111,23 +138,40 @@ export default {
       const code = e.target.dataset.code;
       if (!code) return;
       this.tabActive = code;
+      console.log(this.tabActive, 'this.tabActive');
+      this.curPageActive = this.tabActiveItem.curPageActive;
     },
     /**
-     * @description
-     * @param {}
-     * @returns {}
+     * @description 自定义事件点击
+     */
+    sureDate(e) {
+      mutations.setFieldTimeParams(this.tabActive, '', e);
+    },
+    /**
+     * @description 筛选项点击事件
      */
     filterHandleClick(e) {
       const dataset = e.target.dataset;
       const fieldCode = dataset.fieldCode;
       const fieldChildCode = dataset.fieldChildCode;
+      console.log(dataset.fieldCode, dataset.fieldChildCode);
       if (!fieldCode) return;
-      if (fieldCode === 'acceptStatus') {
-        this.curPageActive = dataset.fieldChildCode;
+      if (
+        fieldCode === 'acceptStatus' ||
+        (fieldCode === 'buildStatus' && fieldChildCode === 'builded')
+      ) {
+        this.curPageActive = fieldChildCode;
         mutations.clearFieldParams(this.tabActive);
+      }
+      //如果父類code是acceptStatus 并且 未自定義時間
+      if (fieldCode == 'acceptTime' && fieldChildCode == 'datetime') {
+        this.dateFlag = true;
+      } else {
+        this.dateFlag = false;
       }
       mutations.setFieldParams(this.tabActive, fieldCode, fieldChildCode);
     },
+
     /**
      * @description tab栏
      */

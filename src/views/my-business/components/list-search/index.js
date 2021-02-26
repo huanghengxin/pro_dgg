@@ -76,11 +76,13 @@ export default {
   activated() {
     this.getBusStateNumber();
     this.getFilterList();
+    // this.initDefaultField(); //今日待跟进筛选字段
   },
   created() {
     //获取商机动态
-    this.getBusStateNumber();
     this.init();
+    // this.getBusStateNumber();
+    // this.getFilterList();
   },
   mounted() {
     this.$eventBus.$on('edit-on-submit_update-list-search', (isDelete) => {
@@ -168,7 +170,6 @@ export default {
         filterType[key] = item[key];
       }
       //请求数据字典
-      this.getFilterList();
     },
     /**
      * @description 初始化数据
@@ -178,7 +179,6 @@ export default {
       this.tabList = Object.freeze(TAB_LIST);
       //初始化tab搜索输入字段默认为空字符串和展开和收起
       this.ininFilterField(); //初始化第一个tab页的筛选项
-      this.initDefaultField(); //今日待跟进筛选字段
     },
     /**
      * @description 综合搜索输入内容切换tab后返回保存之前输入得内容
@@ -365,6 +365,7 @@ export default {
       this.activeTabField = code;
       this.showMoreFilterField[code] = false;
       this.initDefaultField();
+      this.getFilterList();
       this.$eventBus.$emit('my-business_transfer-params', [
         this.paramsDate[code],
         code,

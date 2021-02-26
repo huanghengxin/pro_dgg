@@ -6,6 +6,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import routers from '@/router/routers';
+import store from '@/store';
 Vue.use(VueRouter);
 
 const routes = routers;
@@ -19,6 +20,16 @@ VueRouter.prototype.push = function push(to) {
 const router = new VueRouter({
   mode: 'hash',
   routes: routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.path == '/my-business' || to.path == '/my-business/business-details') {
+    store.dispatch('keep-alive/setKeepAlive', 'MyBusiness');
+  } else {
+    store.dispatch('keep-alive/clearKeepAlive', 'MyBusiness');
+  }
+  // 如果用户未能验证身份，则 `next` 会被调用两次
+  next();
 });
 
 export default router;

@@ -1,7 +1,7 @@
 <template>
   <div class="cooperationCustomer">
     <div class="cooperationCustomer-seasBox">
-      <list-search :tab-list="tabList" />
+      <list-search :tab-list="tabList" :tab-active-prop="activeName" class="tabList" />
       <div class="tocooperationBox">
         <el-button type="primary" size="small" class="tocooperation" @click="tocooperation"
           >发起合作</el-button
@@ -14,7 +14,7 @@
         <el-table
           ref="tableRef"
           v-loading="loading"
-          :data="tableData.data"
+          :data="tableData.list"
           clear-sort
           :default-sort="{ prop: 'null', order: 'null' }"
           data-tid="recordSortList"
@@ -27,14 +27,14 @@
             prop="customerName"
             label="姓名"
             fixed="left"
-            min-width="90"
+            min-width="70"
             class-name="list-name"
           >
             <template slot-scope="scope">
               <show-tooltip
                 v-if="scope.row.customerName"
                 :text="scope.row.customerName"
-                :width="50"
+                :width="70"
               ></show-tooltip>
               <span v-else>暂无数据</span>
             </template>
@@ -51,20 +51,20 @@
           </el-table-column>
           <el-table-column label="客户需求" min-width="100">
             <template slot-scope="scope">
-              <div v-if="scope.row.require">
+              <div v-if="scope.row.customerRequirementName">
                 <show-tooltip
-                  :text="scope.row.require.replace(/\|/g, ',')"
+                  :text="scope.row.customerRequirementName.replace(/\|/g, ',')"
                   :width="100"
                 ></show-tooltip>
               </div>
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
-          <el-table-column label="业务区域" min-width="120">
+          <el-table-column label="业务区域" min-width="100">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessArea">
+              <div v-if="scope.row.customerBizAreaName">
                 <show-tooltip
-                  :text="scope.row.businessArea.replace(/\|/g, ',')"
+                  :text="scope.row.customerBizAreaName.replace(/\|/g, ',')"
                   :width="80"
                 ></show-tooltip>
               </div>
@@ -73,19 +73,24 @@
           </el-table-column>
           <el-table-column label="合作状态" min-width="100">
             <template slot-scope="scope">
-              <div v-if="scope.row.cooperationState">
+              <div v-if="scope.row.status">
                 <show-tooltip
-                  :text="scope.row.cooperationState == 1 ? '合作中' : '已解除'"
+                  :text="
+                    scope.row.status == 0 ? '合作中' : scope.row.status == 1 ? '合作成功' : '已解散'
+                  "
                   :width="100"
                 ></show-tooltip>
+                <p v-if="scope.row.status == 2 && scope.row.abandonStatus == 2" style="color: #999">
+                  {{ scope.row.abandonReason }}
+                </p>
               </div>
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
           <el-table-column prop="lastRemarkTime" label="合作类型" min-width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.cooperationType">
-                <show-tooltip :text="scope.row.cooperationType" :width="80"></show-tooltip>
+              <div v-if="scope.row.type">
+                <show-tooltip :text="scope.row.type" :width="80"></show-tooltip>
               </div>
               <p v-else>暂无数据</p>
             </template>
@@ -93,41 +98,64 @@
 
           <el-table-column
             prop="lastRemarkTime"
-            label="合作得分比例"
+            label="合作分得比例"
             sortable="custom"
             min-width="120"
           >
             <template slot-scope="scope">
-              <div v-if="scope.row.cooperationRatio">
-                <p>{{ scope.row.cooperationRatio + '%' }}</p>
+              <div v-if="scope.row.ratio">
+                <p>{{ scope.row.ratio + '%' }}</p>
               </div>
               <p v-else>暂无数据</p>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="lastRemarkTime"
-            label="预计退回时间"
-            sortable="custom"
-            min-width="180"
-          >
+          <el-table-column prop="returnTime" label="预计退回时间" sortable="custom" min-width="160">
             <template slot-scope="scope">
-              <div v-if="scope.row.backTime">
-                <show-tooltip :text="scope.row.backTime" :width="140"></show-tooltip>
+              <div v-if="scope.row.returnTime">
+                {{ scope.row.returnTime | filterTime }}
+                <!-- <show-tooltip :text="scope.row.returnTime" :width="120"></show-tooltip> -->
               </div>
               <p v-else>暂无数据</p>
             </template>
           </el-table-column>
-          <el-table-column label="发起人/时间" sortable="custom" min-width="180" prop="date">
+          <el-table-column label="发起人/时间" sortable="custom" min-width="160" prop="createDate">
             <template slot-scope="scope">
-              <div v-if="scope.row.initiator || scope.row.date">
-                <p v-show="scope.row.initiator">
-                  {{ scope.row.initiator }}{{ '(' + scope.row.jobNo + ')' }}
+              <div v-if="scope.row.sponsorUserName || scope.row.createDate">
+                <p v-show="scope.row.sponsorUserName">
+                  {{ scope.row.sponsorUserName }}{{ '(' + scope.row.jobNumber + ')' }}
                 </p>
-                <show-tooltip
-                  v-show="scope.row.date"
-                  :text="scope.row.date"
+                {{ scope.row.createDate | filterTime }}
+                <!-- <show-tooltip
+                  v-show="scope.row.createDate"
+                  :text="scope.row.createDate"
                   :width="140"
-                ></show-tooltip>
+                ></show-tooltip> -->
+              </div>
+              <p v-else>暂无数据</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="接收人" sortable="custom" min-width="160" prop="receiveUserName">
+            <template slot-scope="scope">
+              <div v-if="scope.row.receiveUserName || scope.row.receiveTime">
+                <p v-show="scope.row.receiveUserName">
+                  {{ scope.row.receiveUserName }}
+                </p>
+              </div>
+              <p v-else>暂无数据</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="接收人/时间" sortable="custom" min-width="160" prop="receiveTime">
+            <template slot-scope="scope">
+              <div v-if="scope.row.receiveUserName || scope.row.receiveTime">
+                <p v-show="scope.row.receiveUserName">
+                  {{ scope.row.receiveUserName }}{{ '(' + scope.row.jobNumber + ')' }}
+                </p>
+                {{ scope.row.receiveTime | filterTime }}
+                <!-- <show-tooltip
+                  v-show="scope.row.receiveTime"
+                  :text="scope.row.receiveTime"
+                  :width="140"
+                ></show-tooltip> -->
               </div>
               <p v-else>暂无数据</p>
             </template>
@@ -135,20 +163,16 @@
 
           <el-table-column prop="lastRemarkTime" label="合作原因" min-width="180">
             <template slot-scope="scope">
-              <div v-if="scope.row.cooperationReason">
-                <show-tooltip :text="scope.row.cooperationReason" :width="140"></show-tooltip>
+              <div v-if="scope.row.reason">
+                <show-tooltip :text="scope.row.reason" :width="140"></show-tooltip>
               </div>
               <p v-else>暂无数据</p>
             </template>
           </el-table-column>
           <el-table-column label="接收时间" min-width="180">
             <template slot-scope="scope">
-              <div v-if="scope.row.date">
-                <show-tooltip
-                  v-show="scope.row.date"
-                  :text="scope.row.date"
-                  :width="140"
-                ></show-tooltip>
+              <div v-if="scope.row.receiveTime">
+                {{ scope.row.receiveTime | filterTime }}
               </div>
               <p v-else>暂无数据</p>
             </template>

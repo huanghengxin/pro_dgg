@@ -1,6 +1,6 @@
 <template>
   <div class="handle-record-table list-base-ui">
-    <el-table :data="handleRecordTable" style="width: 100%">
+    <el-table v-loading="loading" :data="handleRecordTable.data" style="width: 100%">
       <template slot="empty">
         <svg-icon key="item-warp" type="nodata" icon="icon-icon_nodata" />
       </template>
@@ -46,7 +46,7 @@
         :page-sizes="[10, 20, 30, 40, 50]"
         background
         layout="total, prev, pager, next,sizes,  jumper"
-        :total="handleRecordPage"
+        :total="handleRecordTable.total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       >
@@ -56,8 +56,8 @@
 </template>
 <script>
 import './index.scss';
-import { limit_log_list } from 'api/close-black-current-limit';
 import ShowTooltip from 'components/show-tooltip';
+import { mutations, store, action } from '../../observable';
 import SvgIcon from 'components/svg-icon';
 export default {
   components: {
@@ -66,14 +66,23 @@ export default {
   },
   data() {
     return {
-      handleRecordTable: [],
       limit: 10, //每页显示多少条
       start: 1, //页数
-      handleRecordPage: 0, //总页数
     };
   },
-  mounted() {
-    this.getHandleRecordTable();
+  computed: {
+    handleRecordTable() {
+      return store.handleRecordTable;
+    },
+    loading() {
+      return store.loading;
+    },
+  },
+  created() {
+    action.getDataList();
+  },
+  destroyed() {
+    mutations.clearField();
   },
   methods: {
     /**
@@ -83,25 +92,14 @@ export default {
     handleSizeChange(val) {
       //每页多少条
       this.limit = val;
-      this.getHandleRecordTable();
+      mutations.setPageChangeParams('limit', val);
+      action.getDataList();
     },
     handleCurrentChange(val) {
       //第几页
       this.start = val;
-      this.getHandleRecordTable();
-    },
-    /**
-     * @description 获取表格数据
-     */
-    getHandleRecordTable() {
-      let params = {
-        limit: this.limit,
-        start: this.start,
-      };
-      limit_log_list(params).then((res) => {
-        this.handleRecordTable = res.data.records;
-        this.handleRecordPage = Number(res.data.totalCount) || 0;
-      });
+      mutations.setPageChangeParams('start', val);
+      action.getDataList();
     },
   },
 };

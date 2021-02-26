@@ -1,5 +1,6 @@
 @import 'assets/scss/mixins/base';
 @import 'assets/scss/mixins/list-ui';
+
 @include list();
 
 .prospective {
@@ -19,7 +20,7 @@
     background-color: $base-list-background-color;
     padding: $list-search-padding;
     box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
-    .first-search-from {
+    &-tabs {
       display: flex;
       border-bottom: 1px solid #e5e5e5;
       border-bottom: $list-search-tab-warp-border-bottom;
@@ -37,8 +38,18 @@
         }
       }
     }
-    .search-box {
-      padding-top: 4px;
+    &-list {
+      height: 48px;
+      span {
+        margin: 12px 0;
+      }
+      .lable {
+        font-size: $font-size-sm;
+        color: $black-2;
+        margin-right: 42px;
+        font-weight: $font-weight-crm;
+      }
+      @include filter-item();
     }
   }
 
@@ -57,20 +68,30 @@
           white-space: nowrap;
           text-overflow: ellipsis;
         }
+      }
 
-        .cell {
-          padding-right: 0;
-          .source {
-            display: flex;
-            flex-direction: column;
-          }
+      .cell {
+        padding-right: 0;
+        .el-tag {
+          width: max-content;
+          height: 20px;
+          font-size: $font-size-sm;
+          padding: 0 4px;
+          text-align: center;
+          line-height: 20px;
+          border-radius: 2px;
+          border: 1px solid #409eff;
         }
+        .source {
+          display: flex;
+          flex-direction: column;
+        }
+      }
 
-        th {
-          background-color: $white;
-          color: $black-2;
-          font-weight: $font-weight-crm;
-        }
+      th {
+        background-color: $white;
+        color: $black-2;
+        font-weight: $font-weight-crm;
       }
     }
   }

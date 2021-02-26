@@ -262,16 +262,3 @@ export const PRODUCTION_ORDER_DETAILS = [
   { name1: '产品名称：', code1: 'productionName' },
   { name1: '', code1: 'remark' },
 ];
-
-export const CULE_SOURCE_LIST = [
-  { code: 'QDS_ClUE_SOURCE_STAY', name: '留资线索' },
-  { code: 'QDS_ClUE_SOURCE_IM', name: 'IM线索' },
-];
-export const CULE_IMPOWER_LIST = [
-  { code: 'QDS_ClUE_IMPOWER_NOT', name: '未授权' },
-  { code: 'DS_ClUE_IMPOWER_YES', name: '已授权' },
-];
-export const CULE_STATUS_LIST = [
-  { code: 'QDS_ClUE_STATUS_NOT', name: '未联系' },
-  { code: 'QDS_ClUE_STATUS_ALREADY', name: '已联系' },
-];

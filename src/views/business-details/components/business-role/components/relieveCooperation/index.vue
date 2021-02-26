@@ -16,9 +16,9 @@
         label-width="100px"
         class="demo-ruleForm"
       >
-        <el-form-item label="解除原因：" prop="relieveReason">
+        <el-form-item label="解除原因：" prop="reason">
           <el-input
-            v-model="ruleForm.relieveReason"
+            v-model="ruleForm.reason"
             v-emoji="'textarea'"
             type="textarea"
             placeholder="为保证双方利益，请务必与合作方进行协商确认后再发起哦～"
@@ -26,7 +26,7 @@
             show-word-limit
             resize="none"
           />
-          <!-- {{ businessId }} -->
+          <!-- {{ cooperationId }} -->
         </el-form-item>
       </el-form>
     </div>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { apply } from 'api/cooperation-in-page';
 import './index.scss';
 export default {
   name: 'RelieveCooperation',
@@ -55,13 +56,13 @@ export default {
   data() {
     return {
       ruleForm: {
-        relieveReason: '', //解除原因
+        reason: '', //解除原因
       },
-      businessId: '',
+      cooperationId: '', //合作id
       dialogVisible: false, //控制弹框显示隐藏
       loading: false,
       rules: {
-        relieveReason: [{ required: true, message: '请输入解除原因', trigger: 'blur' }],
+        reason: [{ required: true, message: '请输入解除原因', trigger: 'blur' }],
       },
     };
   },
@@ -71,8 +72,10 @@ export default {
      * @description 供父组件调用打开弹层
      */
     openModal(id) {
-      console.log(id, 'id');
-      this.businessId = id;
+      if (id) {
+        console.log(id, 'id');
+        this.cooperationId = id;
+      }
       this.dialogVisible = true;
     },
     /**
@@ -89,16 +92,31 @@ export default {
      * @returns {}
      */
     commitReason(formName) {
-      //校验解除原因字段 relieveReason
-      this.$refs[formName].validateField('relieveReason', (relieveReasonError) => {
-        if (!relieveReasonError) {
-          console.log('commitReason', this.ruleForm.relieveReason);
+      //校验解除原因字段 reason
+      this.$refs[formName].validateField('reason', (reasonError) => {
+        if (!reasonError) {
+          console.log('commitReason', this.ruleForm.reason);
           this.loading = true;
-          setTimeout(() => {
-            this.loading = true;
-            this.dialogVisible = false;
-            this.$emit('reload-list');
-          }, 2000);
+          let params = { id: this.cooperationId };
+          apply(params)
+            .then((res) => {
+              const { code, message } = res;
+              if (code === 200) {
+                this.$message({
+                  type: 'success',
+                  message: '操作成功',
+                });
+              } else {
+                this.$message.warning(message);
+              }
+              this.loading = false;
+              this.dialogVisible = false;
+            })
+            .catch((res) => {
+              this.loading = false;
+              this.dialogVisible = false;
+            });
+          // this.$emit('reload-list');
         }
       });
     },

@@ -24,7 +24,6 @@ const ErrorList = () =>
     /* webpackChunkName: "error-list" */ 'views/rule/close-black-current-limit/components/error-list'
   );
 
-const PushSheet = () => import(/* webpackChunkName: "push-sheet" */ 'views/push-sheet');
 const MyBusiness = () => import(/* webpackChunkName: "my-business" */ 'views/my-business');
 const TeamManage = () => import(/* webpackChunkName: "team-manage" */ 'views/team-manage');
 
@@ -51,10 +50,6 @@ const InitiateCooperationInPage = () =>
   );
 const DynamicBusiness = () =>
   import(/* webpackChunkName: "dynamic-business" */ 'views/dynamic-business');
-const OrderDetails = () => import(/* webpackChunkName: "order-details" */ 'views/order-details');
-const orderLlist = () => import(/* webpackChunkName: "order-list" */ 'views/order-list');
-const productionInformation = () =>
-  import(/* webpackChunkName: "production-information" */ 'views/production-information');
 const RceferralCustomer = () =>
   import(/* webpackChunkName: "referral-customer" */ 'views/cule/referral-customer');
 const Login = () => import(/* webpackChunkName: "login" */ 'views/login');
@@ -63,6 +58,7 @@ export default [
   {
     path: '/',
     redirect: '/login',
+    name: 'Layout',
     component: Layout,
     children: [
       {
@@ -78,21 +74,16 @@ export default [
       //我的商机/商机详情
       {
         path: '/my-business/business-details',
-        name: 'myBusinessBusinessDetails',
+        name: 'MyBusinessBusinessDetails',
         component: BusinessDetails,
       },
       //商机/商机详情
       {
         path: '/team-manage/business-details',
-        name: 'teamManageBusinessDetails',
+        name: 'TeamManageBusinessDetails',
         component: BusinessDetails,
       },
-      //推单
-      {
-        path: '/push-sheet',
-        name: 'PushSheet',
-        component: PushSheet,
-      },
+
       // 商户规则
       {
         path: '/merchant',
@@ -121,9 +112,6 @@ export default [
       {
         path: '/my-business',
         name: 'MyBusiness',
-        meta: {
-          keepAlive: true,
-        },
         component: MyBusiness,
       },
       // 经营管理
@@ -192,24 +180,6 @@ export default [
         path: '/dynamic-business',
         name: 'DynamicBusiness',
         component: DynamicBusiness,
-      },
-      //订单详情
-      {
-        path: '/order-details',
-        name: 'OrderDetails',
-        component: OrderDetails,
-      },
-      //生产信息
-      {
-        path: '/production-information',
-        name: 'productionInformation',
-        component: productionInformation,
-      },
-      //订单列表
-      {
-        path: '/order-list',
-        name: 'orderLlist',
-        component: orderLlist,
       },
     ],
   },

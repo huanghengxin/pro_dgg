@@ -1,6 +1,11 @@
-import { get_mch_user_info_list, get_user_website, get_user_business_category } from 'api/common';
+import { get_mch_user_info_list, get_user_business_category } from 'api/common';
+import { get_no_cooperation_list, save_by_present_customer } from 'api/cooperation-in-page';
+import NewRequire from './components/newRequire/index.vue';
 import './index.scss';
 export default {
+  components: {
+    NewRequire,
+  },
   data() {
     let reg = /^((2[0-9])|(3[0-9])|4[0-5])$/;
     const checkProportion = (rule, value, callback) => {
@@ -12,16 +17,19 @@ export default {
     };
     return {
       ruleForms: {
-        customerName: '张先生', //客户姓名
-        customerRequire: '', //客户需求
-        customerRequireNo: '', //客户需求No
-        cooperationType: '', //合作类型
-        fullFree: 1, //分配方式
-        cooperationProportion: '', //合作比例
-        singleRange: 1, //抢单人员范围
-        cooperationAcceptor: '', //合作接收方
+        customerName: '', //客户姓名
+        requirementCode: '', //客户需求code
+        requirementName: '', //客户需求
+        requirementParentCode: '', //客户需求父级Code
+        bizRequirementId: '', //客户需求No
+        type: '', //合作类型
+        allocationMode: 1, //分配方式
+        ratio: '', //合作比例
+        grabOrderScope: '', //抢单人员范围(1.本商户,2.薯片平台)
+        receiveUserId: undefined, //合作接收方ID
+        receiveUserName: undefined, //合作接收方姓名
         mchUserId: '', //商户id
-        workingReason: '', //合作原因
+        reason: '', //合作原因
       },
       dialogVisible: false, //控制弹窗显示隐藏
       loading: false, //加载效果
@@ -31,7 +39,6 @@ export default {
       defaultPeopleList: [], //搜索人员默认列表
       peopleList: [], //合作接收人请求列表
       selectLoading: false,
-      customerDemandList: [], //客户需求
       isActive: 1,
       requireNameList: [], //需求列表
       order: [
@@ -46,35 +53,42 @@ export default {
       requireStr:
         "[{'intentionName':'广告传媒类','requirementNo':'BXQ202102020163028'},{'intentionName':'工商变更','requirementNo':'BXQ202102030168005'},{'intentionName':'工商变更','requirementNo':'BXQ202102030168007'}]",
       rules: {
-        customerRequire: [
+        requirementCode: [
           {
             required: true,
             message: '请选择您的需求',
             trigger: 'change',
           },
         ],
-        cooperationType: [
+        customerName: [
+          {
+            required: true,
+            message: '请输入客户姓名',
+            trigger: 'change',
+          },
+        ],
+        type: [
           {
             required: true,
             message: '请选择合作类型',
             trigger: 'change',
           },
         ],
-        cooperationAcceptor: [
+        receiveUserId: [
           {
             required: true,
             message: '请选择合作接收方',
             trigger: 'change',
           },
         ],
-        cooperationProportion: [
+        ratio: [
           {
             required: true,
             validator: checkProportion,
             trigger: 'blur',
           },
         ],
-        fullFree: [{ required: true, message: '请选择', trigger: 'blur' }],
+        allocationMode: [{ required: true, message: '请选择', trigger: 'blur' }],
         areaCode: [{ required: true, message: '请选择业务区域', trigger: 'change' }],
       },
       props: {
@@ -127,53 +141,68 @@ export default {
      */
     openModal(info) {
       this.dialogVisible = true;
-      // console.log(info, 'info');
+      console.log(info, 'info');
       this.ruleForms.customerName = info.customerName;
-      let requireList = eval(this.requireStr);
-      if (requireList.length > 1) {
-        this.requireNameList = requireList;
-      }
-      if (requireList.length == 1) {
-        this.ruleForms.customerRequire = requireList[0].intentionName;
-        this.ruleForms.customerRequireNo = requireList[0].requirementNo;
-      }
-      console.log(this.requireNameList, 'this.requireNameList');
-      this.getCustomerDemandList(); //客户需求
+
+      this.getRequireNameList(info.id); //客户需求
+      // let requireList = eval(this.requireStr);
+      // if (requireList.length > 1) {
+      //   this.requireNameList = requireList;
+      // }
+      // if (requireList.length == 1) {
+      //   this.ruleForms.requirementCode = requireList[0].intentionName;
+      //   this.ruleForms.bizRequirementId = requireList[0].requirementNo;
+      // }
+      // console.log(this.requireNameList, 'this.requireNameList');
     },
+    /**
+     * @description 弹层关闭的回调
+     */
     diologHandleClose() {
       this.$refs.ruleForms.resetFields();
-      this.ruleForms.fullFree = 1;
+      this.ruleForms.allocationMode = 1;
+      this.ruleForms.reason = '';
       this.isActive = 1;
       this.dialogVisible = false;
     },
     /**
      * @description 获取客户需求
      */
-    getCustomerDemandList() {
-      get_user_website()
+    getRequireNameList(id) {
+      let params = {
+        id,
+      };
+      get_no_cooperation_list(params)
         .then((res) => {
           if (res.code === 200) {
-            res = res.data;
-            this.customerDemandList = res?.list || [];
+            const { data } = res;
+            //判断数据数量是否为1，为1则直接显示
+            if (data.length === 1) {
+              this.ruleForms.requirementName = data[0].name;
+              this.ruleForms.requirementId = data[0].id;
+            }
+            this.requireNameList = data || [];
           } else {
             this.$message.warning(res.message);
           }
         })
-        .catch(() => {
-          this.loading = false;
-        });
+        .catch(() => {});
     },
     /**
      * @description 分配方式切换
      * @param {Number}
      */
     changeFullFree(id) {
-      this.$refs.ruleForms.clearValidate('cooperationProportion');
-      this.$refs.ruleForms.clearValidate('cooperationAcceptor');
+      this.$refs.ruleForms.clearValidate('ratio');
+      this.$refs.ruleForms.clearValidate('receiveUserId');
       this.isActive = id;
-      this.ruleForms.fullFree = id;
+      this.ruleForms.allocationMode = id;
+      console.log(this.ruleForms.allocationMode, 'this.ruleForms.allocationMode1');
+      if (this.ruleForms.allocationMode == 2) {
+        this.ruleForms.grabOrderScope = '1';
+      }
       // console.log(this.isActive, 'this.isActive');
-      this.$refs.ruleForms.validateField('fullFree', (error) => {
+      this.$refs.ruleForms.validateField('allocationMode', (error) => {
         if (!error) {
           return;
         }
@@ -188,7 +217,9 @@ export default {
         this.peopleList = this.defaultPeopleList;
       }
       this.ruleForms.mchUserId = val.mchUserId;
-      this.ruleForms.cooperationAcceptor = val.userName;
+      /*此处receiveUserId需要修改*/
+      this.ruleForms.receiveUserName = val.userName;
+      this.ruleForms.receiveUserId = val.mchUserId;
     },
     /**
      * @description 远程搜索陪谈人
@@ -232,6 +263,13 @@ export default {
       }
     },
     /**
+     * @description 新增需求
+     */
+    addNewRequire() {
+      console.log('新增需求');
+      this.$refs.newRequireRef.openModal();
+    },
+    /**
      * @description 提交事件
      */
     submitV(formName) {
@@ -239,9 +277,20 @@ export default {
         if (valid) {
           this.loading = true;
           console.log(this.ruleForms, 'this.ruleForms');
-          setTimeout(() => {
-            // this.dialogVisible = false;
-          }, 3000);
+          const params = { ...this.ruleForms };
+          save_by_present_customer(params)
+            .then((res) => {
+              const { data, code, message } = res;
+              if (code === 200) {
+                console.log(data, 'data');
+                this.$eventBus.$emit('reload-list', true, 'Partners');
+              } else {
+                this.$message.warning(message);
+              }
+              this.loading = false;
+              this.dialogVisible = false;
+            })
+            .catch(() => ((this.loading = false), (this.dialogVisible = false)));
         }
       });
     },

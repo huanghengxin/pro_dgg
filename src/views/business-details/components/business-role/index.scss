@@ -14,6 +14,9 @@
     .el-tabs__nav-wrap::after {
       height: 1px;
     }
+    .el-tabs__item {
+      padding: 0 17px !important;
+    }
     .el-tabs__content {
       .el-tab-pane {
         .accendant-item {
@@ -96,16 +99,20 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            // &-date {
-            // width: 80px;
-            // margin-right: 21px;
-            // }
+            &-date {
+              // width: 80px;
+              // margin-right: 21px;
+              color: $gray-11;
+            }
             &-ring {
               span {
                 color: $black-2;
                 margin-right: 6px;
               }
-              color: $base-color;
+              &-box {
+                cursor: pointer;
+                color: $base-color !important;
+              }
             }
           }
         }
@@ -124,22 +131,22 @@
             justify-content: space-between;
             &-leftCont {
               width: 500px;
-              &-require {
-                span {
-                  color: $black-2;
-                  font-weight: $font-weight-crm;
-                }
+            }
+            &-require {
+              span {
+                color: $black-2;
+                font-weight: $font-weight-crm;
               }
-              &-proportion {
-                margin-top: 8px;
-                span {
-                  font-weight: $font-weight-crm;
-                  color: $black-2;
-                }
-                &-tip {
-                  color: $gray-11 !important;
-                  font-weight: $font-weight-normal !important;
-                }
+            }
+            &-proportion {
+              margin-top: 8px;
+              span {
+                font-weight: $font-weight-crm;
+                color: $black-2;
+              }
+              &-tip {
+                color: $gray-11 !important;
+                font-weight: $font-weight-normal !important;
               }
             }
             &-contentCont {

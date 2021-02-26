@@ -23,7 +23,7 @@ import BusinessRole from './components/business-role/index';
 // import LinkCompany from './components/link-company';
 import { getQueryString } from 'utils/helper';
 export default {
-  name: 'BusinessDetails',
+  name: 'MyBusinessBusinessDetails',
   components: {
     BusinessInfo,
     MoreHandle,

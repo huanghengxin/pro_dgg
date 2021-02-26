@@ -8,7 +8,7 @@
       destroy-on-close
       @closed="dialogColsed"
     >
-      <div class="limit-details-scroll">
+      <div v-loading="loading" class="limit-details-scroll">
         <div class="limit-details-content">
           <div>
             <div class="first-row">
@@ -66,11 +66,12 @@
 </template>
 <script>
 import './index.scss';
-import { limit_detail } from 'api/close-black-current-limit';
+import { limit_detail } from 'api/close-black-limit';
 export default {
   data() {
     return {
       dialogVisible: false,
+      loading: false,
       activeName: 'first',
       limitDetailsList: {}, //限制详情所有数据
       limitDetailsArray: [], //限制详情的限制方式
@@ -79,10 +80,12 @@ export default {
   methods: {
     openModal(details) {
       this.dialogVisible = true;
+      this.loading = true;
       this.limitDetailsList = details;
       let params = { plannerId: details.plannerId };
       limit_detail(params).then((res) => {
         this.limitDetailsArray = res.data;
+        this.loading = false;
       });
     },
     dialogColsed() {

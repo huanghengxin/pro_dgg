@@ -133,6 +133,7 @@ import { get_dictionary_data_by_parent_code } from 'api/common';
 import SvgIcon from 'components/svg-icon';
 import './index.scss';
 export default {
+  name: 'DynamicBusiness',
   components: {
     SearchButton,
     SvgIcon,

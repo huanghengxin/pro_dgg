@@ -39,6 +39,19 @@
       line-height: 17px;
       margin-top: 8px;
     }
+    .el-upload-list__item {
+      background: #f2f2f2;
+      .el-upload-list__item-name {
+        font-size: 12px;
+        font-weight: 400;
+        color: #222222;
+        height: 28px;
+        line-height: 28px;
+      }
+    }
+    .el-upload-list__item-name:hover {
+      color: #222222;
+    }
   }
   .el-dialog__footer {
     .el-button {

@@ -25,11 +25,15 @@
           <div class="cooperationInfo-titleInfo">
             <div class="cooperationInfo-titleInfo-leftCont">
               <p class="cooperationInfo-titleInfo-require">
-                合作需求：<span>{{ item.require || '-' }}</span>
+                合作需求：<span
+                  >{{ item.customerRequirementName || '-' }}-{{
+                    item.customerBizAreaName || '-'
+                  }}</span
+                >
               </p>
               <p class="cooperationInfo-titleInfo-proportion">
                 合作人预计分润比例：
-                <span>{{ item.proportion + '%' || '-' }}</span>
+                <span>{{ item.ratio + '%' || '-' }}</span>
                 <span class="cooperationInfo-titleInfo-proportion-tip">
                   （此数据只为参考，最终比例以订单结算时为准）
                 </span>
@@ -37,7 +41,7 @@
             </div>
             <div class="cooperationInfo-titleInfo-contentCont">
               <div
-                v-if="item.state == 2"
+                v-if="item.status == 2"
                 class="cooperationInfo-titleInfo-contentCont-grabSingleBox"
               >
                 <p class="cooperationInfo-titleInfo-contentCont-grabSingleBox-grabSingleText">
@@ -50,7 +54,7 @@
                 </div>
               </div>
               <div
-                v-if="item.state == 3"
+                v-if="item.status == 3"
                 class="cooperationInfo-titleInfo-contentCont-onlineTalkBox"
               >
                 <div
@@ -62,7 +66,7 @@
                 <div
                   class="common-button cooperationInfo-titleInfo-contentCont-onlineTalkBox-cancel"
                   data-tid="relieveCooperation"
-                  @click="relieveCooperation(item.id, item.cooperationState)"
+                  @click="relieveCooperation(item.id)"
                 >
                   解除合作
                 </div>
@@ -77,60 +81,96 @@
                   <i class="iconfont-qds-crm icon-question icon-tip" style="color: #bfbfbf"></i>
                 </el-tooltip>
               </div>
-              <p v-else-if="item.state == 4" class="cooperationInfo-titleInfo-contentCont-success">
+              <p v-else-if="item.status == 4" class="cooperationInfo-titleInfo-contentCont-success">
                 <i class="iconfont-qds-crm icon-success1"></i>
                 合作成功
               </p>
             </div>
           </div>
-          <div
-            v-for="itemson in item.personList"
-            :key="itemson.id"
-            class="accendant-item proportion-item"
-          >
+          <div class="accendant-item proportion-item">
             <div class="accendant-item-left">
-              <img :src="itemson.avatar" alt="" />
+              <img :src="item.sponsor.avatar" alt="" />
             </div>
             <div class="accendant-item-content proportion-item">
               <p class="accendant-item-content-box">
                 <span class="accendant-item-content-name">
-                  {{ itemson.name || '-' }} <span>{{ '(' + itemson.jobNo + ')' || '-' }}</span>
+                  {{ item.sponsor.name || '-' }}
+                  <span>{{ '(' + item.sponsor.jobNo + ')' || '-' }}</span>
                 </span>
                 <span
                   class="common"
                   :class="
-                    itemson.personType == '合作发起人'
+                    item.sponsor.roleName == '合作发起人'
                       ? 'accendant-item-content-cooperator'
                       : 'accendant-item-content-cosponsor'
                   "
                 >
-                  {{ itemson.personType || '- ' }}
+                  {{ item.sponsor.roleName || '- ' }}
                 </span>
               </p>
               <p class="accendant-item-content-brand">
-                {{ itemson.commercialTenant || '-' }}-{{ itemson.title || '-' }}
+                {{ item.sponsor.commercialTenant || '-' }}-{{ item.sponsor.title || '-' }}
               </p>
               <p class="accendant-item-content-number">
-                电话： <span>{{ itemson.number || '-' }}</span>
+                电话： <span>{{ item.sponsor.number || '-' }}</span>
               </p>
             </div>
             <div class="accendant-item-right">
-              <div v-if="item.state != 2" class="accendant-item-right-date">
-                {{ itemson.date | filterTime
-                }}{{ itemson.personType == '合作发起人' ? '日发起' : '接收' }}
+              <div v-if="item.status != 2" class="accendant-item-right-date">
+                {{ item.sponsor.create_date | filterTime }}日发起
               </div>
               <div v-else class="accendant-item-right-ring">
                 <span>待接收</span>
-                <i class="iconfont-qds-crm icon-notice"></i> 提醒TA
+                <span class="accendant-item-right-ring-box" @click="ringSomeOne(item.sponsor.id)">
+                  <i class="iconfont-qds-crm icon-notice"></i> 提醒TA
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- 合作接收人 -->
+          <div class="accendant-item proportion-item">
+            <div class="accendant-item-left">
+              <img :src="item.receive.avatar" alt="" />
+            </div>
+            <div class="accendant-item-content proportion-item">
+              <p class="accendant-item-content-box">
+                <span class="accendant-item-content-name">
+                  {{ item.receive.name || '-' }}
+                  <span>{{ '(' + item.receive.jobNo + ')' || '-' }}</span>
+                </span>
+                <span
+                  v-if="item.status != 2"
+                  class="common"
+                  :class="item.receive.roleName ? 'accendant-item-content-cosponsor' : ''"
+                >
+                  {{ item.receive.roleName || '- ' }}
+                </span>
+              </p>
+              <p class="accendant-item-content-brand">
+                {{ item.receive.commercialTenant || '-' }}-{{ item.receive.title || '-' }}
+              </p>
+              <p class="accendant-item-content-number">
+                电话： <span>{{ item.receive.number || '-' }}</span>
+              </p>
+            </div>
+            <div class="accendant-item-right">
+              <div v-if="item.status != 2" class="accendant-item-right-date">
+                {{ item.receive.receiveTime | filterTime }}日发起
+              </div>
+              <div v-else class="accendant-item-right-ring">
+                <span>待接收</span>
+                <span class="accendant-item-right-ring-box" @click="ringSomeOne(item.receive.id)">
+                  <i class="iconfont-qds-crm icon-notice"></i> 提醒TA
+                </span>
               </div>
             </div>
           </div>
         </div>
       </el-tab-pane>
     </el-tabs>
-    <!-- 解除合作联盟 -->
+    <!-- 发起解除合作联盟 -->
     <RelieveCooperation ref="relieveCooperationRef" class="relieveCooperation"></RelieveCooperation>
-    <!-- 拒绝原因 -->
+    <!-- 解除 拒绝合作 -->
     <RelieveReason
       ref="relieveReasonRef"
       class="relieveReason"

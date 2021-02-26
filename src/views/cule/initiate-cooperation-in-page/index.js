@@ -1,4 +1,4 @@
-import { createBiz, checkBizByPhone } from 'api/add-business';
+import { checkBizByPhone } from 'api/add-business';
 import ShowTooltip from '../../../components/show-tooltip/index.js';
 import {
   get_user_website,
@@ -7,13 +7,15 @@ import {
   get_mch_user_info_list,
   get_user_business_category,
 } from 'api/common';
-import { get_conversion_business_resource, clue_conversion_business } from 'api/cule';
+import { save_by_absent_customer } from 'api/cooperation-in-page';
+import InitiateCooperation from '../../business-details/components/initiate-cooperation/index.vue';
 import './index.scss';
 import validatePhone from 'utils/validate';
 export default {
   mixins: [validatePhone],
   components: {
     ShowTooltip,
+    InitiateCooperation,
   },
   data() {
     let reg = /^((2[0-9])|(3[0-9])|4[0-5])$/;
@@ -31,25 +33,29 @@ export default {
       defaultPeopleList: [],
       peopleList: [],
       selectLoading: false,
+      blurPhoneNumber: '', //判断输入号码是否与当前号码一致
+      accompanyInfo: {},
       ruleForm: {
         customerName: '',
         customerSex: '',
         customerPhone: '',
-        intentionGrade: 3,
-        blurPhoneNumber: '',
-        customerRequire: '', //客户需求
-        cooperationType: '', //合作类型
-        fullFree: 1, //分配方式
-        cooperationProportion: '', //合作比例
-        cooperationAcceptor: '', //合作接收方
-        workingReason: '', //合作原因
-        singleRange: 1, //抢单人员范围
+        intentionLevel: 3, //客户意向等级
+        bizAreaCode: '', //业务区域Code
+        requirementCode: '', //客户需求
+        requirementParentCode: '', //客户需求父级Code
+        requirementParentName: '', //客户需求父级名字
+        type: '', //合作类型 1.自留维护权,2.转出维护权
+        allocation_mode: 1, //分配方式 1.定向分配,2.抢单
+        ratio: '', //合作比例
+        receiveUserId: '', //合作接收方ID
+        reason: '', //合作原因
+        grabOrderScope: 1, //抢单人员范围 (1.本商户,2.薯片平台)
         phoneArray: [],
       },
       //合作类型
       typeList: [
-        { id: 1, key: 'ZILIU', value: '自留' },
-        { id: 2, key: 'WEIHU', value: '维护' },
+        { id: 1, key: 'ZILIU', value: '自留维护权' },
+        { id: 2, key: 'ZHUANCHU', value: '转出维护权' },
       ],
       tooltip:
         '自留维护权：合作双方共享客户，均有客户维护权限，但客户实际归属于合作发起方。转出维护权：合作建立后客户归属于接收方，发起方仅有查看功能。',
@@ -59,28 +65,28 @@ export default {
         { id: 2, name: '抢单' },
       ],
       rules: {
+        customerPhone: [{ required: true, validator: this.checkPhone, trigger: 'blur' }],
         customerName: [
           { required: true, validator: this.checkCtomerName, trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
         ], //姓名
-        customerPhone: [{ required: true, validator: this.checkPhone, trigger: 'blur' }],
-        customerRequire: [
+        requirementCode: [
           {
             required: true,
             message: '请选择您的需求',
             trigger: 'change',
           },
         ],
-        areaCode: [{ required: true, message: '请选择业务区域', trigger: 'change' }],
+        bizAreaCode: [{ required: true, message: '请选择业务区域', trigger: 'change' }],
         //合作类型
-        cooperationType: [
+        type: [
           {
             required: true,
             message: '请选择合作类型',
             trigger: 'change',
           },
         ],
-        cooperationAcceptor: [
+        receiveUserId: [
           {
             required: true,
             message: '请选择合作接收方',
@@ -88,14 +94,14 @@ export default {
           },
         ],
         //合作比例
-        cooperationProportion: [
+        ratio: [
           {
             required: true,
             validator: checkProportion,
             trigger: 'blur',
           },
         ],
-        fullFree: [{ required: true, message: '请选择', trigger: 'blur' }],
+        allocation_mode: [{ required: true, message: '请选择', trigger: 'blur' }],
       },
       props: {
         lazy: true,
@@ -126,6 +132,7 @@ export default {
         },
       },
       isRelevance: false, //是否显示关联行
+      isNewRequire: false, //是否显示新增需求弹框
       texts: [], //评分辅助文字
       areaList: [],
       query: {},
@@ -133,14 +140,6 @@ export default {
   },
   computed: {},
   created() {
-    // this.query = getQueryString();
-    // if (this.query.clueId) {
-    //   const param = {
-    //     clueId: this.query.clueId,
-    //     clueSourceType: this.query.type,
-    //   };
-    //   this.getConversionBusinessResource(param); //线索
-    // }
     this.getAreaList(); //地区
     this.getIntentionList(); //等级
     this.getPeopleList(
@@ -184,31 +183,9 @@ export default {
           this.loading = false;
         });
     },
-    /**
-     * @description 通过线索id查询线索信息
-     */
-    getConversionBusinessResource(param) {
-      this.loading = true;
-      get_conversion_business_resource(param)
-        .then((res) => {
-          if (res.code === 200) {
-            res = res.data;
-            this.ruleForm.customerName = res.customerName;
-            this.desensitization = res.desensitization;
-            this.isRelevance = true;
-            this.separatePhoneList(res.list);
-          } else {
-            this.$message.warning(res.message);
-          }
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
-        });
-    },
 
     /**
-     * @description 号码输入框失焦后，查询客户中心号码
+     * @description 号码输入框失焦后，查询号码
      */
     phoneBlurValidate(event) {
       this.$refs.ruleForm.validateField('customerPhone', (valid) => {
@@ -218,6 +195,7 @@ export default {
             this.getPhone();
           }
           this.blurPhoneNumber = event.target.value;
+          console.log(this.blurPhoneNumber, 'this.blurPhoneNumber');
         }
       });
     },
@@ -247,21 +225,27 @@ export default {
       let params = { customerNo: value };
       listContact(params)
         .then((res) => {
-          if (res.code === 200) {
+          const { data, code } = res;
+          if (code === 200) {
             res = res.data;
-            if (!Array.isArray(res)) return;
-            res.shift();
+            if (!Array.isArray(data)) return;
+            data.shift();
             this.ruleForm.phoneArray = [];
-            if (res.length === 0) {
+            if (data.length === 0) {
               this.resetPhone();
               return;
             }
             this.isRelevance = true;
-            this.separatePhoneList(res);
+            this.isNewRequire = true;
+            this.separatePhoneList(data);
+            this.$message.warning('已有客户商机，无需填写基础信息可直接发起');
+            this.$refs.initiateCooperationRef.openModal({}, true);
           } else {
             this.resetPhone();
+            this.isNewRequire = false;
             this.ruleForm.phoneArray = [];
           }
+          console.log(this.isNewRequire, 'this.isNewRequire');
         })
         .catch(() => {
           this.ruleForm.phoneArray = [];
@@ -285,7 +269,7 @@ export default {
       }
     },
     /**
-     * @description 客户中心不存在客户清空
+     * @description 不存在清空此联系手机号
      */
     resetPhone() {
       this.isRelevance = true;
@@ -299,6 +283,12 @@ export default {
       this.ruleForm.phoneArray.push({ contactNo: '' });
     },
     /**
+     * @description 新增需求
+     */
+    addNewRequire() {
+      console.log('新增需求');
+    },
+    /**
      * @description 删除手机号
      */
     delPhone(index) {
@@ -309,13 +299,13 @@ export default {
      * @param {Number}
      */
     changeFullFree(id) {
-      this.$refs.ruleForm.clearValidate('cooperationProportion');
-      this.$refs.ruleForm.clearValidate('cooperationAcceptor');
+      this.$refs.ruleForm.clearValidate('ratio');
+      this.$refs.ruleForm.clearValidate('receiveUserId');
       console.log('ssdfsklflsdlf', this.rules);
       this.isActive = id;
-      this.ruleForm.fullFree = id;
-      console.log(this.isActive, this.ruleForm.fullFree, 'this.isActive');
-      this.$refs.ruleForm.validateField('fullFree', (error) => {
+      this.ruleForm.allocation_mode = id;
+      console.log(this.isActive, this.ruleForm.allocation_mode, 'this.isActive');
+      this.$refs.ruleForm.validateField('allocation_mode', (error) => {
         if (!error) {
           return;
         }
@@ -329,7 +319,7 @@ export default {
       if (val === '') {
         this.peopleList = this.defaultPeopleList;
         this.ruleForm.mchUserId = val.mchUserId;
-        this.ruleForm.cooperationAcceptor = val.userName;
+        this.ruleForm.receiveUserId = val.userName;
       }
       this.accompanyInfo = val;
     },
@@ -376,7 +366,6 @@ export default {
      * @description 提交事件
      */
     submitV(formName) {
-      console.log(this.ruleForm, 'this.ruleForm');
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           const ruleForm = this.ruleForm;
@@ -387,24 +376,32 @@ export default {
           if (!checkBiz) return;
           let { phoneArray, customerPhone, ...elseFrom } = ruleForm;
           console.log(phoneArray, '1212121');
+          const accompanyInfo = this.accompanyInfo;
           let params = elseFrom;
-          params.bizSource = 'SELF_DEV';
+
+          // 需要看接口需要的合作接收人的字段名
+          params.accompanyId = accompanyInfo.mchUserId || undefined;
+          params.accompanyNo = accompanyInfo.userCenterNo || undefined;
+          params.receiveUserId = accompanyInfo.userCenterNo || undefined;
+
           params.customerPhone = customerPhone;
-          params.areaName = this.areaList.find((item) => item.key === params.areaCode)?.value || '';
-          const quire = this.$refs.customerRequireRef.getCheckedNodes();
-          params.requireParentCode = quire[0]?.parent.value || ''; //一级需求编码
-          params.requireParentName = quire[0]?.parent.label || ''; //一级需求名称
-          params.productTypeCode = quire[0]?.data.productTypeCode || ''; //产品类型
-          params.customerRequire = quire[0]?.value || ''; //二级需求编码
-          params.customerRequireName = quire[0]?.label || ''; //二级需求名称
           params.phoneArray = phoneArray.reduce((acc, cur) => {
             if (!cur.id) {
               acc.push(cur.contactNo);
             }
             return acc;
           }, []);
-          const mothodsApi = this.query.clueId ? clue_conversion_business : createBiz;
-          mothodsApi(params)
+          params.areaName =
+            this.areaList.find((item) => item.key === params.bizAreaCode)?.value || '';
+          const quire = this.$refs.requirementRef.getCheckedNodes();
+          console.log(quire, 'quire');
+          params.productTypeCode = quire[0]?.data.productTypeCode || ''; //一级产品类型
+          params.requirementParentCode = quire[0]?.parent.value || ''; //二级需求编码
+          params.requirementParentName = quire[0]?.parent.label || ''; //二级需求名称
+          params.requirementCode = quire[0]?.value || ''; //三级需求编码
+          params.requirementCodeName = quire[0]?.label || ''; //三级需求名称
+          console.log(this.ruleForm, 'this.ruleForm');
+          save_by_absent_customer(params)
             .then((res) => {
               if (res.code === 200) {
                 res = res.data;
@@ -412,14 +409,8 @@ export default {
                   type: 'success',
                   message: '操作成功',
                 });
-                //判断是否推单新建商机，
-                let path = '';
-                if (this.query?.type === 'PUSH_SHEET') {
-                  path = 'push-sheet';
-                } else {
-                  path = 'business-details';
-                }
-                res && this.$router.replace(`/${path}?businessId=` + res);
+                let path = 'cooperation-alliance-clients';
+                res && this.$router.replace(`/${path}?active=YJS`);
               } else {
                 this.$message.warning(res.message);
               }

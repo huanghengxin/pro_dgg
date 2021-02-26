@@ -27,10 +27,9 @@
             :loading="selectLoading"
             clearable
             @change="selectChangeHandle"
-            @blur="handleBlue"
           >
             <el-option
-              v-for="people in peopleList"
+              v-for="people in plannerList"
               :key="people.mchUserId"
               :label="people.userName + '（' + people.userCenterNo + '）'"
               :value="people"
@@ -108,7 +107,6 @@
             </el-date-picker>
           </el-form-item>
         </div>
-        <!--  -->
         <el-form-item label="备注：" prop="remark" class="form-remark">
           <el-input
             v-model="ruleForm.remark"
@@ -132,8 +130,8 @@
 import './index.scss';
 import dayjs from 'dayjs';
 import store from 'storejs';
-import { get_mch_user_info_list, get_dictionary_data_by_parent_code } from 'api/common';
-import { insert } from 'api/close-black-current-limit';
+import { get_dictionary_data_by_parent_code } from 'api/common';
+import { insert, get_plat_form_user_info_list } from 'api/close-black-limit';
 import validateCloseBlackCurrentLimit from 'utils/mixins/closeBlackCurrentLimit';
 export default {
   mixins: [validateCloseBlackCurrentLimit],
@@ -143,9 +141,7 @@ export default {
       dialogVisible: false, //控制dialog开关
       mchDetailId: '', //商户ID
       selectLoading: false, //搜索输入框的加载
-      peopleList: [], //远程搜索人员名单
-      defaultPeopleList: [],
-      accompanyInfo: {}, //供提交时传值
+      plannerList: [], //远程搜索人员名单
       //禁用当前时间之前的时间
       pickerOptions: {
         disabledDate(time) {
@@ -183,8 +179,7 @@ export default {
     dialogColsed() {
       this.$refs.ruleForm.resetFields();
       this.ruleForm.limitWayList = [{ limitTypeName: '', limitProportion: '', limitTime: '' }];
-      this.peopleList = [];
-      this.accompanyInfo = {};
+      this.plannerList = [];
     },
     /**
      * @description 添加关黑限流
@@ -230,12 +225,13 @@ export default {
      * @description 请求数据字典，再加载列表
      * @param {}
      */
-    async getCode(code) {
+    getCode(code) {
       let paramCode = {
         parentCode: code,
       };
-      const result = await get_dictionary_data_by_parent_code(paramCode);
-      this.limitWay = Object.freeze(result.data);
+      get_dictionary_data_by_parent_code(paramCode).then((res) => {
+        if (res.code === 200) this.limitWay = Object.freeze(res.data);
+      });
     },
     /**
      * @description 删除按钮
@@ -277,7 +273,9 @@ export default {
       const params = {
         start: 1,
         limit: 1000,
-        mchDetailId: this.mchDetailId,
+        userCenterStatus: -1,
+        userCenterAuthStatus: '',
+        status: -1,
       };
       const regPhone = /^1[3-9]\d{9}$/;
       if (regPhone.test(keyword)) {
@@ -292,27 +290,18 @@ export default {
      */
     selectChangeHandle(val) {
       if (val === '') {
-        this.peopleList = this.defaultPeopleList;
-      }
-      this.accompanyInfo = val;
-    },
-    handleBlue() {
-      if (this.peopleList.length === 0) {
-        this.peopleList = this.defaultPeopleList;
+        this.plannerList = [];
       }
     },
     /**
      * @description 获取限制人员名单
      */
-    getPeopleList(params, type) {
-      get_mch_user_info_list(params)
+    getPeopleList(params) {
+      get_plat_form_user_info_list(params)
         .then((res) => {
           if (res.code === 200) {
             res = res.data;
-            this.peopleList = res.records || [];
-            if (type) {
-              this.defaultPeopleList = res.records;
-            }
+            this.plannerList = res.records || [];
             this.selectLoading = false;
           } else {
             this.$message.warning(res.message);

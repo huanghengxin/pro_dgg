@@ -23,14 +23,16 @@ class Api {
   constructor() {
     methods.forEach(
       (method) =>
-        (this[method] = (path, data = {}, headers = {}) =>
+        (this[method] = (path, data = {}, headers = {}, isFile) =>
           new Promise((resolve, reject) => {
-            this.doFetch(method, path, data, headers, resolve, reject);
+            this.doFetch(method, path, data, headers, resolve, reject, isFile);
           })),
     );
   }
 
-  doFetch(method, path, data, headers, resolve, reject) {
+  doFetch(method, path, data, headers, resolve, reject, isFile = false) {
+    axios.defaults.responseType = isFile ? 'blob' : 'text';
+    let fileConfig = {};
     const isForm = method === 'form';
     const formData = isForm ? new FormData() : null;
     if (isForm) {
@@ -42,9 +44,21 @@ class Api {
         });
         formData.append('paths', paths.toString(','));
       } else {
-        const dataKeys = Object.keys(data);
-        for (const key of dataKeys) {
-          formData.append(key, data[key]);
+        if (data.file instanceof File) {
+          fileConfig = {
+            onUploadProgress: function(e) {
+              if (e.total > 0) {
+                e.percent = (e.loaded / e.total) * 100;
+              }
+              data.onProgress(e);
+            },
+          };
+          formData.append('file', data.file, data.file.name);
+        } else {
+          const dataKeys = Object.keys(data);
+          for (const key of dataKeys) {
+            formData.append(key, data[key]);
+          }
         }
       }
     }
@@ -65,10 +79,13 @@ class Api {
         ...signData,
       },
     };
-
     data = paramsMethods.indexOf(method) !== -1 ? { params: data, ...config } : data;
     const _path = path.indexOf('http') === 0 ? path : `${API_PREFIX}${path}`;
-    axios[isForm ? 'post' : method](_path, isForm ? formData : data, config)
+    axios[isForm ? 'post' : method](
+      _path,
+      isForm ? formData : data,
+      Object.assign({}, config, fileConfig),
+    )
       .then(({ data }) => {
         resolve(data);
         if (data.code === 5223) {

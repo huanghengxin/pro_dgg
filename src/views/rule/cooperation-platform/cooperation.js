@@ -1,12 +1,7 @@
 import './index.scss';
 import ShowTooltip from 'components/show-tooltip';
-import dayjs from 'dayjs';
-import {
-  queryTreeBook,
-  rules_switch_boarded,
-  merchants_query_rules,
-  update_merchants,
-} from 'api/rule';
+// import dayjs from 'dayjs';
+import { queryTreeBook, merchants_query_rules, update_merchants } from 'api/rule';
 import SvgIcon from 'components/svg-icon';
 export default {
   name: 'cooperation',
@@ -14,9 +9,7 @@ export default {
    * @description 过滤单位
    */
   filters: {
-    getTimeName: function(val) {
-      // if (value == 'TIAO') return '条';
-      // if (value == 'GE') return '个';
+    getTimeName: function (val) {
       const map = {
         U_N_DAYS: '天',
         U_MINUTE: '分钟',
@@ -30,7 +23,23 @@ export default {
     SvgIcon,
   },
   data() {
+    const validateVal1 = (rule, value, callback) => {
+      value = value?.trim();
+      if (value === '') {
+        callback(new Error('必填项'));
+      } else {
+        var reg = /^[1-9][0-9]{0,3}$/;
+        if (!reg.test(value)) {
+          callback(new Error('数值≤9999正整数'));
+        }
+        callback();
+      }
+    };
+
     return {
+      rules: {
+        val1: [{ validator: validateVal1, trigger: 'blur' }],
+      },
       cooperationHeight: null,
       switchboardStatus: null,
       loading: false,
@@ -40,14 +49,57 @@ export default {
       changeForm: [],
       parma: [],
       rulesMerchantLists: [],
-      getRuleList: { data1: [] },
+      // getRuleList: { data1: [] },
       edit: true,
     };
   },
-  computed: {},
-  created() {
-    this.getSwitchboard();
-    this.init();
+  computed: {
+    getLibraryRule() {
+      return (
+        this.ruleList?.reduce((cur, acc) => {
+          cur[acc.ruleCode] = acc;
+          return cur;
+        }, {}) || {}
+      );
+    },
+    /**
+     * @description 规则列表数据
+     */
+    getRuleList() {
+      const arr =
+        this.libraryRule?.map((item) => {
+          const { status, val1 = '', val2 = '', val3 = '', val4 = '', id = '' } =
+            this.getLibraryRule[item.code] || {};
+          return {
+            status,
+            val1,
+            val2,
+            val3,
+            val4,
+            id,
+            ...item,
+          };
+        }) || [];
+      return { data1: arr };
+    },
+  },
+  async created() {
+    this.loading = true;
+    // 请求数据字段
+    this.ruleList = (await this.getRulesMerchantLists()) || [];
+    // 后台
+    const dictionaryTree = (await this.getDictionary()) || {};
+    this.unitCode = dictionaryTree.rule_date_code || [];
+    // 字典和code码一一对应
+    this.libraryRule =
+      dictionaryTree.lz_code?.map((item) => {
+        return {
+          name: item.name,
+          code: item.code,
+          description: item.description,
+        };
+      }) || [];
+    console.log(this.libraryRule, 'this.libraryRule');
   },
   mounted() {
     this.$nextTick(() => {
@@ -69,178 +121,25 @@ export default {
         document.documentElement.clientHeight ||
         document.body.clientHeight - top;
     },
-    async init() {
-      // 商户规则后台数据
-      this.loading = true;
-      this.rulesMerchantLists = (await this.getRulesMerchantLists()) || [];
-      if (this.rulesMerchantLists.length === 0) {
-        this.loading = false;
-        return;
-      }
-      // 数据字典
-      const dictionaryTree = (await this.getDictionary().catch()) || {};
-
-      this.loading = false;
-      this.unitCode = dictionaryTree.rule_date_code || [];
-      let libraryMap = dictionaryTree.rule_biz_db_code?.reduce((acc, cur) => {
-        acc[cur.code] = cur.name;
-        return acc;
-      }, {});
-      // libraryCode
-      let dateMap = dictionaryTree.rule_date_code?.reduce((acc, cur) => {
-        acc[cur.code] = cur.name;
-        return acc;
-      }, {});
-      let unitCodeMap = {};
-      for (const item of this.rulesMerchantLists) {
-        const isLibraryCode = Object.prototype.hasOwnProperty.call(item, 'libraryCode');
-        const isTimeCode = Object.prototype.hasOwnProperty.call(item, 'timeCode');
-        const isNoAttentionMaxDay = Object.prototype.hasOwnProperty.call(item, 'noAttentionMaxDay');
-
-        if (isLibraryCode) item['【X】库'] = libraryMap[item.libraryCode];
-        if (isTimeCode) item['【单位】'] = dateMap[item.timeCode];
-        if (isNoAttentionMaxDay) item['【X】自然日'] = item.noAttentionMaxDay;
-        unitCodeMap[item.ruleCode] = item;
-      }
-      this.handleDataList(unitCodeMap, dictionaryTree.lz_code, 'getRuleList');
-    },
     /**
-     * @description 获取总开关数据
+     * @description val2输入框校验
      */
-    async getSwitchboard() {
-      const param = {
-        ruleCode: 'RULE_SWITCH_ALL',
-      };
-      const boarded = await rules_switch_boarded(param);
-      if (boarded.code === 200) {
-        this.switchboardStatus = boarded.data.status;
-        if (this.switchboardStatus === 1) {
-          this.edit = true;
-        } else {
-          this.start = boarded.data.val1;
-          this.editAble(this.start);
-        }
-      } else {
-        this.$message.warning(boarded.message);
-      }
-    },
-    /**
-     * @description  当前时间和开关开启时间的判断
-     */
-    editAble(startDateStr) {
-      var curDate = dayjs(new Date()).format('YYYY-MM-DD');
-      let startTime = dayjs(new Date(startDateStr)).format('YYYY-MM-DD');
-      if (curDate < startTime) {
-        this.edit = true;
-      } else {
-        this.edit = false;
-      }
-    },
-    /**
-     * @description 正则匹配描述
-     */
-    handleDataList(unitCodeMap, _codeList, data) {
-      const reg = /【单位】|【X】库|【X】自然日|上限/g;
-      console.log(_codeList[10], '151515151');
-      for (const item1 of _codeList) {
-        if (item1.ext1.trim() !== 'Y') {
-          console.log(111111);
-          continue;
-        }
-        console.log(222222);
-        const unit = unitCodeMap[item1.code.trim()];
-        if (typeof unit == 'undefined') {
-          continue;
-        }
-        let arr = Object.keys(unit);
-        if (arr.length == 0) {
-          return;
-        }
-        let obj = {};
-        obj.ruleCode = item1.code || '';
-        obj.id = item1.id || '';
-        obj.name = item1.name || '';
-        obj.max = unit.max || '';
-        obj.val1 = unit.val1 || '';
-        obj.val2 = unit.val2 || '';
-        obj.status = unit.status || '';
-        obj.timeCode = unit.timeCode || '';
-        let str = item1.description;
-        let str1 = str;
-        let flag = true;
-
-        while (flag) {
-          let execItme = reg.exec(str1);
-          if (!execItme) {
-            flag = false;
-          } else {
-            if (unit[execItme[0]]) {
-              str1 = str1.replace(execItme[0], unit[execItme[0]]);
-            }
-          }
-        }
-        obj.description = str1.replace('上限', '默认');
-        if (data === 'getRuleList') {
-          this[data]?.data1.push(obj);
-        } else {
-          this[data]?.data2.push(obj);
-        }
-      }
-    },
-    /**
-     * @description val1输入框校验
-     */
-    handleRule(item) {
+    handleRuleVal2(item) {
       const rule = [
         {
           validator: (rule, value, callback) => {
-            const field = rule.field;
-            const indexArr = field.split('.');
-            const d = indexArr[0];
-            if (value.trim() === '') {
+            console.log(item.code, '12121');
+            if (item.code === 'LZ_FIR' || item.code === 'LZ_PRI_CON') {
               callback();
-            } else {
-              if (d === 'data1') {
-                let reg = /^[1-9]\d*$/;
-                if (!reg.test(value) || value * 1 > item.max * 1) {
-                  callback(new Error('请输入平台最大值范围内正整数'));
-                }
-                callback();
-              } else {
-                let reg = /^[0-9]\d*$/;
-                if (!reg.test(value) || value * 1 > item.max * 1) {
-                  callback(new Error('请输入平台最大值范围内正整数'));
-                }
-                callback();
-              }
+            } else if (value.trim() === '') {
+              callback(new Error('必填项'));
             }
+            callback();
           },
           trigger: ['blur'],
         },
       ];
       return rule;
-    },
-    /**
-     * @description 输入框值变化
-     */
-    handleChange(row) {
-      let obj = {};
-      var result = this.parma.some((item) => {
-        if (item.code === row.code) {
-          return true;
-        }
-      });
-      if (result) {
-        this.parma.forEach((item) => {
-          if (item.code === row.code) {
-            item.val1 = row.val1;
-          }
-        });
-      } else {
-        obj.code = row.code;
-        obj.val1 = row.val1;
-        this.parma.push(obj);
-      }
     },
 
     /**
@@ -279,14 +178,10 @@ export default {
      */
     saveMerchantRule() {
       let check1 = null;
-      let check2 = null;
-      this.$refs.getStaffListRef.validate((valid) => {
-        check2 = valid;
-      });
       this.$refs.getRuleListRef.validate((valid) => {
         check1 = valid;
       });
-      if (check1 && check2) {
+      if (check1) {
         this.$messageBox
           .confirm('请确定保存规则, 是否继续?', '保存提示', {
             confirmButtonText: '确定',
@@ -308,15 +203,17 @@ export default {
      */
     updateMerchants() {
       const getRule = this.getRuleList?.data1 || [];
+
       const rulesMerchant =
         getRule?.map((item) => {
           return {
             id: item.id,
-            ruleCode: item.ruleCode,
-            timeCode: item.timeCode,
+            ruleCode: item.code,
             status: item.status,
             val1: item?.val1.trim(),
             val2: item?.val2.trim(),
+            val3: item?.val3.trim(),
+            val4: item?.val4.trim(),
           };
         }) || [];
 

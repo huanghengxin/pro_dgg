@@ -8,6 +8,7 @@
 import SearchTitle from './components/search-title';
 import HandleRecord from './components/handle-record';
 export default {
+  name: 'CloseBlackHandleRecord',
   components: {
     SearchTitle,
     HandleRecord,

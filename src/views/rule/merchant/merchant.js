@@ -14,7 +14,7 @@ export default {
    * @description 过滤单位
    */
   filters: {
-    getTimeName: function(val) {
+    getTimeName: function (val) {
       const map = {
         U_N_DAYS: '天',
         U_MINUTE: '分钟',
@@ -222,25 +222,25 @@ export default {
     /**
      * @description 输入框值变化
      */
-    handleChange(row) {
-      let obj = {};
-      var result = this.parma.some((item) => {
-        if (item.code === row.code) {
-          return true;
-        }
-      });
-      if (result) {
-        this.parma.forEach((item) => {
-          if (item.code === row.code) {
-            item.val1 = row.val1;
-          }
-        });
-      } else {
-        obj.code = row.code;
-        obj.val1 = row.val1;
-        this.parma.push(obj);
-      }
-    },
+    // handleChange(row) {
+    //   let obj = {};
+    //   var result = this.parma.some((item) => {
+    //     if (item.code === row.code) {
+    //       return true;
+    //     }
+    //   });
+    //   if (result) {
+    //     this.parma.forEach((item) => {
+    //       if (item.code === row.code) {
+    //         item.val1 = row.val1;
+    //       }
+    //     });
+    //   } else {
+    //     obj.code = row.code;
+    //     obj.val1 = row.val1;
+    //     this.parma.push(obj);
+    //   }
+    // },
 
     /**
      * @description 数据字典接口

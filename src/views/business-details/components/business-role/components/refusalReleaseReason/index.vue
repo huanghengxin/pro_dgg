@@ -22,7 +22,7 @@
             v-model="ruleForm.refuseReason"
             v-emoji="'textarea'"
             type="textarea"
-            placeholder="请填写拒绝的原因，便于发起人理解 哦～"
+            placeholder="请填写拒绝的原因，便于发起人理解哦～"
             maxlength="200"
             show-word-limit
             resize="none"

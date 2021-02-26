@@ -31,8 +31,24 @@
 .filter-container {
   display: flex;
   align-items: baseline;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 20px;
+  .date-picker {
+    height: 30px !important;
+    .el-input__inner {
+      height: 30px !important;
+      padding: 0px 10px;
+      margin-left: 12px;
+      box-sizing: border-box;
+    }
+  }
   &_title {
     width: 90px;
+    color: $black-2;
+    font-weight: $font-weight-crm;
+    font-size: $font-size-sm;
   }
   &_item {
   }

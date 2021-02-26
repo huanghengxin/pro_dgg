@@ -10,6 +10,7 @@ import MultipCuleRetrieveDialog from '../components/multip-cule-retrieve-dialog'
 import callMixins from 'utils/mixins/callMixins';
 
 export default {
+  name: 'ClueSeasLibrary',
   components: {
     ShowTooltip,
     MultipCuleRetrieveDialog,
@@ -305,7 +306,7 @@ export default {
      */
     selectAllClick(row) {
       if (this.limit <= 50) {
-        this.multipleSelectionId = row?.map(function (val) {
+        this.multipleSelectionId = row?.map(function(val) {
           return val.id;
         });
       } else {
@@ -319,7 +320,7 @@ export default {
      * @description 多选
      */
     handleSelectionChange(val) {
-      this.multipleSelectionId = val.map(function (val) {
+      this.multipleSelectionId = val.map(function(val) {
         return val.id;
       });
     },

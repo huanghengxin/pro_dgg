@@ -32,7 +32,7 @@ const validateCloseBlackCurrentLimit = {
       }
       let regLimitProportion = /^([1-9]|[1-9]\d|100)$/;
       if (!value) {
-        callback('请输入');
+        callback('请输入1-100整数');
       } else if (!regLimitProportion.test(value)) {
         callback('请输入1-100整数');
       } else {

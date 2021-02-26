@@ -58,9 +58,10 @@
         }
         .el-date-editor {
           border-radius: 2px;
-          width: 250px;
+          width: 260px;
           height: 32px;
-          .el-input__icon {
+          .el-input__icon,
+          .el-range-separator {
             line-height: 26px;
           }
         }

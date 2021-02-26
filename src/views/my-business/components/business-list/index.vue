@@ -272,7 +272,6 @@ export default {
       handler() {
         this.getListData(this.params);
       },
-      immediate: true,
       deep: true,
     },
   },
@@ -280,9 +279,7 @@ export default {
     this.handleEventBus();
     this.getListData(this.params);
   },
-  mounted() {
-    this.handleEventBus();
-  },
+  mounted() {},
   beforeDestroy() {
     this.$eventBus.$off('my-business_transfer-params');
   },

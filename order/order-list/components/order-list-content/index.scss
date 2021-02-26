@@ -1,0 +1,115 @@
+.order-list-content-page {
+  padding: 16px 20px;
+  margin-top: 16px;
+  background-color: #fff;
+  box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+  .order-list-main {
+    margin-bottom: 16px;
+    color: #222222;
+    border: 1px solid #e5e5e5;
+    border-bottom: 0;
+    .el-tag {
+      width: max-content;
+      height: 20px;
+      font-size: 12px;
+      padding: 0 4px;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 2px;
+    }
+    .order-list-content-title {
+      background: #f2faff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 14px 0 14px 16px;
+      display: flex;
+      // justify-content: space-around;
+      & > div:nth-child(2) {
+        margin: 0 20px 0 4px;
+      }
+      & > div:nth-child(3),
+      & > div:nth-child(4),
+      & > div:nth-child(5) {
+        margin-right: 20px;
+      }
+      & > div:first-child,
+      & > div:last-child {
+        display: flex;
+      }
+    }
+    .order-list-content-table {
+      .order-number,
+      .contract-number {
+        margin-right: 20px;
+        color: #4974f5;
+      }
+      .contract-main {
+        margin-right: 34px;
+      }
+      .order-details {
+        cursor: pointer;
+        color: #4974f5;
+        margin: 0 20px;
+      }
+      .order-type {
+        margin: 0 34px 0 8px;
+        background: #bfbfbf;
+        border-color: transparent;
+      }
+      .order-list-more,
+      .apply-contract {
+        color: #4974f5;
+        cursor: pointer;
+        .icon-up {
+          transform: rotate(-90deg);
+        }
+        .icon-down {
+          transform: rotate(90deg);
+        }
+      }
+      & > div:nth-child(1) {
+        border-bottom: 1px solid #e5e5e5;
+        padding: 14px 0 14px 16px;
+        height: 48px;
+        background: #f2f2f2;
+        display: flex;
+      }
+      .order-list-content-table-list {
+        display: flex;
+        align-items: center;
+        padding-left: 16px;
+        min-height: 78px;
+        background: #ffffff;
+        border-bottom: 1px solid #e5e5e5;
+        .product-name {
+          width: 180px;
+          margin-right: 8px;
+          & > div:nth-child(1) {
+            margin-bottom: 8px;
+          }
+          & > div:nth-child(2) {
+            color: #999999;
+          }
+        }
+        .cope-with {
+          margin-right: 110px;
+        }
+        .product-price {
+          margin: 0 110px;
+          & > div:nth-child(1) {
+            margin-bottom: 8px;
+          }
+          & > div:nth-child(2) {
+            color: #999999;
+          }
+        }
+      }
+    }
+  }
+  .order-list-footer {
+    background-color: #ffffff;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

@@ -1,7 +1,7 @@
 <template>
   <div class="prospective">
     <div class="prospective__search">
-      <div class="prospective__search-from search-base-component">
+      <div>
         <search-button
           show-word-limit
           placeholder="请输入姓名/联系方式/商机编号查询"
@@ -10,7 +10,7 @@
           @clear="handleInputValue"
         ></search-button>
       </div>
-      <div class="prospective__search-from first-search-from">
+      <div class="prospective__search-tabs">
         <span
           v-for="item in clueSourceList"
           :key="item.id"
@@ -24,23 +24,20 @@
           {{ item.name }}
         </span>
       </div>
-      <div class="search-box">
-        <list-search
-          v-if="clueImpowerList.length > 0 && param.clueSourceType === 'QDS_ClUE_SOURCE_IM'"
-          :search-data="clueImpowerList"
-          lable="号码授权"
-          :active="param.clueImpower"
-          active-type="clueImpower"
-          @active-handle="onActiveHandle"
-        />
-        <list-search
-          v-if="clueStatusList.length > 0"
-          :search-data="clueStatusList"
-          lable="是否联系"
-          :active="param.clueStatus"
-          active-type="clueStatus"
-          @active-handle="onActiveHandle"
-        />
+      <div v-for="item in curTabFilter" :key="item.code" class="prospective__search-list">
+        <span class="lable">{{ item.name }}</span>
+        <span
+          v-for="one in item.searchList"
+          :key="one.code"
+          :class="{
+            'filter-item': true,
+            'filter-item_active': one.code === param[item.code],
+          }"
+          data-tid="customerChangeCuleStatus"
+          @click="filterTag(one, item.code)"
+        >
+          {{ one.name }}
+        </span>
       </div>
     </div>
 
@@ -61,14 +58,14 @@
           </template>
           <el-table-column
             prop="customerName"
-            min-width="150"
+            min-width="120"
             fixed="left"
             label="姓名"
             class-name="list-selection"
           >
             <template slot-scope="scope">
               <div v-if="scope.row.customerName">
-                <show-tooltip :text="scope.row.customerName" :width="120"></show-tooltip>
+                <show-tooltip :text="scope.row.customerName" :width="100"></show-tooltip>
               </div>
               <span v-else>暂无数据</span>
             </template>
@@ -76,13 +73,12 @@
           <el-table-column
             v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
             label="信息来源"
-            min-width="180"
+            min-width="220"
           >
             <template slot-scope="scope">
-              <div v-if="scope.row.customerPhone">
-                <p>
-                  <el-tag>{{ scope.row.customerPhone }}</el-tag>
-                </p>
+              <div v-if="scope.row.keep">
+                <el-tag>{{ scope.row.keep }}</el-tag>
+                <el-tag>{{ scope.row.keep2 }}</el-tag>
               </div>
               <span v-else>暂无数据</span>
             </template>
@@ -166,7 +162,7 @@
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="130" fixed="right" class-name="list-last">
+          <el-table-column label="操作" min-width="150" fixed="right" class-name="list-last">
             <template slot-scope="scope">
               <div class="list-handle">
                 <p

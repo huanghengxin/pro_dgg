@@ -105,13 +105,16 @@
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-menu-item index="7">
+            <!-- <el-menu-item index="7">
               <router-link to="/push-sheet" tag="div">推单</router-link>
-            </el-menu-item>
+            </el-menu-item> -->
           </el-menu>
         </div>
+
         <div class="el-main_view">
-          <router-view />
+          <keep-alive :include="$store.state['keep-alive'].cacheList">
+            <router-view />
+          </keep-alive>
         </div>
       </el-main>
     </el-container>
@@ -120,6 +123,8 @@
 
 <script>
 export default {
+  name: 'Layout',
+
   data() {
     return {
       SP_MICRO_FE: window.SP_MICRO_FE,
@@ -155,7 +160,6 @@ export default {
       this.$store.commit('user/SET_FULLNAME');
     }
   },
-
   methods: {
     handleClick() {
       this.$router.go(-1);

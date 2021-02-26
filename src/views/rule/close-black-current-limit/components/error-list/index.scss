@@ -9,6 +9,7 @@
     align-items: center;
     border-bottom: 1px solid #e5e5e5;
     padding-bottom: 8px;
+    margin-bottom: 16px;
     & > div {
       font-size: 16px;
       font-weight: 600;
@@ -33,7 +34,6 @@
     background: #fef0f0;
     border-radius: 2px;
     padding: 8px 16px;
-    margin: 16px 0;
     .icon-surface_informationcircle {
       color: #f1524e;
     }
@@ -45,6 +45,7 @@
     }
   }
   .error-list-table {
+    margin-top: 16px;
     .el-table__row {
       td {
         height: 58px;

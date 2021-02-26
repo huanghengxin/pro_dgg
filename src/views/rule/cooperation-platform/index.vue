@@ -35,7 +35,7 @@
     <div class="content">
       <div class="business">
         <div class="business__title">合作联盟规则</div>
-        <el-form ref="getRuleListRef" :model="getRuleList">
+        <el-form ref="getRuleListRef" :model="getRuleList" :rules="rules">
           <el-table :data="getRuleList.data1" class="business__table">
             <template slot="empty">
               <svg-icon key="item-warp" type="nodata" icon="icon-icon_nodata" />
@@ -58,55 +58,50 @@
                     :width="340"
                     :tooltip-line-clamp="2"
                   ></show-tooltip>
-                  <!-- <el-tag
-                    v-if="scope.row.max && scope.row.ruleCode !== 'LZ_PUB_INV'"
-                    type="info"
-                    effect="dark"
-                    >最大值 {{ scope.row.max }} {{ scope.row.timeCode | getTimeName }}</el-tag
-                  > -->
                 </div>
               </template>
             </el-table-column>
             <el-table-column class-name="list-input" prop="val1" label="值" min-width="350">
               <template slot-scope="scope">
-                <el-form-item
-                  :prop="'data1.' + scope.$index + '.val1'"
-                  :rules="handleRule(scope.row)"
-                >
+                <el-form-item :prop="'data1.' + scope.$index + '.val1'" :rules="rules.val1">
                   <el-input
                     v-model="scope.row.val1"
-                    :placeholder="scope.row.max"
-                    :disabled="!scope.row.max || !edit || scope.row.status === 2"
+                    :placeholder="scope.row.val1"
                     type="text"
                     :data-tid="'val1Input' + scope.$index"
                     class="val1"
-                  ></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-input
-                    v-model="scope.row.val2"
-                    type="text"
-                    class="val1"
-                    :data-tid="'val2Input' + scope.$index"
                   ></el-input>
                 </el-form-item>
                 <el-form-item
-                  :prop="'data1.' + scope.$index + '.val1'"
-                  :rules="handleRule(scope.row)"
+                  :prop="'data1.' + scope.$index + '.val2'"
+                  :rules="handleRuleVal2(scope.row)"
                 >
                   <el-input
                     v-model="scope.row.val2"
+                    :placeholder="scope.row.val2"
                     type="text"
-                    :data-tid="'val1Input' + scope.$index"
+                    class="val1"
+                    :data-tid="'val2Input' + scope.$index"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input
+                    v-model="scope.row.val3"
+                    :placeholder="scope.row.val3"
+                    disabled
+                    type="text"
+                    :data-tid="'val3Input' + scope.$index"
                     class="val1"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-input
-                    v-model="scope.row.val2"
+                    v-model="scope.row.val4"
+                    :placeholder="scope.row.val4"
+                    disabled
                     type="text"
                     class="val1"
-                    :data-tid="'val2Input' + scope.$index"
+                    :data-tid="'val4Input' + scope.$index"
                   ></el-input>
                 </el-form-item>
               </template>

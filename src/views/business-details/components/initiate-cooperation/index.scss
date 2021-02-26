@@ -1,13 +1,12 @@
 @import 'assets/scss/mixins/base.scss';
+
 .initiate-cooperation {
-  .content {
+  .contents {
     .el-form-item {
       margin-bottom: 20px !important;
     }
     &-customerName {
       .el-form-item__label {
-        width: 72px !important;
-        margin-left: 12px;
         margin-top: -4px;
       }
       .el-form-item__content {
@@ -33,7 +32,18 @@
       }
       .icon-question {
         cursor: pointer;
+        margin-left: 6px;
         font-size: 14px;
+      }
+      .icon-plus {
+        width: 50px;
+        margin-left: 6px;
+        color: #4974f5;
+        font-size: 12px;
+        cursor: pointer;
+        em {
+          margin-left: 4px;
+        }
       }
       .inputFlexBox {
         color: #222;

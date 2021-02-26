@@ -2,7 +2,9 @@
 @import 'assets/scss/mixins/list-ui';
 
 @include list();
-
+.list-base-ui .list-name .cell {
+  padding-left: 0px;
+}
 .cooperationCustomer {
   width: 100%;
   font-size: $font-size-md;
@@ -22,9 +24,12 @@
     display: flex;
     overflow: hidden;
     position: relative;
-
-    .el-tabs {
+    .tabList {
       width: 100%;
+      .tab-container {
+        margin-top: 0;
+        padding: 0 0 0 24px;
+      }
     }
     .tocooperationBox {
       position: absolute;

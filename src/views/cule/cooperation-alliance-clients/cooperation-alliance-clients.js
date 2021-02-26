@@ -2,10 +2,13 @@ import ShowTooltip from 'components/show-tooltip';
 import ListSearch from './components/list-search';
 import SvgIcon from 'components/svg-icon';
 import RefusalReleaseReason from '../../business-details/components/business-role/components/refusalReleaseReason/index.vue';
-import { get_cooperation_alliance_list } from 'api/cooperation-in-page';
+import { get_page } from 'api/cooperation-in-page';
 import SearchButton from 'components/search-button';
 import tabList from './constants';
-// import FilterTime from 'utils/filter-time'; // 使用日期过滤
+import { pick_up_clue } from 'api/cule';
+import { store, actions } from './components/observable';
+import { filterWithSecTime } from 'utils/helper'; // 使用日期过滤
+import { getQueryString } from 'utils/helper';
 // import dayjs from 'dayjs'; // 使用日期过滤
 export default {
   components: {
@@ -25,10 +28,6 @@ export default {
       activeName: 'DJS',
       loading: false,
       cooperationList: [], //合作联盟数据
-      tableData: {
-        total: 0,
-        data: [],
-      },
       tabList: Object.freeze(tabList),
       start: 1,
       limit: 10,
@@ -38,17 +37,25 @@ export default {
     };
   },
   created() {
-    // this.get_cooperation_alliance_list(this.param);
+    // this.getCooperationList(this.param);
     // 数据字典
     // this.receivedInit();
+    console.log(actions.getDataList(), 'store.tableData1');
+    console.log(store.tableData, 'store.tableData2');
+    let query = new getQueryString();
+    console.log(query, 'query');
+    if (query.active) {
+      this.activeName = query.active;
+    }
   },
   computed: {
-    params() {
-      return {
-        start: this.start,
-        limit: this.limit,
-        ...this.fieldParams[this.activeName],
-      };
+    tableData() {
+      return store.tableData;
+    },
+  },
+  filters: {
+    filterTime(val) {
+      return val ? filterWithSecTime(val) : '';
     },
   },
   mounted() {},
@@ -70,7 +77,7 @@ export default {
 
     //tab切换
     handleClick(tab) {
-      console.log(tab.name);
+      console.log(tab.name, '111');
       if (tab.name == 1) {
         //我接收的
         this.receivedInit();
@@ -103,7 +110,7 @@ export default {
     //   console.log(item, index, 'item');
     //   this.enterTimeIndex = index; //用于控制当前点击样式
     //   this.sortClear();
-    //   this.get_cooperation_alliance_list(this.param);
+    //   this.get_page(this.param);
     // },
     // /**
     //  * @description 合作类型
@@ -115,7 +122,7 @@ export default {
     //   console.log(item, 'item');
     //   this.enterTypeIndex = index; //用于控制当前点击样式
     //   this.sortClear();
-    //   this.get_cooperation_alliance_list(this.param);
+    //   this.get_page(this.param);
     // },
     // /**
     //  * @description 发起时间切换
@@ -138,12 +145,12 @@ export default {
     //       'YYYY-MM-DD HH:mm:ss',
     //     ).time[1];
     //     this.date = '';
-    //     this.get_cooperation_alliance_list(this.param);
+    //     this.get_page(this.param);
     //   }
     //   if (this.isActive == 0) {
     //     this.param.dropTimeStart = undefined;
     //     this.param.dropTimeEnd = undefined;
-    //     this.get_cooperation_alliance_list(this.param);
+    //     this.get_page(this.param);
     //   }
     // },
     // /**
@@ -155,7 +162,7 @@ export default {
     //   this.start = 1;
     //   this.param.dropTimeStart = dayjs(val[0]).format('YYYY-MM-DD HH:mm:ss');
     //   this.param.dropTimeEnd = dayjs(val[1]).format('YYYY-MM-DD HH:mm:ss');
-    //   this.get_cooperation_alliance_list(this.param);
+    //   this.get_page(this.param);
     // },
     // /**
     //  * @description 线索来源
@@ -185,7 +192,7 @@ export default {
       //     this.param.isAsc = 0;
       //   }
       // }
-      // this.get_cooperation_alliance_list(this.param);
+      // this.get_page(this.param);
     },
 
     /**
@@ -200,55 +207,55 @@ export default {
     /**
      * @description 接受合作
      */
-    // listHandleClick(id) {
-    //   const param = {
-    //     clueId: id,
-    //   };
-    //   this.$messageBox
-    //     .confirm('请确认是否接收合作联盟？', '提示', {
-    //       confirmButtonText: '确定',
-    //       cancelButtonText: '取消',
-    //       type: 'warning',
-    //       customClass: 'message-box-min-height',
-    //       closeOnClickModal: false,
-    //     })
-    //     .then(() => {
-    //       pick_up_clue(param)
-    //         .then((res) => {
-    //           if (res.code === 200) {
-    //             if (this.cooperationList?.length == 1 && this.param.start != 1) {
-    //               this.param.start--;
-    //             }
-    //             this.get_cooperation_alliance_list(this.param);
-    //             this.$message({
-    //               type: 'success',
-    //               message: '已接收合作联盟!',
-    //             });
-    //           } else {
-    //             this.$message.warning(res.message);
-    //           }
-    //         })
-    //         .catch(() => {
-    //           this.loading = false;
-    //         });
-    //     })
-    //     .catch(() => {
-    //       this.loading = false;
-    //     });
-    // },
+    listHandleClick(id) {
+      const param = {
+        clueId: id,
+      };
+      this.$messageBox
+        .confirm('请确认是否接收合作联盟？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          customClass: 'message-box-min-height',
+          closeOnClickModal: false,
+        })
+        .then(() => {
+          pick_up_clue(param)
+            .then((res) => {
+              if (res.code === 200) {
+                if (this.cooperationList?.length == 1 && this.param.start != 1) {
+                  this.param.start--;
+                }
+                this.get_page(this.param);
+                this.$message({
+                  type: 'success',
+                  message: '已接收合作联盟!',
+                });
+              } else {
+                this.$message.warning(res.message);
+              }
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+    },
     /**
      * @description 拒绝合作
      */
-    // refuseCooperation(id) {
-    //   this.$refs.refusalReleaseReasonRef.openModal(id);
-    //   console.log(id, 'id');
-    // },
+    refuseCooperation(id) {
+      this.$refs.refusalReleaseReasonRef.openModal(id);
+      console.log(id, 'id');
+    },
     /**
      * @description 合作联盟列表数据 我接收的
      */
-    get_cooperation_alliance_list(param) {
+    getCooperationList(param) {
       this.loading = true;
-      get_cooperation_alliance_list(param)
+      get_page(param)
         .then((result) => {
           if (result.code === 200) {
             this.total = result.data.totalCount * 1;
@@ -268,11 +275,11 @@ export default {
     handleSizeChange(val) {
       this.param.limit = val;
       this.param.start = 1;
-      this.get_cooperation_alliance_list(this.param);
+      this.getCooperationList(this.param);
     },
     handleCurrentChange(val) {
       this.param.start = val;
-      this.get_cooperation_alliance_list(this.param);
+      this.getCooperationList(this.param);
     },
   },
 };

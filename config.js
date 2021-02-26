@@ -69,7 +69,7 @@ const envs = [
 
 const config = {
   // 本地开发时，根据这个值匹配envs的配置
-  branch: 'prod',
+  branch: 'dev',
 
   // 是否为移动端应用，为true时启用px转rem规则
   isH5: false,

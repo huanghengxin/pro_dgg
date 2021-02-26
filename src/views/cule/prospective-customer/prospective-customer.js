@@ -3,14 +3,17 @@ import ShowMoreRequire from 'views/dynamic-business/components/show-more-require
 import ShowTooltip from 'components/show-tooltip';
 import WriteFollowDailog from './components/write-follow-dailog';
 import MoreFollowRecord from './components/more-follow-record';
-import ListSearch from './components/list-search';
 import SvgIcon from 'components/svg-icon';
 import NoAttention from 'views/my-business/components/no-attention';
 import callMixins from 'utils/mixins/callMixins';
 import { filterTime as filterTimeDate } from 'utils/helper'; // 使用日期过滤
 import { get_my_potential_customer_lists } from 'api/cule';
 import SearchButton from 'components/search-button';
-import { CULE_SOURCE_LIST, CULE_IMPOWER_LIST, CULE_STATUS_LIST } from 'constants/constants.js';
+import {
+  CULE_SOURCE_LIST,
+  QDS_ClUE_SOURCE_STAY_LIST,
+  QDS_ClUE_SOURCE_IM_LIST,
+} from './constants.js';
 export default {
   components: {
     ShowTooltip,
@@ -21,7 +24,6 @@ export default {
     MoreRequire,
     NoAttention,
     SearchButton,
-    ListSearch,
   },
   filters: {
     statusFormat(val) {
@@ -41,30 +43,58 @@ export default {
       parentLoadMore: this.loadMore,
     };
   },
+
   data() {
     return {
       dialogVisible: false,
       loading: false,
       clueSourceList: [], //线索来源数据字典
-      clueImpowerList: [],
-      clueStatusList: [],
-      potentialCustomerList: [{ customerName: '张超', customerPhone: '15008209695' }], //列表数据
+      clueSearchList: [],
+      potentialCustomerList: [
+        {
+          customerName: '张超',
+          keep2: '薯片app电话',
+          keep: '公海库拾回',
+          customerPhone: '15008209695',
+        },
+      ], //列表数据
       total: 0,
       param: {
         start: 1,
         limit: 10,
         clueSourceType: 'QDS_ClUE_SOURCE_STAY',
         clueStatus: 'QDS_ClUE_STATUS_NOT',
-        clueImpower: 'QDS_ClUE_IMPOWER_NOT',
+        clueImpower: '',
         orderBy: '1', //排序字段 orderBy
         isAsc: 0,
       },
     };
   },
+  computed: {
+    curTabFilter() {
+      const map = {
+        QDS_ClUE_SOURCE_STAY: QDS_ClUE_SOURCE_STAY_LIST,
+        QDS_ClUE_SOURCE_IM: QDS_ClUE_SOURCE_IM_LIST,
+      };
+      return map[this.param.clueSourceType];
+    },
+  },
+  watch: {
+    'param.clueSourceType': {
+      handler: function (val, oldval) {
+        if (val === 'QDS_ClUE_SOURCE_IM') {
+          this.param.clueImpower = 'QDS_ClUE_IMPOWER_NOT';
+          this.param.clueStatus = 'QDS_ClUE_STATUS_NOT';
+        } else {
+          this.param.clueImpower = '';
+          this.param.clueStatus = 'QDS_ClUE_STATUS_NOT';
+        }
+        this.getTeamBusyList(this.param);
+      },
+    },
+  },
   created() {
     this.clueSourceList = Object.freeze(CULE_SOURCE_LIST);
-    this.clueImpowerList = Object.freeze(CULE_IMPOWER_LIST);
-    this.clueStatusList = Object.freeze(CULE_STATUS_LIST);
     this.getTeamBusyList(this.param);
   },
   mounted() {},
@@ -80,10 +110,9 @@ export default {
      */
     filterTag(item, field) {
       this.param[field] = item.code;
-      this.param.clueStatus = 'QDS_ClUE_STATUS_NOT';
-      this.param.clueImpower = 'QDS_ClUE_IMPOWER_NOT';
       this.param.pageNum = 1;
       this.sortClear();
+      if (field === 'clueSourceType') return;
       this.getTeamBusyList(this.param);
     },
     /**
