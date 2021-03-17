@@ -38,10 +38,10 @@
         <ul v-if="list.length > 0" key="handle-log">
           <li v-for="item in list" :key="item.id" class="table-tr">
             <div>
-              {{ item.optType | handleLog }}
+              <show-tooltip :text="item.optType | handleLog" :width="160"></show-tooltip>
             </div>
             <div>
-              <show-tooltip :text="item.optPerson || ''" :width="160"></show-tooltip>
+              <show-tooltip :text="item.optPerson || '暂无数据'" :width="160"></show-tooltip>
               <!-- {{ item.optPerson || '-' }} -->
             </div>
             <div>
@@ -98,7 +98,7 @@ export default {
   },
   filters: {
     handleLog(val) {
-      return HANDLE_LOG[val];
+      return HANDLE_LOG[val] || '暂无数据';
     },
   },
   data() {

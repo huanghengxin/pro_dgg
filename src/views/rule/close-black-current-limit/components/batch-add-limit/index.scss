@@ -52,6 +52,9 @@
     .el-upload-list__item-name:hover {
       color: #222222;
     }
+    .el-upload-list__item:hover .el-upload-list__item-status-label {
+      display: none;
+    }
   }
   .el-dialog__footer {
     .el-button {

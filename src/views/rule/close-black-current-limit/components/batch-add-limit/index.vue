@@ -5,17 +5,13 @@
       :visible.sync="dialogVisible"
       width="480px"
       :close-on-click-modal="false"
+      :close-on-press-escape="closeEscape"
       @closed="dialogColsed"
     >
       <div class="batch-add-limit-text">
         <span>请下载导入文件模板，按格式修改后导入</span>
         <span>
-          <!-- <a
-            href="https://sp-img-wlh.oss-cn-beijing.aliyuncs.com/diyTest_1614244790000_%E5%85%B3%E9%BB%91%E9%99%90%E6%B5%81%E4%BA%BA%E5%91%98%E5%90%8D%E5%8D%95%E6%A8%A1%E6%9D%BF.xlsx"
-          >
-            下载模板
-          </a> -->
-          <span @click="download">下载模板</span>
+          <span data-tid="batchAddLimitPageDownload" @click="download">下载模板</span>
         </span>
       </div>
       <div class="batch-add-limit-button">
@@ -23,26 +19,39 @@
           ref="upload"
           class="upload-demo"
           action="/"
-          :disabled="isUploadButton"
+          :disabled="disabledButton"
           :on-exceed="handleExceed"
           :before-upload="beforeAvatarUpload"
           :on-progress="uploadProgress"
+          :on-error="error"
           :auto-upload="false"
           :http-request="httpRequest"
           :limit="1"
           accept=".xls,.xlsx"
         >
-          <el-button plain :disabled="isUploadButton">上传按钮</el-button>
+          <el-button plain :disabled="disabledButton">上传文件</el-button>
         </el-upload>
         <div slot="tip" class="el-upload__tip">
           <p>提示：</p>
           <p>1、仅支持上传Excel格式文件（同时支持各版本下xls、xlsx格式）</p>
-          <p>2、一次仅支持一份文件上传；一份文件最多上传500条；</p>
+          <p>2、一次仅支持一份文件上传；一份文件最多上传100条</p>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button plain @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="intoLimitList">导入</el-button>
+        <el-button
+          plain
+          :disabled="disabledButton"
+          data-tid="batchAddLimitPageCancelButton"
+          @click="dialogVisible = false"
+          >取消</el-button
+        >
+        <el-button
+          type="primary"
+          :disabled="disabledButton"
+          data-tid="batchAddLimitPageIntoLimitList"
+          @click="intoLimitList"
+          >导入</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -57,7 +66,8 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      isUploadButton: false,
+      disabledButton: false,
+      closeEscape: true,
       file: null,
     };
   },
@@ -67,6 +77,26 @@ export default {
     },
     dialogColsed() {
       this.$refs.upload.clearFiles();
+      this.disabledButton = false;
+    },
+    /**
+     * @description 解决下载模板文件名字
+     */
+    downloadFile(url, fileName) {
+      let x = new XMLHttpRequest();
+      x.open('GET', url, true);
+      x.responseType = 'blob';
+      x.onload = function(e) {
+        //会创建一个 DOMString，其中包含一个表示参数中给出的对象的URL。这个 URL 的生命周期和创建它的窗口中的 document 绑定。这个新的URL 对象表示指定的 File 对象或 Blob 对象。
+        const url = window.URL.createObjectURL(x.response);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a = null;
+      };
+      x.send();
     },
     /**
      * @description 下载模板
@@ -78,13 +108,8 @@ export default {
       };
       find(obj).then((res) => {
         if (res.code === 200) {
-          let Anode = document.createElement('a');
           let result = res.data[0];
-          Anode.href = result.filepath;
-          Anode.download = result.filename;
-          document.body.appendChild(Anode);
-          Anode.click();
-          document.body.removeChild(Anode);
+          this.downloadFile(result.filepath, result.filename);
         }
       });
     },
@@ -100,19 +125,18 @@ export default {
         } else {
           if (res.data.length === 0) {
             this.$message.success(res.message);
-          } else {
-            this.$message.info('导入文件存在错误数据，请修改后重新上传！');
           }
           // 把数据放进store里
           mutations.saveErrorList(res.data);
           if (storeError.errorList.length > 0) {
             this.$router.push('/error-list');
           } else {
-            this.$emit('batch-add');
+            this.$emit('update-list');
           }
           this.dialogVisible = false;
         }
-        this.isUploadButton = false;
+        this.disabledButton = false;
+        this.closeEscape = true;
       }, options.onError);
     },
     /**
@@ -124,6 +148,14 @@ export default {
         return;
       }
       this.$refs.upload.submit();
+      this.closeEscape = false;
+    },
+    /**
+     * @description 文件上传失败时的钩子
+     */
+    error() {
+      this.$message.warning('导入文件失败！');
+      this.disabledButton = false;
     },
     /**
      * @description 文件超出个数限制时的钩子
@@ -135,7 +167,7 @@ export default {
      * @description 文件上传时的钩子
      */
     uploadProgress(event, file, fileList) {
-      this.isUploadButton = true;
+      this.disabledButton = true;
     },
     /**
      * @description 上传文件之前的钩子，参数为上传的文件
@@ -143,7 +175,10 @@ export default {
     beforeAvatarUpload(file, fileList) {
       let testmsg = file.name.substring(file.name.lastIndexOf('.') + 1);
       if (!['xls', 'xlsx'].includes(testmsg)) {
-        this.$message.error('仅支持上传Excel格式文件!');
+        this.$message.warning('仅支持上传Excel格式文件!');
+        return false;
+      } else if (file.size > 1048576) {
+        this.$message.warning('导入的文件不能大于1M!');
         return false;
       }
     },

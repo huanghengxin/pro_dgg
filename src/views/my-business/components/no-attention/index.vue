@@ -47,6 +47,7 @@
           <template slot="append">天</template>
         </el-input>
       </el-form-item>
+      <!-- 其他无效原因 -->
       <el-form-item
         v-if="activeDialog === 'BUS_ZBGZ' || ruleForm.noAttention === 'OTHER_REASON'"
         :label="dialogInfo.label2"
@@ -95,6 +96,8 @@ import {
   get_inattention_time,
 } from 'api/common';
 import { inattention, disableBiz } from 'api/my-business';
+import { ginvalid_operation, get_invalid_details } from 'api/cule';
+
 export default {
   name: 'NoAttention',
   props: {
@@ -127,7 +130,7 @@ export default {
           callback();
         }
       }
-      if (this.activeDialog === 'BUS_WXSJ') {
+      if (this.activeDialog === 'BUS_WXSJ' || this.activeDialog === 'CULE_WXSJ') {
         if (value === '') {
           callback('请选择无效原因');
         } else {
@@ -182,13 +185,20 @@ export default {
     openModal(item) {
       this.activeDialog = item.code;
       this.businessId = item.busId;
-      if (this.activeDialog === 'BUS_WXSJ' || this.activeDialog === 'CULE_WXSJ') {
-        this.getNoAttentionOption();
-        this.getNum();
-      }
-      if (this.activeDialog === 'BUS_ZBGZ') {
-        this.getNum('NO_ATTENTION');
-        this.getMaxNoAttentionTime();
+      // console.log(this.businessId, '555555555555');
+      switch (this.activeDialog) {
+        case 'BUS_WXSJ':
+          this.getNoAttentionOption();
+          this.getNum();
+          break;
+        case 'BUS_ZBGZ':
+          this.getNum('NO_ATTENTION');
+          this.getMaxNoAttentionTime();
+          break;
+        default:
+          // 线索
+          this.getClueNum({ clueId: this.businessId });
+          break;
       }
     },
     /**
@@ -203,8 +213,17 @@ export default {
      */
     submitHandleClick() {
       if (this.num == 0) {
-        const text = this.activeDialog === 'BUS_ZBGZ' ? '暂不关注' : '无效商机';
-        this.$message.error(`剩余${text}数量为0`);
+        switch (this.activeDialog) {
+          case 'BUS_ZBGZ':
+            this.$message.error(`剩余暂不关注数量为0`);
+            break;
+          case 'CULE_WXSJ':
+            this.$message.error(`剩余无效线索数量为0`);
+            break;
+          default:
+            this.$message.error(`剩余无效商机数量为0`);
+            break;
+        }
         return;
       }
       this.$refs.ruleForm.validate((valid) => {
@@ -212,16 +231,26 @@ export default {
           const ruleForm = this.ruleForm;
           let params = {},
             path;
-          params.bizId = this.businessId || '';
+
           if (this.activeDialog === 'BUS_ZBGZ') {
+            params.bizId = this.businessId || '';
             params.days = ruleForm.noAttention.trim();
             params.reason = ruleForm.reason.trim();
             path = inattention;
-          } else {
+          } else if (this.activeDialog === 'BUS_WXSJ') {
+            params.bizId = this.businessId || '';
             params.disableReason = ruleForm.noAttention;
             params.disableDescription = ruleForm.reason.trim() || '';
             path = disableBiz;
+          } else {
+            params.clueId = this.businessId || '';
+            params.invalidCode = ruleForm.noAttention;
+            params.invalidReason = this.invalidList.filter(
+              (item) => item.code == ruleForm.noAttention,
+            )[0].name;
+            path = ginvalid_operation;
           }
+          // 还有线索提交
           this.loading = true;
           path(params)
             .then((res) => {
@@ -258,6 +287,26 @@ export default {
       });
     },
     /**
+     * @description 线索默认Num
+     */
+    getClueNum(params) {
+      get_invalid_details(params).then((res) => {
+        if (res.code === 200) {
+          res = res.data;
+          this.invalidList = Object.freeze(res?.invalidReasonList);
+          this.num = res.surplusCount;
+          if (this.num === 0) {
+            this.$message.info('剩余的无效线索数量为0');
+            this.dialogVisible = false;
+            return;
+          }
+          this.dialogVisible = true;
+        } else {
+          this.$message.warning(res.message);
+        }
+      });
+    },
+    /**
      * @description 获取暂不关注剩余数量/获取无效商机剩余数量
      */
     getNum(type) {
@@ -265,24 +314,6 @@ export default {
         type,
       };
       if (this.activeDialog === 'BUS_ZBGZ') {
-        get_storage_by_type(params).then((res) => {
-          if (res.code === 200) {
-            res = res.data;
-            const num = Number(res.capacity) - Number(res.used);
-            this.num = num < 0 ? 0 : num;
-            if (this.num === 0) {
-              this.$message.info('剩余的暂不关注数量为0');
-              this.dialogVisible = false;
-              return;
-            }
-            this.dialogVisible = true;
-          } else {
-            this.$message.warning(res.message);
-          }
-        });
-      } else if (this.activeDialog === 'CULE_WXSJ') {
-        this.dialogVisible = true;
-        // 换成线索接口
         get_storage_by_type(params).then((res) => {
           if (res.code === 200) {
             res = res.data;

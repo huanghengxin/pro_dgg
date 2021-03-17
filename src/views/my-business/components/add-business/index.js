@@ -282,6 +282,7 @@ export default {
           params.productTypeCode = quire[0]?.data.productTypeCode || ''; //产品类型
           params.customerRequire = quire[0]?.value || ''; //二级需求编码
           params.customerRequireName = quire[0]?.label || ''; //二级需求名称
+          params.remark = this.ruleForm.remark?.trim();
           params.phoneArray = phoneArray.reduce((acc, cur) => {
             if (!cur.id) {
               acc.push(cur.contactNo);

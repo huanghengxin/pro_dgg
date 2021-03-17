@@ -41,7 +41,7 @@
     &-list {
       height: 48px;
       span {
-        margin: 12px 0;
+        margin: 12px 0 4px 0;
       }
       .lable {
         font-size: $font-size-sm;
@@ -81,6 +81,7 @@
           line-height: 20px;
           border-radius: 2px;
           border: 1px solid #409eff;
+          margin-right: 5px;
         }
         .source {
           display: flex;

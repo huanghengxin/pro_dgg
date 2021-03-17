@@ -63,11 +63,6 @@ export function filterTime(times) {
     return dayjs(time).format('YYYY-MM-DD HH:mm');
   }
 }
-export function filterWithSecTime(times) {
-  let time = dayjs(times);
-  if (!time.isValid()) return times;
-  return dayjs(time).format('YYYY-MM-DD HH:mm');
-}
 
 export function isObject(val) {
   return val !== null && typeof val === 'object';

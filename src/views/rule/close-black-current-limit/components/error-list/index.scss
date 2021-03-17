@@ -1,5 +1,5 @@
 .error-list-page {
-  width: 1200px;
+  width: 100%;
   background: #ffffff;
   box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
   padding: 8px 20px 20px 20px;
@@ -29,7 +29,7 @@
     }
   }
   .error-list-text {
-    width: 1160px;
+    width: 100%;
     height: 32px;
     background: #fef0f0;
     border-radius: 2px;
@@ -72,5 +72,12 @@
         }
       }
     }
+  }
+  .page-break {
+    background-color: #ffffff;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

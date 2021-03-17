@@ -16,6 +16,28 @@ export function get_referral_business_list(params) {
     params,
   );
 }
+// 无效线索初始化
+export function get_invalid_details(params) {
+  return api.get(
+    '/crm-middle-pc/api/crisps-crm/service/yk/v1/invalid/get_invalid_details.do',
+    params,
+  );
+}
+// 无效线索操作
+export function ginvalid_operation(params) {
+  return api.post(
+    '/crm-middle-pc/api/crisps-crm/service/yk/v1/invalid/invalid_operation.do',
+    params,
+  );
+}
+// 判断商机个人库是否存在此客户
+
+export function check_customer_is_exist(params) {
+  return api.get(
+    '/crm-middle-pc/api/crisps-crm/service/yk/v1/personal/check_customer_is_exist.do',
+    params,
+  );
+}
 // 我的潜在客户列表
 export function get_my_potential_customer_lists(params) {
   return api.post(

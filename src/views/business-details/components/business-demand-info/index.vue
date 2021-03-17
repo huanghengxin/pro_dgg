@@ -161,6 +161,7 @@ export default {
       scrollDisable: false,
       warpWidth: '',
       noAttentionStatus: '',
+      CallEventBus: undefined,
     };
   },
   computed: {
@@ -192,9 +193,14 @@ export default {
     },
   },
   created() {
+    this.CallEventBus = this.$createEventBus && this.$createEventBus('CALL');
+    this.CallEventBus?.$on('terminated', this.getDemandInfoList);
     //监听基础信息获取数据后，打开基础信息的按钮限制
     this.$eventBus.$on('get-business-info', (value) => {
       this.noAttentionStatus = value.noAttention;
+    });
+    this.$eventBus.$on('update-demand-list', () => {
+      this.getDemandInfoList();
     });
     this.getDemandInfoList();
   },
@@ -203,7 +209,9 @@ export default {
     window.addEventListener('resize', this.resize);
   },
   destroyed() {
+    this.CallEventBus?.$off('terminated', this.getDemandInfoList);
     this.$eventBus.$off('get-business-info');
+    this.$eventBus.$off('update-demand-list');
     window.removeEventListener('resize', this.resize);
   },
   methods: {

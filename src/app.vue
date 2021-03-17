@@ -6,6 +6,7 @@
   </div>
 </template>
 <script>
+import mainApplicationStyle from 'assets/main-application';
 export default {
   name: 'App',
   provide() {
@@ -18,6 +19,9 @@ export default {
     return {
       isRouterAlive: true, //控制视图是否显示的变量
     };
+  },
+  created() {
+    this.$mainService?.addStyle(mainApplicationStyle);
   },
   methods: {
     reload() {

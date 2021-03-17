@@ -39,7 +39,6 @@
             >查看90天以前</el-checkbox
           >
           <el-button
-            v-if="from !== 'team-manage'"
             v-accControls:noAttention="noAttentionStatus"
             type="primary"
             :disabled="disabledButton"
@@ -205,6 +204,7 @@
       ref="writeFollowRcordRef"
       is-place="business-details"
       data-tid="recordWriteFollowRecordk"
+      :from="from"
       @on-submit="writeFollowRecord"
     />
     <play-recording ref="playRecordingRef" :customer-name="customerName" />

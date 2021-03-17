@@ -3,13 +3,16 @@
   .el-dialog__body {
     height: max-content;
   }
-  .cancel-limit-checkbox {
-    margin-bottom: 28px;
-    .el-checkbox__label {
-      font-size: 14px;
-      font-weight: 400;
-      color: #222222;
-      line-height: 20px;
+  .el-checkbox {
+    display: block;
+    .cancel-limit-checkbox {
+      margin-bottom: 28px;
+      .el-checkbox__label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #222222;
+        line-height: 20px;
+      }
     }
   }
   .el-dialog__footer {

@@ -59,9 +59,10 @@
   }
 }
 
-.el-message-box {
+.clue-move-error {
   .el-message-box__status {
-    top: 30%;
+    top: 6%;
+    transform: translateY(0%);
     font-size: 18px !important;
   }
 }

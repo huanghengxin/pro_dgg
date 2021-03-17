@@ -95,7 +95,5 @@ export function page_list(params) {
 
 //下载模板
 export function find(params) {
-  return api.get(
-    'https://dspmicrouag.shupian.cn/tac-external-platform-server/oss/find?' + param(params),
-  );
+  return api.get('/tac-external-platform-server/oss/find?' + param(params));
 }

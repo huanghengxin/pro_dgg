@@ -154,8 +154,8 @@ export default {
   filters: {
     statusFormat(val) {
       const map = {
-        QDS_ClUE_STATUS_NOT: '未联系',
-        QDS_ClUE_STATUS_ALREADY: '已联系',
+        QDS_CLUE_STATUS_NOT: '未联系',
+        QDS_CLUE_STATUS_ALREADY: '已联系',
       };
       return map[val];
     },

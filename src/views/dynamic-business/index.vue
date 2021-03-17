@@ -3,15 +3,13 @@
     <div class="title">
       <span>掉库</span>
       <!-- 搜索框 -->
-      <div>
-        <search-button
-          show-word-limit
-          placeholder="请输入姓名/联系方式/商机编号查询"
-          data-tid="dynamicHandleInputValue"
-          @search="searchUser"
-          @clear="handleInputValue"
-        ></search-button>
-      </div>
+      <search-button
+        show-word-limit
+        placeholder="请输入姓名/联系方式/商机编号查询"
+        data-tid="dynamicHandleInputValue"
+        @search="searchUser"
+        @clear="handleInputValue"
+      ></search-button>
       <!-- 时间选择 -->
       <div class="title-time">
         <span>动态时间</span>
@@ -133,7 +131,6 @@ import { get_dictionary_data_by_parent_code } from 'api/common';
 import SvgIcon from 'components/svg-icon';
 import './index.scss';
 export default {
-  name: 'DynamicBusiness',
   components: {
     SearchButton,
     SvgIcon,
@@ -345,7 +342,6 @@ export default {
       };
       const result = await get_dictionary_data_by_parent_code(paramCode);
       const obj = result.data?.reduce((acc, cur) => {
-        console.log(acc, cur, '22121');
         acc[cur.code] = cur.name;
         return acc;
       }, {});

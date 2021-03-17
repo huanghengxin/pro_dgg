@@ -17,8 +17,9 @@ export const mutations = {
     const { handlePeople, handleObject, merchantName, ...values } = value;
     store.fieldParams = { ...store.fieldParams, ...values };
     store.fieldParams.createrId = handlePeople?.mchUserId;
-    store.fieldParams.plannerId = handleObject?.mchUserId;
+    store.fieldParams.plannerNo = handleObject?.userCenterNo;
     store.fieldParams.mchId = merchantName?.id;
+    store.fieldParams.start = 1;
     action.getDataList();
   },
   setPageChangeParams(type, value) {

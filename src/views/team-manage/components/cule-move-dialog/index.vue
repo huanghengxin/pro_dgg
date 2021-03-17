@@ -77,7 +77,7 @@
         </div>
       </span>
     </el-dialog>
-    <remind-dialog ref="remindDialog" @reset-list="resetList" @repeat="openModal" />
+    <remind-dialog ref="remindDialog" :from="type" @reset-list="resetList" @repeat="openModal" />
   </div>
 </template>
 
@@ -93,7 +93,6 @@ export default {
   components: {
     RemindDialog,
   },
-
   props: {},
   data() {
     var validateSafft = (rule, value, callback) => {
@@ -104,6 +103,7 @@ export default {
       callback();
     };
     return {
+      type: '',
       mchDetailId: '',
       userName: '',
       dialogVisible: false,
@@ -222,17 +222,22 @@ export default {
       if (Object.keys(this.res).length) {
         const res = this.res;
         if (res.code === 10008) {
-          this.$refs.remindDialog.openModal(this.businessId, res, this.businessDetail);
+          this.$refs.remindDialog.openModal(this.businessId, res, this.businessDetail, this.from);
         } else {
           this.$messageBox
             .alert(`<span>移交失败</span><br/> <span>失败原因：${res.message}</span>`, `移交商机`, {
               dangerouslyUseHTMLString: true,
               confirmButtonText: '确定',
               closeOnClickModal: false,
-              customClass: 'message-box-min-height',
+              customClass: 'message-box-min-height team-manage-error',
               type: 'error',
             })
-            .catch(() => {});
+            .then(() => {
+              this.$emit('success-reset-list');
+            })
+            .catch(() => {
+              this.$emit('success-reset-list');
+            });
         }
       }
       this.res = {};
@@ -242,7 +247,8 @@ export default {
      * @description 供父组件调用打开弹层方法
      * @param {Object} 点击当前列表项
      */
-    openModal(item) {
+    openModal(item, type) {
+      this.type = type;
       this.businessDetail = item;
       this.businessId = item.id;
       this.rowPlannerId = item.plannerId;

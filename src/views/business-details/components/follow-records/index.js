@@ -121,6 +121,7 @@ export default {
      * @description 写跟进回调
      */
     writeFollowRecord() {
+      this.$eventBus.$emit('update-demand-list'); //更新需求进度
       if (this.tabActive === '' || this.tabActive == 'CRM_OPER_FOLLOW') {
         this.isReachBottom = false;
         this.isShow = false;

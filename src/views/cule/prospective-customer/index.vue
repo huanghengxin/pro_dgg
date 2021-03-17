@@ -6,6 +6,7 @@
           show-word-limit
           placeholder="请输入姓名/联系方式/商机编号查询"
           data-tid="prospectiveHandleInputValue"
+          :from="'cule'"
           @search="searchUser"
           @clear="handleInputValue"
         ></search-button>
@@ -16,7 +17,7 @@
           :key="item.id"
           :class="{
             'tabs-item': true,
-            'tabs-item_active': item.code === param.clueSourceType,
+            'tabs-item_active': item.code === clueSourceTypeActive,
           }"
           data-tid="customerChangeCuleFrom"
           @click="filterTag(item, 'clueSourceType')"
@@ -71,43 +72,52 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
+            v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
             label="信息来源"
             min-width="220"
           >
             <template slot-scope="scope">
-              <div v-if="scope.row.keep">
-                <el-tag>{{ scope.row.keep }}</el-tag>
-                <el-tag>{{ scope.row.keep2 }}</el-tag>
+              <div v-if="scope.row.informationSource && scope.row.informationSource.length > 0">
+                <el-tag v-for="item in scope.row.informationSource" :key="item.id">{{
+                  item
+                }}</el-tag>
               </div>
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
           <el-table-column label="客户号码" min-width="180">
             <template slot-scope="scope">
-              <span v-if="scope.row.customerPhone">{{ scope.row.customerPhone }}</span>
+              <show-tooltip
+                v-if="scope.row.customerPhone"
+                :text="scope.row.customerPhone"
+                :width="150"
+              ></show-tooltip>
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
           <el-table-column
-            v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
+            v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
             label="联系号码"
             min-width="180"
           >
             <template slot-scope="scope">
-              <span v-if="scope.row.customerPhone">{{ scope.row.customerPhone }}</span>
-              <span v-else>暂无数据</span>
+              <show-tooltip
+                v-if="scope.row.hideNumber"
+                :text="scope.row.hideNumber"
+                :width="150"
+              ></show-tooltip>
+              <span v-else>暂无</span>
             </template>
           </el-table-column>
           <el-table-column label="状态" min-width="150">
             <template slot-scope="scope">
-              <span v-if="scope.row.clueStatus">{{ scope.row.clueStatus | statusFormat }}</span>
+              <span v-if="scope.row.clueStatus">{{ scope.row.clueStatus }}</span>
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
-          <el-table-column label="获取时间" sortable="custom" min-width="180">
+          <el-table-column label="更新时间" prop="updateTime" sortable="custom" min-width="180">
             <template slot-scope="scope">
-              <span v-if="scope.row.clueStatus">{{ scope.row.clueStatus | statusFormat }}</span>
+              <span v-if="scope.row.updateTime">{{ scope.row.updateTime | filterTime }}</span>
               <span v-else>暂无数据</span>
             </template>
           </el-table-column>
@@ -135,7 +145,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="param.clueStatus !== 'QDS_ClUE_STATUS_NOT'"
             prop="lastRemarkTime"
             class="refresh-follow"
             label="最新跟进信息"
@@ -166,7 +175,7 @@
             <template slot-scope="scope">
               <div class="list-handle">
                 <p
-                  v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
+                  v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
                   class="list-handle_follow"
                   :data-tid="'customerListHandleClick' + scope.$index"
                   @click="callPhone(scope.row)"
@@ -174,14 +183,23 @@
                   打电话
                 </p>
                 <p
-                  v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_IM'"
+                  v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_IM'"
                   class="list-handle_follow"
-                  :data-tid="'ChatHandleClick' + scope.$index"
-                  @click="listChatClick(scope.row)"
+                  :data-tid="'IMchat' + scope.$index"
+                  @click="onlineChatClick({ code: 'CULE_WXSJ', item: scope.row })"
                 >
                   在线聊
                 </p>
+                <p
+                  v-if="param.accredit === 'NO'"
+                  class="list-handle_follow"
+                  :data-tid="'handleFollowRef' + scope.$index"
+                  @click="listHandleClick(scope.row)"
+                >
+                  写跟进
+                </p>
                 <el-dropdown
+                  v-if="param.accredit !== 'NO'"
                   trigger="click"
                   :data-tid="'handleCommand' + scope.$index"
                   @command="handleCommand"
@@ -194,13 +212,16 @@
                       >写跟进</el-dropdown-item
                     >
                     <el-dropdown-item
-                      v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
-                      :data-tid="'ChatHandleClick' + scope.$index"
-                      :command="{ component: 'callPhoneRef', item: scope.row }"
+                      v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
+                      :data-tid="'IMchat' + scope.$index"
+                      :command="{
+                        component: 'IMchat',
+                        item: { code: 'CULE_WXSJ', item: scope.row },
+                      }"
                       >在线聊</el-dropdown-item
                     >
                     <el-dropdown-item
-                      v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_IM'"
+                      v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_IM'"
                       :data-tid="'callPhoneRef' + scope.$index"
                       :command="{ component: 'callPhoneRef', item: scope.row }"
                       >打电话</el-dropdown-item
@@ -211,19 +232,14 @@
                       >转商机</el-dropdown-item
                     >
                     <el-dropdown-item
-                      v-if="param.clueSourceType === 'QDS_ClUE_SOURCE_STAY'"
-                      :data-tid="'noUse' + scope.$index"
+                      v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
+                      :data-tid="'InvalidRef' + scope.$index"
                       :command="{
                         component: 'noAttentionRef',
                         item: { code: 'CULE_WXSJ', busId: scope.row.id },
                       }"
                       >无效</el-dropdown-item
                     >
-                    <!-- <el-dropdown-item
-                      :data-tid="'InvalidRef' + scope.$index"
-                      :command="{ component: 'InvalidRef', item: scope.row }"
-                      >无效</el-dropdown-item
-                    > -->
                   </el-dropdown-menu>
                 </el-dropdown>
               </div>
@@ -237,7 +253,7 @@
             :page-size="param.limit"
             :page-sizes="[10, 20, 30, 40, 50]"
             layout="total, prev, pager, next, sizes, jumper"
-            :total="param.total"
+            :total="total"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
           >
@@ -245,17 +261,18 @@
         </div>
       </div>
     </div>
-    <write-follow-dailog
-      ref="writeFollowDailogRef"
-      data-tid="customerSubmitHandle"
-      @on-submit="submitHandle"
+
+    <library-records
+      ref="libraryRecordsRef"
+      data-tid="publicResetList"
+      :from="'prospective'"
+      @reset-list="submitHandle"
     />
     <more-follow-record ref="moreFollowRecordRef" />
     <show-more-require ref="showMoreRequireRefs" />
-    <no-attention ref="noAttentionRef" @on-submit="onSubmitHandle" />
+    <no-attention ref="noAttentionRef" @on-submit="submitHandle" />
   </div>
 </template>
-
 <script>
 import './index.scss';
 import ProspectiveCustomer from './prospective-customer';

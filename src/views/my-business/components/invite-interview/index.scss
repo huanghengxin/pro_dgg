@@ -28,7 +28,7 @@ el-form-item__content {
   }
 
   .el-form-item {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
   .el-input {
     width: 300px;
@@ -37,7 +37,17 @@ el-form-item__content {
       border-radius: 2px;
     }
   }
-
+  .warn {
+    line-height: 20px;
+    color: #999999;
+    .warn-icon {
+      font-size: 12px;
+    }
+    .warn-text {
+      font-size: 12px;
+      margin-left: 4px;
+    }
+  }
   .footer {
     display: flex;
     justify-content: space-between;

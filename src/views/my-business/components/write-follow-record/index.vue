@@ -6,7 +6,7 @@
       custom-class="write-follow-record"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      width="820px"
+      :width="width"
       data-tid="writeFollowRrecord"
       @close="diologHandleClose"
     >
@@ -14,7 +14,7 @@
         ref="ruleForm"
         :model="ruleForm"
         :rules="rules"
-        label-width="130px"
+        :label-width="labelWidth"
         label-position="left"
         size="small"
       >
@@ -30,7 +30,11 @@
             placeholder="请输入跟进内容"
           ></el-input>
         </el-form-item>
-        <div class="quick-note" data-tid="noteHanleClick" @click="noteHanleClick">
+        <div
+          :class="from === 'team-manage' ? 'quick-note-team-manage' : 'quick-note'"
+          data-tid="noteHanleClick"
+          @click="noteHanleClick"
+        >
           <span
             v-for="(item, index) in quickNoteList"
             :key="item.code"
@@ -43,7 +47,7 @@
             >{{ item.description }}</span
           >
         </div>
-        <el-form-item label="下次跟进时间：" prop="nextFollowTime">
+        <el-form-item v-if="from !== 'team-manage'" label="下次跟进时间：" prop="nextFollowTime">
           <el-date-picker
             ref="dateTimeRef"
             v-model="ruleForm.nextFollowTime"
@@ -57,7 +61,7 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="商机分组：" prop="groupId">
+        <el-form-item v-if="from !== 'team-manage'" label="商机分组：" prop="groupId">
           <div class="quick-note_group">
             <el-select v-model="ruleForm.groupId" clearable placeholder="请选择分组">
               <el-option
@@ -107,6 +111,7 @@
 <script>
 import './index.scss';
 import { get_business_groups } from 'api/my-business';
+import { write_biz_follow_record_manage } from 'api/team-manage';
 import dayjs from 'dayjs';
 import { write_biz_follow_record, getTreeBook } from 'api/common';
 import nextOneHourLate from 'utils/mixins/dateTimeValidate';
@@ -119,6 +124,10 @@ export default {
   mixins: [nextOneHourLate('nextFollowTime', 1, 'y')],
   props: {
     isPlace: {
+      type: String,
+      default: '',
+    },
+    from: {
       type: String,
       default: '',
     },
@@ -136,13 +145,15 @@ export default {
       loading: false,
       showSetGroup: false,
       dialogVisible: false,
+      width: '820px',
+      labelWidth: '130px',
       ruleForm: {
         text: '',
         nextFollowTime: '',
         groupId: undefined,
       },
       rules: {
-        text: [{ validator: validateContent, trigger: 'blur', required: true }],
+        text: [{ validator: validateContent, trigger: 'change', required: true }],
       },
       groupList: [],
       businessId: '',
@@ -161,6 +172,31 @@ export default {
           const ruleForm = this.ruleForm;
           params.text = ruleForm.text.trim();
           params.bizId = this.businessId;
+          if (this.from === 'team-manage') {
+            write_biz_follow_record_manage(params)
+              .then((res) => {
+                if (res.code === 200) {
+                  res = res.data;
+                  this.dialogVisible = false;
+                  this.$emit('on-submit');
+                  this.$message.success('操作成功');
+                } else {
+                  this.$message.warning(res.message);
+                  if (res.code === 5002) {
+                    if (this.isPlace === 'business-details') {
+                      this.$router.go(-1);
+                    } else {
+                      this.$emit('on-submit');
+                    }
+                  }
+                }
+                this.loading = false;
+              })
+              .catch(() => {
+                this.loading = false;
+              });
+            return;
+          }
           params.groupId = ruleForm.groupId || 0;
           params.nextFollowTime = ruleForm.nextFollowTime
             ? dayjs(ruleForm.nextFollowTime).format('YYYY-MM-DD HH:mm') + ':00'
@@ -276,9 +312,11 @@ export default {
      * @param {Object} 点击当前列表项
      */
     openModal({ id = '', groupId = '', nextFollowTime = '' }) {
-      this.nextTime = dayjs()
-        .add(5, 'm')
-        .valueOf();
+      if (this.from === 'team-manage') {
+        this.width = '680px';
+        this.labelWidth = '100px';
+      }
+      this.nextTime = dayjs().add(5, 'm').valueOf();
       this.businessId = id;
       if (nextFollowTime && dayjs(nextFollowTime).isValid()) {
         this.ruleForm.nextFollowTime = dayjs().isBefore(dayjs(nextFollowTime))
@@ -299,7 +337,6 @@ export default {
       get_business_groups(params).then((res) => {
         if (res.code === 200) {
           res = res.data;
-          console.log('ssss', id);
           this.groupList = res.map((item) => {
             const { groupName, id } = item;
             return {

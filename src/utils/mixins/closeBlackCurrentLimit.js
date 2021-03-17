@@ -5,7 +5,7 @@ const validateCloseBlackCurrentLimit = {
   methods: {
     //关黑限流校验限制方式相同与否
     checkLimitTypeName(rule, value, callback) {
-      const ruleForm = this.ruleForm;
+      // const ruleForm = this.ruleForm;
       const field = rule.field;
       const index = field.split('.');
       const limitTypeNameIndex = index[1];
@@ -15,9 +15,11 @@ const validateCloseBlackCurrentLimit = {
       }
       if (!value) {
         callback('请选择限制方式');
-      } else if (ruleForm.limitWayList.filter((item) => item.limitTypeName === value).length > 1) {
-        callback('不能选择相同限制方式');
-      } else {
+      }
+      // else if (ruleForm.limitWayList.filter((item) => item.limitTypeName === value).length > 1) {
+      //   callback('不能选择相同限制方式');
+      // }
+      else {
         callback();
       }
     },

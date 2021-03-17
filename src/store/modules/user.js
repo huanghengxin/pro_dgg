@@ -75,7 +75,6 @@ const actions = {
 const mutations = {
   SET_USERINFO: (state, data) => {
     store.set('userInfo', data?.data);
-    store.set('platformType', 'COMDIC_PLATFORM_QIDASHUN');
     state.userInfo = data?.data;
     state.fullName = store.get('userInfo').fullName;
   },

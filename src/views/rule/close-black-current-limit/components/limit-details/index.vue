@@ -8,28 +8,20 @@
       destroy-on-close
       @closed="dialogColsed"
     >
-      <div v-loading="loading" class="limit-details-scroll">
+      <div class="limit-details-scroll">
         <div class="limit-details-content">
-          <div>
-            <div class="first-row">
-              <span class="explain">姓名：</span>
-              <span class="explain-content">{{ limitDetailsList.plannerName }}</span>
-            </div>
-            <div>
-              <span class="explain">商户：</span>
-              <span class="explain-content">{{ limitDetailsList.merchantName }}</span>
-            </div>
+          <div class="first-row">
+            <span class="explain">姓名：</span>
+            <span class="explain-content">{{ limitDetailsList.plannerName }}</span>
           </div>
-          <div>
-            <!-- <div class="first-row">
-              <span class="explain">联系方式：</span>
-              <span class="explain-content">{{ limitDetailsList.plannerPhone }}</span>
-            </div> -->
-            <div>
-              <span class="explain">平台工号：</span>
-              <span class="explain-content">{{ limitDetailsList.plannerNo }}</span>
-            </div>
+          <div class="first-row">
+            <span class="explain">平台工号：</span>
+            <span class="explain-content">{{ limitDetailsList.plannerNo }}</span>
           </div>
+        </div>
+        <div>
+          <span class="explain">商户：</span>
+          <span class="explain-content">{{ limitDetailsList.merchantName }}</span>
         </div>
         <div
           v-for="(item, index) in limitDetailsArray"
@@ -71,25 +63,40 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      loading: false,
-      activeName: 'first',
       limitDetailsList: {}, //限制详情所有数据
       limitDetailsArray: [], //限制详情的限制方式
     };
   },
   methods: {
     openModal(details) {
-      this.dialogVisible = true;
-      this.loading = true;
       this.limitDetailsList = details;
       let params = { plannerId: details.plannerId };
-      limit_detail(params).then((res) => {
-        this.limitDetailsArray = res.data;
-        this.loading = false;
-      });
+      limit_detail(params)
+        .then(({ code, data, message }) => {
+          if (code === 200) {
+            if (Array.isArray(data) && data.length > 0) {
+              this.limitDetailsArray = data;
+              this.dialogVisible = true;
+            } else {
+              this.$message.warning('此限制方式已经被取消了！');
+              this.$emit('update-list');
+              this.dialogVisible = false;
+              return;
+            }
+          } else {
+            this.dialogVisible = true;
+            this.$message.warning(message);
+          }
+        })
+        .catch(() => {
+          this.dialogVisible = true;
+        });
     },
     dialogColsed() {
-      this.activeName = 'first';
+      const len = this.limitDetailsList.limitTypeName.split('、')?.length;
+      if (this.limitDetailsArray.length !== len) {
+        this.$emit('update-list');
+      }
     },
   },
 };

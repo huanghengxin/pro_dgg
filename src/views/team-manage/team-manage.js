@@ -86,6 +86,20 @@ export default {
   mounted() {},
   methods: {
     /**
+     * @description 团队商机跳转详情
+     */
+    handleDetails(row) {
+      // 判断是否认证，后台给字段
+      // if (row.id) {
+      //   this.$message({
+      //     message: '该商机未授权，不能跳转商机详情！',
+      //     type: 'warning',
+      //   });
+      //   return;
+      // }
+      this.$router.push(`/team-manage/business-details?businessId=${row.id}&from=team-manage`);
+    },
+    /**
      * @description 条件搜索按钮
      */
     searchHanle() {
@@ -109,6 +123,12 @@ export default {
         this.peopleList = this.defaultPeopleList;
       }
     },
+    // handleVisibleChange(e) {
+    //   if (e === true) {
+    //     this.peopleList = this.defaultPeopleList;
+    //   }
+    //  @visible-change="handleVisibleChange"
+    // },
     /**
      * @description 弹窗时间重新刷新列表
      */
@@ -262,6 +282,10 @@ export default {
         parentCode: code,
       };
       const result = await get_dictionary_data_by_parent_code(param);
+      if (result.code !== 200) {
+        this.$message.warning(result.message);
+        return;
+      }
       if (result.code === 200) {
         switch (code) {
           case 'CRM_BIZ_STATUS':
@@ -276,8 +300,6 @@ export default {
               return acc;
             }, {});
         }
-      } else {
-        this.$message.warning(result.message);
       }
     },
 

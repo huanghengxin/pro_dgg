@@ -11,12 +11,13 @@ export const NO_ATTENTION_MORE_HANDLE = [
   { name: '基本信息修改', openModal: 'edit-base-info', auth: 'crmEditBaseInfo' },
   // { name: '下单', openModal: 'push-sheet' },
   { name: '恢复关注', openModal: 'reset-attention', auth: 'crmResetAttention' },
+  { name: '操作日志', openModal: 'handle-log', auth: 'crmHandleLog' },
 ];
 export const MORE_HANDLE = [
   { name: '基本信息修改', openModal: 'edit-base-info', auth: 'crmEditBaseInfo' },
+  { name: '在线聊', openModal: 'im-chat', auth: 'crmChatIm' },
   { name: '邀约面谈', openModal: 'invite-interview', auth: 'crmInviteInterview' },
   { name: '操作日志', openModal: 'handle-log', auth: 'crmHandleLog' },
-  { name: '发起合作', openModal: 'initiate-cooperation', auth: 'crmInitiateCooperation' },
   // { name: '下单', openModal: 'push-sheet' },
   { name: '设置分组', openModal: 'set-group', auth: 'crmSetGroup' },
   { name: '暂不关注', code: 'BUS_ZBGZ', openModal: 'no-attention', auth: 'crmNoAttention' },
@@ -30,9 +31,9 @@ export const MORE_HANDLE = [
 //商机详情已签
 export const SIGNED_BUSINESS = [
   { name: '基本信息修改', openModal: 'edit-base-info', auth: 'crmEditBaseInfo' },
+  { name: '在线聊', openModal: 'im-chat', auth: 'crmChatIm' },
   { name: '邀约面谈', openModal: 'invite-interview', auth: 'crmInviteInterview' },
   { name: '操作日志', openModal: 'handle-log', auth: 'crmHandleLog' },
-  // { name: '发起合作', openModal: 'initiate-cooperation', auth: 'crmInitiateCooperation' },
   // { name: '下单', openModal: 'push-sheet' },
   { name: '设置分组', openModal: 'set-group', auth: 'crmSetGroup' },
   {
@@ -45,6 +46,7 @@ export const SIGNED_BUSINESS = [
 //经理
 export const MORE_TEAM_MANAGE = [
   { name: '移交', openModal: 'cule-move-dialog', auth: 'crmTurnOver' },
+  { name: '操作日志', openModal: 'handle-log', auth: 'crmHandleLog' },
 ];
 
 //全部组件
@@ -55,7 +57,6 @@ export const MORE_HANDLE_COMPONENT = [
   'set-group',
   'no-attention',
   'set-next-follow-time',
-  'initiate-cooperation',
 ];
 //已签单组件
 export const SIGNED_BUSINESS_COMPONENT = [
@@ -66,6 +67,6 @@ export const SIGNED_BUSINESS_COMPONENT = [
   'set-next-follow-time',
 ];
 //暂不关注组件
-export const NO_ATTENTION_MORE_HANDLE_COMPONENT = ['edit-base-info'];
-//经理
-export const MORE_TEAM_MANAGE_COMPONENT = ['cule-move-dialog'];
+export const NO_ATTENTION_MORE_HANDLE_COMPONENT = ['edit-base-info', 'handle-log'];
+//经理组件
+export const MORE_TEAM_MANAGE_COMPONENT = ['cule-move-dialog', 'handle-log'];

@@ -117,3 +117,24 @@
     }
   }
 }
+//经营管理详情写跟进
+@mixin quick-note-team-manage() {
+  .quick-note-team-manage {
+    margin-bottom: 10px;
+    margin-left: 100px;
+    &_item {
+      cursor: pointer;
+      line-height: 1;
+      padding: $write-quick-note-item-padding;
+      font-size: $write-quick-note-item-font-size;
+      display: inline-block;
+      margin-right: $write-quick-note-item-margin-right;
+      background-color: $write-quick-note-item-background-color;
+      margin-bottom: 6px;
+      &-active {
+        background-color: $base-color;
+        color: #ffffff;
+      }
+    }
+  }
+}

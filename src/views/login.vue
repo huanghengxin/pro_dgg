@@ -45,6 +45,7 @@
                 type="primary"
                 class="btn_login"
                 data-tid="login"
+                native-type="submit"
                 @click="login"
               >
                 登&nbsp;录
@@ -112,13 +113,13 @@ export default {
       activeName: 'passwd',
       loading: false,
       phoneForm: {
-        phone: '17765488997',
-        captcha: '123456',
+        phone: '',
+        captcha: '',
       },
 
       ruleForm: {
         account: '17765488997',
-        password: '123456',
+        password: '488997',
         platformType: 'COMDIC_PLATFORM_QIDASHUN',
       },
     };

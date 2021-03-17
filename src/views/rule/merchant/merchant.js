@@ -72,21 +72,22 @@ export default {
         document.body.clientHeight - top;
     },
     async init() {
-      // 商户规则后台数据
       this.loading = true;
+      // 数据字典
+      const dictionaryTree = (await this.getDictionary().catch()) || {};
+      this.unitCode = dictionaryTree.rule_date_code || [];
+      // 商户规则后台数据
       this.rulesMerchantLists = (await this.getRulesMerchantLists()) || [];
       if (this.rulesMerchantLists.length === 0) {
         this.loading = false;
         return;
       }
-      // 数据字典
-      const dictionaryTree = (await this.getDictionary().catch()) || {};
       this.loading = false;
-      this.unitCode = dictionaryTree.rule_date_code || [];
       let libraryMap = dictionaryTree.rule_biz_db_code?.reduce((acc, cur) => {
         acc[cur.code] = cur.name;
         return acc;
       }, {});
+
       // libraryCode
       let dateMap = dictionaryTree.rule_date_code?.reduce((acc, cur) => {
         acc[cur.code] = cur.name;
@@ -97,6 +98,7 @@ export default {
         const isLibraryCode = Object.prototype.hasOwnProperty.call(item, 'libraryCode');
         const isTimeCode = Object.prototype.hasOwnProperty.call(item, 'timeCode');
         const isNoAttentionMaxDay = Object.prototype.hasOwnProperty.call(item, 'noAttentionMaxDay');
+        // 后端沟通具体的不用字段的命名
 
         if (isLibraryCode) item['【X】库'] = libraryMap[item.libraryCode];
         if (isTimeCode) item['【单位】'] = dateMap[item.timeCode];
@@ -105,6 +107,11 @@ export default {
       }
       this.handleDataList(unitCodeMap, dictionaryTree.lz_code, 'getRuleList');
       this.handleDataList(unitCodeMap, dictionaryTree.sx_code, 'getStaffList');
+      this.regDescription(this.getRuleList.data1);
+      // console.log(
+      //   'libraryRulelibraryRulelibraryRulelibraryRulelibraryRule',
+      //   dictionaryTree.lz_code,
+      // );
     },
     /**
      * @description 获取总开关数据
@@ -114,11 +121,13 @@ export default {
         ruleCode: 'RULE_SWITCH_ALL',
       };
       const boarded = await rules_switch_boarded(param);
+      if (boarded.code !== 200) {
+        this.$message.warning(boarded.message);
+        return;
+      }
       if (boarded.code === 200) {
         this.switchboardStatus = boarded.data.status;
         this.switchboardEndDate(boarded.data.val2, boarded.data.val1);
-      } else {
-        this.$message.warning(boarded.message);
       }
     },
     /**
@@ -130,10 +139,8 @@ export default {
       let dateEnd = dayjs(endDateStr).valueOf();
       let dateStart = dayjs(startDateStr).valueOf();
       if (curDate < dateStart || curDate > dateEnd) {
-        // this.switchboardStatus = 1;
         this.edit = true;
       } else {
-        // this.switchboardStatus = 2;
         this.edit = false;
       }
     },
@@ -142,13 +149,36 @@ export default {
      */
     handleDataList(unitCodeMap, _codeList, data) {
       const reg = /【单位】|【X】库|【X】自然日|上限/g;
-
       for (const item1 of _codeList) {
-        if (item1.ext1.trim() !== 'Y') {
-          continue;
-        }
+        // 平台规则商户全部展示，需要后台数据调整
         const unit = unitCodeMap[item1.code.trim()];
+        // 后端没有数据;
         if (typeof unit == 'undefined') {
+          if (data === 'getRuleList') {
+            this[data]?.data1.push({
+              id: '',
+              ruleCode: item1.code || '',
+              description: item1.description || '',
+              name: item1.name || '',
+              val1: '',
+              val2: '',
+              val3: '',
+              val4: '',
+              max: '',
+            });
+          } else {
+            this[data]?.data2.push({
+              id: '',
+              ruleCode: item1.code || '',
+              description: item1.description || '',
+              name: item1.name || '',
+              val1: '',
+              val2: '',
+              val3: '',
+              val4: '',
+              max: '',
+            });
+          }
           continue;
         }
         let arr = Object.keys(unit);
@@ -159,22 +189,25 @@ export default {
         obj.ruleCode = item1.code || '';
         obj.id = item1.id || '';
         obj.name = item1.name || '';
-        obj.max = unit.max || '';
-        obj.val1 = unit.val1 || '';
-        obj.val2 = unit.val2 || '';
-        obj.status = unit.status || '';
-        obj.timeCode = unit.timeCode || '';
+        obj.max = unit?.max || '';
+        obj.val1 = unit?.val1 || '';
+        obj.val2 = unit?.val2 || '';
+        obj.val3 = unit?.val3 || '';
+        obj.val4 = unit?.val4 || '';
+        obj.status = unit?.status || '';
+        obj.timeCode = unit?.timeCode || '';
         let str = item1.description;
         let str1 = str;
         let flag = true;
-
-        while (flag) {
-          let execItme = reg.exec(str1);
-          if (!execItme) {
-            flag = false;
-          } else {
-            if (unit[execItme[0]]) {
-              str1 = str1.replace(execItme[0], unit[execItme[0]]);
+        if (unit?.ruleCode !== 'LZ_PUB_HID' && unit?.ruleCode !== 'LZ_PUB_SE') {
+          while (flag) {
+            let execItme = reg.exec(str1);
+            if (!execItme) {
+              flag = false;
+            } else {
+              if (unit[execItme[0]]) {
+                str1 = str1.replace(execItme[0], unit[execItme[0]]);
+              }
             }
           }
         }
@@ -183,6 +216,65 @@ export default {
           this[data]?.data1.push(obj);
         } else {
           this[data]?.data2.push(obj);
+        }
+      }
+    },
+    // 正常匹配描述
+    regDescription(data) {
+      const map = {
+        U_MINUTE: '分钟',
+        U_HOUR: '小时',
+        U_N_DAYS: '自然日',
+      };
+      for (const unit of data) {
+        // 公共库影藏规则和公海库影藏规则;
+        if (unit?.ruleCode === 'LZ_PUB_HID' || unit?.ruleCode === 'LZ_PUB_SE') {
+          let arr = [map[unit.val3], map[unit.val4]];
+          let arr2 = [unit.val1, unit.val2];
+          const reg1 = /【X】【单位】/g;
+          for (let i = 0; i < arr.length; i++) {
+            let execItme = reg1.exec(unit.description);
+            if (
+              execItme &&
+              execItme[0] &&
+              unit.val1 !== '' &&
+              unit.val2 !== '' &&
+              unit.val3 !== '' &&
+              unit.val4 !== ''
+            ) {
+              unit.description = unit.description?.replace(execItme[0], `${arr2[i]}${arr[i]}`);
+            }
+          }
+          continue;
+        }
+        // 移交商机跟进
+        if (unit?.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE') {
+          const reg1 = /【X】【时间单位】/g;
+          let execItme = reg1.exec(unit.description);
+          if (execItme && execItme[0] && unit.max !== '' && unit.timeCode !== '') {
+            unit.description = unit.description?.replace(
+              execItme[0],
+              `${unit.max}${map[unit.timeCode]}`,
+            );
+          }
+          continue;
+        }
+        // 规则延迟执行  // 商机掉库提醒     //超时面谈取消
+        if (
+          unit?.ruleCode === 'RULE_DELAY' ||
+          unit?.ruleCode === 'LZ_PRE_DROP_MSG' ||
+          unit?.ruleCode === 'LZ_PUB_BATCH_CLUE_RETRIEVE' ||
+          unit?.ruleCode === 'LZ_CA_INT'
+        ) {
+          let reg2 = /【X】/g;
+          let execItme = reg2.exec(unit.description);
+          if (execItme && execItme[0] && unit.max !== '') {
+            unit.description = unit.description?.replace(execItme[0], `${unit.max}`);
+          }
+          if (unit?.ruleCode === 'LZ_PRE_DROP_MSG') {
+            unit.description = `${unit.description}(包括总规则和单条规则)`;
+          }
+          continue;
         }
       }
     },
@@ -196,7 +288,16 @@ export default {
             const field = rule.field;
             const indexArr = field.split('.');
             const d = indexArr[0];
-            if (value.trim() === '') {
+            if (
+              value.trim() === '' ||
+              item.ruleCode === 'LZ_PUB_INV' ||
+              item.ruleCode === 'LZ_PUB_HID' ||
+              item.ruleCode === 'LZ_PUB_SE' ||
+              item.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE' ||
+              item.ruleCode === 'RULE_DELAY' ||
+              item.ruleCode === 'LZ_PRE_DROP_MSG' ||
+              item.ruleCode === 'LZ_CA_INT'
+            ) {
               callback();
             } else {
               if (d === 'data1') {
@@ -219,58 +320,40 @@ export default {
       ];
       return rule;
     },
-    /**
-     * @description 输入框值变化
-     */
-    // handleChange(row) {
-    //   let obj = {};
-    //   var result = this.parma.some((item) => {
-    //     if (item.code === row.code) {
-    //       return true;
-    //     }
-    //   });
-    //   if (result) {
-    //     this.parma.forEach((item) => {
-    //       if (item.code === row.code) {
-    //         item.val1 = row.val1;
-    //       }
-    //     });
-    //   } else {
-    //     obj.code = row.code;
-    //     obj.val1 = row.val1;
-    //     this.parma.push(obj);
-    //   }
-    // },
 
     /**
      * @description 数据字典接口
      */
     async getDictionary() {
-      const param = {
-        code: 'rule_code',
-      };
-      const result = await queryTreeBook(param).catch(() => {
+      try {
+        const param = {
+          code: 'rule_code',
+        };
+        const result = await queryTreeBook(param);
+        if (result.code !== 200) {
+          this.$message.warning(result.message);
+        }
+        if (result.code === 200) {
+          return result.data;
+        }
+      } catch (error) {
         this.loading = false;
-      });
-      if (result.code === 200) {
-        this.loading = false;
-        return result.data;
-      } else {
-        this.loading = false;
-        this.$message.warning(result.message);
       }
     },
     /**
-     * @description 柜子数据接口
+     * @description 规则数据接口
      */
     async getRulesMerchantLists() {
-      const result = await merchants_query_rules().catch(() => {
+      try {
+        const result = await merchants_query_rules();
+        if (result.code !== 200) {
+          this.$message.warning(result.message);
+        }
+        if (result.code === 200) {
+          return result.data;
+        }
+      } catch (error) {
         this.loading = false;
-      });
-      if (result.code === 200) {
-        return result.data;
-      } else {
-        this.$message.warning(result.message);
       }
     },
     /**
@@ -281,9 +364,11 @@ export default {
       let check2 = null;
       this.$refs.getStaffListRef.validate((valid) => {
         check2 = valid;
+        console.log(check2, 'check2check2check2check2check2');
       });
       this.$refs.getRuleListRef.validate((valid) => {
         check1 = valid;
+        console.log(check1, 'check2check2check2check2check2');
       });
       if (check1 && check2) {
         this.$messageBox

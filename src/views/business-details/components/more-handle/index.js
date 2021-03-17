@@ -7,7 +7,7 @@ import {
   SIGNED_BUSINESS, //已签状态
   SIGNED_BUSINESS_COMPONENT, //已签状态组件
   MORE_TEAM_MANAGE, //经理
-  MORE_TEAM_MANAGE_COMPONENT, //经理
+  MORE_TEAM_MANAGE_COMPONENT, //经理组件
 } from 'constants/permission';
 import InviteInterview from 'views/my-business/components/invite-interview/index.vue';
 import SetGroup from 'views/my-business/components/set-group';
@@ -16,9 +16,8 @@ import CuleMoveDialog from 'views/team-manage/components/cule-move-dialog';
 import HandleLog from '../handle-log';
 import EditBaseInfo from '../edit-base-info';
 import SetNextFollowTime from '../set-next-follow-time';
-import InitiateCooperation from '../initiate-cooperation/index.vue';
-
 import { recoverInattention } from 'api/common';
+import imChatMinixs from 'utils/mixins/imChatMinixs';
 export default {
   name: 'MoreHandle',
   components: {
@@ -29,12 +28,12 @@ export default {
     HandleLog,
     SetNextFollowTime,
     CuleMoveDialog,
-    InitiateCooperation,
   },
   props: {
     businessId: { type: String, default: '' },
     from: { type: String, default: '' },
   },
+  mixins: [imChatMinixs],
   inject: ['reload'],
   data() {
     return {
@@ -46,10 +45,9 @@ export default {
     //监听基础信息获取数据后，打开基础信息的按钮限制
     this.$eventBus.$on('get-business-info', (value) => {
       if (Object.keys(value).length > 0) {
-        console.log(value, 'value');
         this.isShow = true;
         this.businessInfo = value;
-        // console.log('isShow', this.isShow);
+        console.log('sdfsdfasasd', this.isShow);
       }
     });
   },
@@ -58,14 +56,17 @@ export default {
   },
   methods: {
     openModalHandleClick(e) {
-      // console.log(e.target.dataset, 'e.target.dataset');
       const dataset = e.target.dataset;
       const component = dataset.component;
+      console.log(component, '778788');
       if (component) {
         const code = dataset.code;
         switch (component) {
           case 'push-sheet':
             this.$router.push('/push-sheet');
+            break;
+          case 'im-chat':
+            this.IMChatOpen(this.businessInfo);
             break;
           case 'reset-attention':
             this.resetAttention();
@@ -73,8 +74,10 @@ export default {
           case 'no-attention':
             this.$refs[component].openModal({ code, busId: this.businessId });
             break;
+          case 'cule-move-dialog':
+            this.$refs[component].openModal(this.businessInfo, 'business-details');
+            break;
           default:
-            // console.log(this.$refs, 'this.$refs[component]');
             this.$refs[component].openModal(this.businessInfo);
             break;
         }

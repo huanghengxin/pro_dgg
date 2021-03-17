@@ -3,7 +3,7 @@
 .close-black-current-limit-page {
   box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
   .close-black-current-limit-title {
-    width: 1004px;
+    width: 100%;
     background-color: #ffffff;
     padding: 10px 20px 0 20px;
     box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
@@ -49,6 +49,14 @@
           .el-input__icon {
             line-height: 32px;
           }
+          .limit-select {
+            max-width: 284px;
+            .ellipsis {
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+          }
         }
         .el-button {
           width: 50px;
@@ -78,6 +86,7 @@
     }
   }
   .close-black-current-limit-table {
+    margin-top: 16px;
     box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
     .close-black-name {
       padding-left: 20px;
@@ -90,9 +99,12 @@
     }
     .close-black-handle {
       color: #4974f5;
-      cursor: pointer;
       .cell {
+        display: flex;
         padding: 0;
+        span {
+          cursor: pointer;
+        }
         & > span:nth-child(1) {
           margin-right: 32px;
         }
@@ -108,6 +120,12 @@
   }
 }
 .danger-limit-way {
-  color: #f1524e;
-  font-size: 18px !important;
+  .el-message-box__content {
+    .el-message-box__container {
+      .el-icon-warning {
+        color: #f1524e;
+        font-size: 18px !important;
+      }
+    }
+  }
 }

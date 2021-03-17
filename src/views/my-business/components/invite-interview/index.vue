@@ -69,6 +69,12 @@
               <i class="iconfont-qds-crm icon-rightoutline"></i>
             </div>
           </div>
+          <!-- 提示行！ -->
+          <div class="warn">
+            <span class="iconfont-qds-crm icon-attention warn-icon"
+              ><em class="warn-text">该手机号将用于接收邀约短信，请与客户确认。</em></span
+            >
+          </div>
         </el-form-item>
         <!-- 面谈地点 -->
         <el-form-item
@@ -107,7 +113,7 @@
             value-key="mchUserId"
             remote
             reserve-keyword
-            placeholder="请输入陪谈人号码/系统号/姓名进行搜索"
+            placeholder="请输入陪谈人号码/工号/姓名进行搜索"
             :remote-method="remoteMethod"
             :loading="selectLoading"
             popper-class="select-remote"
@@ -144,7 +150,7 @@
       </el-form>
       <!-- 弹层按钮 -->
       <span slot="footer" class="footer">
-        <span class="footer-info">注：提交后系统将给客户发送邀约短信和薯片</span>
+        <span class="footer-info">注：提交后系统将给客户发送邀约短信和薯片消息</span>
         <div>
           <el-button size="small" data-tid="recordsCancelButton" @click="dialogVisible = false"
             >取消</el-button

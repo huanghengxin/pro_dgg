@@ -1,6 +1,6 @@
 .handle-record-search-title {
   .handle-record-title {
-    width: 1004px;
+    width: 100%;
     padding: 14px 20px;
     padding-top: 0;
     padding-bottom: 0;
@@ -40,11 +40,14 @@
       .el-form-item {
         display: flex;
         margin-bottom: 16px;
+        .el-form-item__label {
+          width: 74px !important;
+        }
         .el-form-item__content {
           height: 32px;
           line-height: 32px;
           .el-input {
-            width: 228px;
+            width: 250px;
             height: 32px;
             margin-right: 16px;
             .el-input__inner {
@@ -55,11 +58,20 @@
               line-height: 32px;
             }
           }
+          .limit-select {
+            max-width: 284px;
+            .ellipsis {
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+          }
         }
         .el-date-editor {
           border-radius: 2px;
-          width: 260px;
+          width: 250px;
           height: 32px;
+          margin-right: 16px;
           .el-input__icon,
           .el-range-separator {
             line-height: 26px;
@@ -73,9 +85,6 @@
           font-size: 14px;
           font-weight: 400;
           color: #222222;
-        }
-        .el-button--primary {
-          margin-left: 16px;
         }
         .el-button {
           width: 50px;

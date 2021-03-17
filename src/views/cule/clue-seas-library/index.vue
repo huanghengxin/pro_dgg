@@ -18,6 +18,16 @@
       </div>
     </div>
 
+    <div class="button-box">
+      <el-button
+        size="small"
+        class="list-base-box-button"
+        type="primary"
+        @click="multiplCuleHandleRetrieve"
+        >拾回</el-button
+      >
+    </div>
+
     <div class="seas__main">
       <div class="seas__main-warp list-base-ui">
         <!-- 不要修改table ref属性值，会影响批量打电话 -->

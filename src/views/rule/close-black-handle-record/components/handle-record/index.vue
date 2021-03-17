@@ -11,9 +11,27 @@
       </el-table-column>
       <el-table-column prop="createTime" label="操作时间" min-width="180"> </el-table-column>
       <el-table-column prop="operationTypeName" label="操作动作" min-width="120"> </el-table-column>
-      <el-table-column prop="plannerName" label="操作对象" min-width="120"> </el-table-column>
+      <el-table-column prop="plannerName" label="操作对象" min-width="140">
+        <template slot-scope="scope">
+          <show-tooltip
+            :text="scope.row.plannerName"
+            title-class="content-title"
+            :width="100"
+            tooltip-class="content-record"
+          ></show-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column prop="plannerNo" label="平台工号" min-width="160"> </el-table-column>
-      <el-table-column prop="merchantName" label="所属商户" min-width="140"> </el-table-column>
+      <el-table-column prop="merchantName" label="商户" min-width="140">
+        <template slot-scope="scope">
+          <show-tooltip
+            :text="scope.row.merchantName"
+            title-class="content-title"
+            :width="100"
+            tooltip-class="content-record"
+          ></show-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column prop="limitTypeName" label="限制方式" min-width="160"> </el-table-column>
       <el-table-column prop="limitProportion" label="限制程度" min-width="140">
         <template slot-scope="scope">
@@ -47,6 +65,7 @@
         background
         layout="total, prev, pager, next,sizes,  jumper"
         :total="handleRecordTable.total"
+        data-tid="recordPageHandlePageBreak"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       >
@@ -80,6 +99,14 @@ export default {
   },
   created() {
     action.getDataList();
+  },
+  mounted() {
+    this.$eventBus.$on('reset-start', () => {
+      this.start = 1;
+    });
+  },
+  beforeDestroy() {
+    this.$eventBus.$off('reset-start');
   },
   destroyed() {
     mutations.clearField();

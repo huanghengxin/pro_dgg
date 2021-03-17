@@ -39,6 +39,14 @@
             .el-input__suffix {
               top: -2px;
             }
+            .limit-select {
+              max-width: 284px;
+              .ellipsis {
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+              }
+            }
           }
         }
       }

@@ -31,3 +31,11 @@ export function single_move_page_initialization(qurry) {
     qurry,
   );
 }
+
+// 商务经理--写跟进
+export function write_biz_follow_record_manage(qurry) {
+  return api.post(
+    '/crm-middle-pc/api/crisps-crm/service/yk/biz/biz_follow_record/v1/write_biz_follow_record_manage.do',
+    qurry,
+  );
+}

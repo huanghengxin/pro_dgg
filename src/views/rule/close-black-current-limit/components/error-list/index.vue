@@ -2,18 +2,18 @@
   <div class="error-list-page">
     <div class="error-list-title">
       <div>导入关黑限流错误名单</div>
-      <el-button type="primary" @click="exportLimit">导出</el-button>
+      <el-button type="primary" data-tid="errorLimitPageExportLimit" @click="exportLimit"
+        >导出</el-button
+      >
     </div>
-    <div v-if="errorListTable && errorListTable.length !== 0" class="error-list-text">
+    <div v-if="errorList && errorList.length !== 0" class="error-list-text">
       <span class="iconfont-qds-crm icon-surface_informationcircle"></span>
       <span>{{
-        '您一共' +
-          errorListTable.length +
-          '条数据错误，请修改后重新上传，返回刷新此页面错误数据不保存！'
+        '您一共' + errorListTotal + '条数据错误，请修改后重新上传，返回刷新此页面错误数据不保存！'
       }}</span>
     </div>
     <div class="error-list-table">
-      <el-table v-loading="loading" :data="errorListTable" lazy style="width: 100%">
+      <el-table ref="table" v-loading="loading" :data="errorList" style="width: 100%">
         <template slot="empty">
           <svg-icon
             key="item-warp"
@@ -22,65 +22,81 @@
             :text-content="textContent"
           />
         </template>
-        <el-table-column prop="num" label="序号" min-width="80"> </el-table-column>
+        <el-table-column prop="num" label="序号" min-width="160px">
+          <template slot-scope="scope">
+            <show-tooltip
+              v-if="scope.row.num"
+              :text="scope.row.num"
+              title-class="content-title"
+              :width="100"
+              tooltip-class="content-record"
+            ></show-tooltip>
+          </template>
+        </el-table-column>
         <el-table-column prop="plannerName" label="姓名" min-width="160px">
           <template slot-scope="scope">
-            <!-- <show-tooltip
+            <show-tooltip
               v-if="scope.row.plannerName"
               :text="scope.row.plannerName"
               title-class="content-title"
               :width="100"
               tooltip-class="content-record"
-            ></show-tooltip> -->
-            <span v-if="scope.row.plannerName">{{ scope.row.plannerName }}</span>
+            ></show-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="plannerNo" label="工号" min-width="160px">
           <template slot-scope="scope">
-            <!-- <show-tooltip
+            <show-tooltip
               v-if="scope.row.plannerNo"
               :text="scope.row.plannerNo"
               title-class="content-title"
               :width="100"
               tooltip-class="content-record"
-            ></show-tooltip> -->
-            <span v-if="scope.row.plannerNo">{{ scope.row.plannerNo }}</span>
+            ></show-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="merchantName" label="商户" min-width="160px">
           <template slot-scope="scope">
-            <!-- <show-tooltip
+            <show-tooltip
               v-if="scope.row.merchantName"
               :text="scope.row.merchantName"
               title-class="content-title"
               :width="100"
               tooltip-class="content-record"
-            ></show-tooltip> -->
-            <span v-if="scope.row.merchantName">{{ scope.row.merchantName }}</span>
+            ></show-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="limitTypeName" label="限制方式" min-width="160px">
           <template slot-scope="scope">
-            <!-- <show-tooltip
+            <show-tooltip
               v-if="scope.row.limitTypeName"
               :text="scope.row.limitTypeName"
               title-class="content-title"
               :width="100"
               tooltip-class="content-record"
-            ></show-tooltip> -->
-            <span v-if="scope.row.limitTypeName">{{ scope.row.limitTypeName }}</span>
+            ></show-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="limitProportion" label="限制程度" min-width="140px">
+        <el-table-column prop="limitProportion" label="限制程度" min-width="160px">
           <template slot-scope="scope">
-            <span v-if="scope.row.limitProportion">限流{{ scope.row.limitProportion }}%</span>
+            <show-tooltip
+              v-if="scope.row.limitProportion"
+              :text="'限制' + scope.row.limitProportion + '%'"
+              title-class="content-title"
+              :width="100"
+              tooltip-class="content-record"
+            ></show-tooltip>
           </template>
         </el-table-column>
         <el-table-column label="限制周期" min-width="240px">
           <template slot-scope="scope">
-            <span v-if="scope.row.startTime && scope.row.endTime">{{
-              scope.row.startTime + ' ~ ' + scope.row.endTime
-            }}</span>
+            <show-tooltip
+              v-if="scope.row.startTime && scope.row.endTime"
+              :text="scope.row.startTime + ' ~ ' + scope.row.endTime"
+              title-class="content-title"
+              :width="200"
+              tooltip-class="content-record"
+            ></show-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注说明" min-width="160px">
@@ -113,7 +129,9 @@
           class-name="error-list-handle"
         >
           <template slot-scope="scope">
-            <span @click="deleteErrorRow(scope.$index)">删除</span>
+            <span :data-tid="'deleteErrorRow' + scope.$index" @click="deleteErrorRow(scope.$index)"
+              >删除</span
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -138,33 +156,60 @@ export default {
     };
   },
   computed: {
-    errorListTable() {
+    errorList() {
       return storeError.errorList;
     },
+    //总条数
+    errorListTotal() {
+      return storeError.errorList.length;
+    },
   },
-  created() {},
+  mounted() {
+    if (this.errorList.length > 0) {
+      this.$message.info('导入文件存在错误数据，请修改后重新上传！');
+    }
+  },
   methods: {
-    /**
-     * @description 列表懒加载
-     */
-    load(tree, treeNode, resolve) {},
     /**
      * @description 导出错误数据
      */
     exportLimit() {
-      this.loading = true;
-      let params = storeError.errorList;
-      export_limit_list(params).then((res) => {
-        let blob = new Blob([res], { type: 'application/vnd.ms-excel' });
-        let ANode = document.createElement('a');
-        ANode.style.display = 'none';
-        ANode.href = URL.createObjectURL(blob);
-        ANode.download = '关黑限流错误数据.xls';
-        document.body.appendChild(ANode);
-        ANode.click();
-        document.body.removeChild(ANode);
-        window.URL.revokeObjectURL(ANode.href);
-        this.loading = false;
+      if (this.loading === true) return;
+      if (this.errorListTotal === 0) {
+        this.$message.warning('暂无错误数据！');
+        return;
+      }
+      const h = this.$createElement;
+      this.$messageBox({
+        title: '消息',
+        message: h('p', null, [
+          h('i', null, '已选定 '),
+          h('i', null, this.errorListTotal),
+          h('i', null, '条关黑限流错误数据，确认导出吗？'),
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        closeOnClickModal: false,
+      }).then(() => {
+        this.loading = true;
+        let params = storeError.errorList;
+        export_limit_list(params)
+          .then((res) => {
+            let blob = new Blob([res], { type: 'application/vnd.ms-excel' });
+            let ANode = document.createElement('a');
+            ANode.style.display = 'none';
+            ANode.href = URL.createObjectURL(blob);
+            ANode.download = '关黑限流错误数据.xls';
+            document.body.appendChild(ANode);
+            ANode.click();
+            document.body.removeChild(ANode);
+            window.URL.revokeObjectURL(ANode.href);
+            this.loading = false;
+          })
+          .catch(() => {
+            this.loading = false;
+          });
       });
     },
     /**

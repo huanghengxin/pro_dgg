@@ -52,7 +52,6 @@
             @click="showModalHandleClick('showPhoneRef', businessInfo.customerContact)"
           ></i>
           <i
-            v-if="from !== 'team-manage'"
             v-callLoading="callLoading"
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
@@ -71,7 +70,6 @@
             @click="showModalHandleClick('showPhoneRef', item.contactNoFull)"
           ></i>
           <i
-            v-if="from !== 'team-manage'"
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
             data-tid="infoBusinessInfoCall"
@@ -156,7 +154,6 @@
         @click="showModalHandleClick('showPhoneRef', businessInfo.bakRelation.contactNoFull)"
       ></i>
       <i
-        v-if="from !== 'team-manage'"
         v-accControls:noAttention="businessInfo"
         class="iconfont-qds-crm icon-dianhua phone-info_icon"
         data-tid="infoBusinessInfoCall"
@@ -218,7 +215,6 @@ export default {
     return {
       businessInfo: {},
       loading: false,
-      busInfo: {},
     };
   },
   computed: {
@@ -259,7 +255,8 @@ export default {
      * @param {String} 改变当前选中的号码
      */
     businessInfoCall(contactNoFull) {
-      this.callMixins('bus', this.businessInfo, 'one', contactNoFull);
+      const type = this.from === 'team-manage' ? 'team-manage' : 'bus';
+      this.callMixins(type, this.businessInfo, 'one', contactNoFull);
     },
     addStandbyPerson() {
       this.$refs.addStandbyContact.openModal(this.businessInfo);
@@ -267,7 +264,6 @@ export default {
     setRemark() {
       this.getBusinessInfo();
     },
-    editRemarkHandleClick() {},
     /**
      * @description 编辑备注 查看号码
      */

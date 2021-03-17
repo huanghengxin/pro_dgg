@@ -36,7 +36,12 @@ import { lose_efficacy_business } from 'api/team-manage';
 export default {
   name: 'RemindDialog',
   components: {},
-  props: {},
+  props: {
+    from: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
       message: '',
@@ -64,9 +69,12 @@ export default {
       lose_efficacy_business(params)
         .then((res) => {
           if (res.code === 200) {
+            this.$emit('reset-list');
+            if (this.from === 'business-details') {
+              this.$router.push(`/team-manage`);
+            }
             this.ok = true;
             this.dialogVisible = false;
-            this.$emit('reset-list');
           } else {
             this.$message.warning(res.message);
           }

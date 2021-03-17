@@ -12,7 +12,7 @@
       display: none;
     }
     .explain {
-      width: 72px;
+      width: 74px;
       font-size: 14px;
       font-weight: 400;
       color: #999999;
@@ -30,10 +30,7 @@
     justify-content: space-between;
     .first-row {
       margin-bottom: 12px;
-    }
-
-    & > div:nth-child(2) {
-      margin-right: 40px;
+      width: 200px;
     }
   }
   .limit-details-tabs {

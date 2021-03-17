@@ -6,10 +6,7 @@
 
 const Layout = () => import(/* webpackChunkName: "layout" */ 'components/layout');
 const Platform = () => import(/* webpackChunkName: "platform" */ 'views/rule/platform');
-const CooperationMerchant = () =>
-  import(/* webpackChunkName: "cooperation-merchant" */ 'views/rule/cooperation-merchant');
-const CooperationPlatform = () =>
-  import(/* webpackChunkName: "cooperation-platform" */ 'views/rule/cooperation-platform');
+
 const Merchant = () => import(/* webpackChunkName: "merchant" */ 'views/rule/merchant');
 const CloseBlackCurrentLimit = () =>
   import(
@@ -34,20 +31,14 @@ const ProspectiveCustomer = () =>
 
 const PublicLibrary = () =>
   import(/* webpackChunkName: "public-library" */ 'views/cule/public-library');
-const CooperationAllianceClients = () =>
-  import(
-    /* webpackChunkName: "cooperation-alliance-clients" */ 'views/cule/cooperation-alliance-clients'
-  );
+
 const BusinessDetails = () =>
   import(/* webpackChunkName: "business-details" */ 'views/business-details');
 const AddBusiness = () =>
   import(
     /* webpackChunkName: "add-business" */ 'views/my-business/components/add-business/index.vue'
   );
-const InitiateCooperationInPage = () =>
-  import(
-    /* webpackChunkName: "initiate-cooperation-in-page" */ 'views/cule/initiate-cooperation-in-page/index.vue'
-  );
+
 const DynamicBusiness = () =>
   import(/* webpackChunkName: "dynamic-business" */ 'views/dynamic-business');
 const RceferralCustomer = () =>
@@ -126,35 +117,12 @@ export default [
         name: 'ClueSeasLibrary',
         component: ClueSeasLibrary,
       },
-      //合作联盟客户
-      {
-        path: '/cooperation-alliance-clients',
-        name: 'CooperationAllianceClients',
-        component: CooperationAllianceClients,
-      },
-      // 发起合作
-      {
-        path: '/initiate-cooperation-in-page',
-        name: 'InitiateCooperationInPage',
-        component: InitiateCooperationInPage,
-      },
+
       // 我的潜在客户
       {
         path: '/prospective-customer',
         name: 'ProspectiveCustomer',
         component: ProspectiveCustomer,
-      },
-      // 合作联盟规则商户
-      {
-        path: '/cooperation-merchant',
-        name: 'CooperationMerchant',
-        component: CooperationMerchant,
-      },
-      // 合作联盟规则平台
-      {
-        path: '/cooperation-platform',
-        name: 'CooperationPlatform',
-        component: CooperationPlatform,
       },
 
       // 我的转介绍

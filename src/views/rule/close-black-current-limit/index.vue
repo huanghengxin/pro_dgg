@@ -7,9 +7,11 @@
       </div>
       <el-form ref="limitForm" :model="limitForm">
         <el-form-item label="限制人员：">
+          <!--  v-loadmore 触底滚动加载事件 -->
           <el-select
             ref="select"
             v-model="limitForm.limitPerson"
+            v-loadmore="'plannerList'"
             filterable
             value-key="mchUserId"
             remote
@@ -17,7 +19,11 @@
             :remote-method="searchPlannerName"
             :loading="selectLoading"
             clearable
+            popper-class="limit-select"
+            :popper-append-to-body="false"
+            data-tid="limitPageSearchPlanner"
             @change="selectChangeHandle"
+            @focus="resetStart"
           >
             <el-option
               v-for="people in plannerList"
@@ -25,12 +31,19 @@
               :label="people.userName + '/' + people.userCenterNo"
               :value="people"
             >
+              <show-tooltip
+                :text="people.userName + '/' + people.userCenterNo"
+                title-class="content-title"
+                :width="242"
+                tooltip-class="content-record"
+              ></show-tooltip>
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="所属商户：">
+        <el-form-item v-permission="['merchantSearch']" label="商户：">
           <el-select
             v-model="limitForm.bizPerson"
+            v-loadmore="'merchantList'"
             filterable
             value-key="id"
             remote
@@ -38,7 +51,11 @@
             :remote-method="searchMerchantName"
             :loading="selectLoading"
             clearable
+            popper-class="limit-select"
+            :popper-append-to-body="false"
+            data-tid="limitPageSearchMerchant"
             @change="selectChangeHandle"
+            @focus="resetStart"
           >
             <el-option
               v-for="people in merchantList"
@@ -46,19 +63,43 @@
               :label="people.name + '/' + people.mchNo"
               :value="people"
             >
+              <show-tooltip
+                :text="people.name + '/' + people.mchNo"
+                title-class="content-title"
+                :width="242"
+                tooltip-class="content-record"
+              ></show-tooltip>
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="search-button" @click="searchData">搜索</el-button>
-          <el-button plain @click="resetInput">重置</el-button>
+          <el-button
+            type="primary"
+            class="search-button"
+            data-tid="limitPageSearchData"
+            @click="searchData"
+            >搜索</el-button
+          >
+          <el-button plain data-tid="limitPageResetInput" @click="resetInput">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
     <!-- 导入按钮 -->
     <div class="close-black-current-limit-button">
-      <el-button type="primary" @click="openAddLimit">添加单个</el-button>
-      <el-button type="primary" @click="openBatchAddLimit">批量导入</el-button>
+      <el-button
+        v-permission="['addLimit']"
+        type="primary"
+        data-tid="limitPageOpenAddLimit"
+        @click="openAddLimit"
+        >添加单个</el-button
+      >
+      <el-button
+        v-permission="['batchAddLimit']"
+        type="primary"
+        data-tid="limitPageOpenBatchAddLimit"
+        @click="openBatchAddLimit"
+        >批量导入</el-button
+      >
     </div>
     <!-- 表格内容 -->
     <div class="close-black-current-limit-table list-base-ui">
@@ -78,7 +119,12 @@
         </el-table-column>
         <el-table-column prop="merchantName" label="商户">
           <template slot-scope="scope">
-            <span>{{ scope.row.merchantName }}</span>
+            <show-tooltip
+              :text="scope.row.merchantName"
+              title-class="content-title"
+              :width="100"
+              tooltip-class="content-record"
+            ></show-tooltip>
           </template>
         </el-table-column>
         <el-table-column
@@ -99,8 +145,15 @@
         </el-table-column>
         <el-table-column prop="closeBlackHandle" label="操作" class-name="close-black-handle">
           <template slot-scope="scope">
-            <span @click="openLimitDetails(scope.row)">限制详情</span>
-            <span @click="openCancelLimit(scope.row)">取消</span>
+            <span :data-tid="'openLimitDetails' + scope.$index" @click="openLimitDetails(scope.row)"
+              >限制详情</span
+            >
+            <span
+              v-permission="['cancelLimit']"
+              :data-tid="'openCancelLimit' + scope.$index"
+              @click="openCancelLimit(scope.row)"
+              >取消</span
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -112,26 +165,33 @@
         :page-sizes="[10, 20, 30, 40, 50]"
         background
         layout="total, prev, pager, next,sizes,  jumper"
-        :total="closeBlackTableDataPage"
+        :total="closeBlackTotal"
+        data-tid="limitPageHandlePageBreak"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       >
       </el-pagination>
     </div>
-    <limit-details ref="limitDetailsRefs"></limit-details>
-    <cancel-limit ref="cancelLimitRefs" @cancel-limit="updateList"></cancel-limit>
-    <add-limit ref="addLimitRefs" @add-limit="updateList"></add-limit>
-    <batch-add-limit ref="batchAddLimitRefs" @batch-add="updateList"></batch-add-limit>
+    <limit-details
+      ref="limitDetailsRefs"
+      data-tid="updateList"
+      @update-list="updateList"
+    ></limit-details>
+    <cancel-limit
+      ref="cancelLimitRefs"
+      data-tid="updateList"
+      @update-list="CancelLimit"
+    ></cancel-limit>
+    <add-limit ref="addLimitRefs" data-tid="updateList" @update-list="updateList"></add-limit>
+    <batch-add-limit
+      ref="batchAddLimitRefs"
+      data-tid="updateList"
+      @update-list="updateList"
+    ></batch-add-limit>
   </div>
 </template>
 <script>
-import {
-  limit_list,
-  cancel_limit,
-  limit_detail,
-  get_plat_form_user_info_list,
-  page_list,
-} from 'api/close-black-limit';
+import { limit_list, cancel_limit, limit_detail } from 'api/close-black-limit';
 import LimitDetails from './components/limit-details';
 import CancelLimit from './components/cancel-limit';
 import AddLimit from './components/add-limit';
@@ -139,6 +199,7 @@ import BatchAddLimit from './components/batch-add-limit';
 import ShowTooltip from 'components/show-tooltip';
 import SvgIcon from 'components/svg-icon';
 import './index.scss';
+import scrollLoad from 'utils/mixins/scrollLoad';
 export default {
   name: 'CloseBlackCurrentLimit',
   components: {
@@ -149,6 +210,7 @@ export default {
     ShowTooltip,
     SvgIcon,
   },
+  mixins: [scrollLoad],
   data() {
     return {
       closeBlackTableData: [],
@@ -156,34 +218,44 @@ export default {
         limitPerson: '',
         bizPerson: '',
       },
-      merchantId: undefined, //搜索的商机id
       plannerId: undefined, //规划师id
-      mchTypeId: undefined, //商户id
+      mchId: undefined, //商户id
       selectLoading: false, //搜索输入框的加载
       plannerList: [], //限制人员搜索名单
       merchantList: [], //商户搜索名单
       loading: false,
       limit: 10, //每页显示多少条
       start: 1, //页数
-      closeBlackTableDataPage: 0, //总页数
+      closeBlackTotal: 0, //总条数
     };
   },
   mounted() {
     this.getCloseBlackTable();
   },
   methods: {
+    CancelLimit(checkListDetails, limitWayDetails) {
+      if (
+        this.closeBlackTableData?.length == 1 &&
+        this.start != 1 &&
+        checkListDetails.length == limitWayDetails.length
+      ) {
+        this.start--;
+      }
+      this.getCloseBlackTable();
+    },
     updateList() {
+      this.start = 1;
       this.getCloseBlackTable();
     },
     /**
      * @description 搜索
      */
     searchData() {
-      let limitPerson = this.limitForm.limitPerson;
-      let bizPerson = this.limitForm.bizPerson;
-      this.merchantId = limitPerson ? limitPerson.mchDetailId : undefined;
+      const limitPerson = this.limitForm.limitPerson;
+      const bizPerson = this.limitForm.bizPerson;
       this.plannerId = limitPerson ? limitPerson.mchUserId : undefined;
-      this.mchTypeId = bizPerson ? bizPerson.id : undefined;
+      this.mchId = bizPerson ? bizPerson.id : undefined;
+      this.start = 1;
       this.getCloseBlackTable();
     },
     /**
@@ -193,23 +265,29 @@ export default {
       this.limitForm = {};
       this.plannerList = []; //限制人员搜索名单
       this.merchantList = []; //商户搜索名单
-      this.merchantId = undefined;
       this.plannerId = undefined;
-      this.mchTypeId = undefined;
+      this.mchId = undefined;
       this.$refs.select.focus();
+      this.start = 1;
       this.getCloseBlackTable();
+    },
+    /**
+     * @description 重置start
+     */
+    resetStart() {
+      this.optionPage = 1;
     },
     /**
      * @description 分页
      * @param {Number}
      */
+    //每页多少条
     handleSizeChange(val) {
-      //每页多少条
       this.limit = val;
       this.getCloseBlackTable();
     },
+    //第几页
     handleCurrentChange(val) {
-      //第几页
       this.start = val;
       this.getCloseBlackTable();
     },
@@ -223,7 +301,7 @@ export default {
      * @description 取消关黑限流
      */
     openCancelLimit(cancelDetails) {
-      let limitTypeList = cancelDetails.limitTypeName.split('、');
+      const limitTypeList = cancelDetails.limitTypeName.split('、');
       if (limitTypeList.length > 1) {
         this.$refs.cancelLimitRefs.openModal(cancelDetails);
       } else {
@@ -234,26 +312,54 @@ export default {
             {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
-              iconClass: 'iconfont-qds-crm icon-surface_informationcircle danger-limit-way',
+              type: 'warning',
+              customClass: 'danger-limit-way',
               closeOnClickModal: false,
             },
           )
-          .then(async () => {
+          .then(() => {
+            this.loading = true;
             let detailsParams = { plannerId: cancelDetails.plannerId };
             let cancelParams = [];
-            const result = await limit_detail(detailsParams);
-            if (result.code !== 200) return this.$message.warning(result.message);
-            cancelParams.push(result.data[0].id);
-            cancel_limit(cancelParams).then((res) => {
-              if (res.code === 200) {
-                this.$message.success(res.message);
-                this.getCloseBlackTable();
-              } else {
-                this.$message.warning(res.message);
-              }
-            });
+            limit_detail(detailsParams)
+              .then((res) => {
+                if (res.code !== 200) {
+                  this.$message.warning(res.message);
+                  this.loading = false;
+                } else {
+                  if (Array.isArray(res.data) && res.data.length === 0) {
+                    this.$message.warning('此限制方式已经被取消了！');
+                    this.loading = false;
+                    this.getCloseBlackTable();
+                    return;
+                  }
+                  cancelParams.push(res.data[0].id);
+                  this.cancelLimit(cancelParams);
+                }
+              })
+              .catch(() => {
+                this.loading = false;
+              });
           });
       }
+    },
+    cancelLimit(cancelParams) {
+      cancel_limit(cancelParams)
+        .then((res) => {
+          if (res.code === 200) {
+            this.$message.success(res.message);
+            if (this.closeBlackTableData?.length == 1 && this.start != 1) {
+              this.start--;
+            }
+            this.getCloseBlackTable();
+          } else {
+            this.$message.warning(res.message);
+            this.loading = false;
+          }
+        })
+        .catch(() => {
+          this.loading = false;
+        });
     },
     /**
      * @description 添加单个限制
@@ -275,15 +381,14 @@ export default {
       let params = {
         limit: this.limit,
         start: this.start,
-        mchId: this.merchantId,
         plannerId: this.plannerId,
-        mchTypeId: this.mchTypeId,
+        mchId: this.mchId,
       };
       limit_list(params)
         .then((res) => {
           if (res.code === 200) {
             this.closeBlackTableData = res.data.records;
-            this.closeBlackTableDataPage = res.data.totalCount;
+            this.closeBlackTotal = res.data.totalCount;
           } else {
             this.$message.warning(res.message);
           }
@@ -298,14 +403,16 @@ export default {
      */
     searchPlannerName(keyword) {
       if (!keyword.trim()) return;
-      this.getPeopleList(keyword, 'plannerList');
+      this.optionKey = keyword.trim();
+      this.getPeopleList(keyword.trim(), 'plannerList');
     },
     /**
-     * @description 所属商户远程搜索方法
+     * @description 商户远程搜索方法
      */
     searchMerchantName(keyword) {
       if (!keyword.trim()) return;
-      this.getPeopleList(keyword, 'merchantList');
+      this.optionKey = keyword.trim();
+      this.getPeopleList(keyword.trim(), 'merchantList');
     },
     /**
      * @description 限制人员搜索后选中方法
@@ -315,39 +422,6 @@ export default {
         this.plannerList = [];
         this.merchantList = [];
       }
-    },
-    /**
-     * @description 获取限制人员名单
-     */
-    getPeopleList(keyword, type) {
-      this.selectLoading = true;
-      let params = {
-        page: 1,
-        limit: 1000,
-      };
-      if (type === 'plannerList') {
-        params.userCenterStatus = -1;
-        params.userCenterAuthStatus = '';
-        params.status = -1;
-      }
-      const regPhone = /^1[3-9]\d{9}$/;
-      if (regPhone.test(keyword)) {
-        params.phone = keyword;
-      } else {
-        params.searchKey = keyword;
-      }
-      const path = type === 'plannerList' ? get_plat_form_user_info_list : page_list;
-      path(params)
-        .then((res) => {
-          if (res.code === 200) {
-            res = res.data;
-            this[type] = res.records || [];
-          } else {
-            this.$message.warning(res.message);
-          }
-          this.selectLoading = false;
-        })
-        .catch(() => (this.selectLoading = false));
     },
   },
 };

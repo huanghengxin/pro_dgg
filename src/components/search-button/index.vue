@@ -6,6 +6,7 @@
       :maxlength="20"
       clearable
       data-tid="searchInput"
+      @keyup.enter.native="handleClick"
       @input="handleInput"
       @blur="handleBlur"
       @clear="clear"
@@ -27,6 +28,10 @@ export default {
       default: '',
     },
     value: {
+      type: String,
+      default: '',
+    },
+    from: {
       type: String,
       default: '',
     },
@@ -55,13 +60,30 @@ export default {
       const regPhone = /^1[3-9]\d{9}$/;
       const regNumber = /^BSJ[0-9]|bsj[0-9]*$/;
       let params = {};
-      if (regNumber.test(this.content)) {
-        params.bizNo = this.content;
-      } else if (regPhone.test(this.content)) {
-        params.phoneNo = this.content;
-      } else {
-        params.customerName = this.content;
+      switch (this.from) {
+        case 'cule':
+          params.keyword = this.content;
+          if (params.keyword && regNumber.test(this.content)) {
+            params.keywordType = 'SEARCH_BUS_NO';
+          } else if (params.keyword && regPhone.test(this.content)) {
+            params.keywordType = 'SEARCH_CLIENT_PHONE';
+          } else if (params.keyword) {
+            params.keywordType = 'SEARCH_CLIENT_NAME';
+          } else {
+            params.keywordType = '';
+          }
+          break;
+        default:
+          if (regNumber.test(this.content)) {
+            params.bizNo = this.content;
+          } else if (regPhone.test(this.content)) {
+            params.phoneNo = this.content;
+          } else {
+            params.customerName = this.content;
+          }
+          break;
       }
+
       this.$emit('search', params, this.content);
     },
     clear() {

@@ -76,7 +76,7 @@ export default {
   activated() {
     this.getBusStateNumber();
     this.getFilterList();
-    // this.initDefaultField(); //今日待跟进筛选字段
+    this.initDefaultField(); //今日待跟进筛选字段
   },
   created() {
     //获取商机动态

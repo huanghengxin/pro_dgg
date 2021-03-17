@@ -148,11 +148,9 @@ export const defaultMapFilterList = {
 };
 //暂不关注和无效商机
 export const NO_ATTENTION = {
-  //无效线索弹层
   //无效商机弹层
   BUS_WXSJ: {
     title: '无效商机',
-    title2: '无效线索',
     label1: '无效原因：',
     label2: '无效原因：',
     placeholder1: '请选择无效原因',

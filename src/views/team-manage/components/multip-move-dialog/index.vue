@@ -237,11 +237,16 @@ export default {
                   dangerouslyUseHTMLString: true,
                   confirmButtonText: '确定',
                   closeOnClickModal: false,
-                  customClass: 'message-box-min-height',
+                  customClass: 'message-box-min-height team-manage-error',
                   type: 'error',
                 },
               )
-              .catch(() => {});
+              .then(() => {
+                this.$emit('reset-list');
+              })
+              .catch(() => {
+                this.$emit('reset-list');
+              });
           }
           this.loading = false;
         })

@@ -32,7 +32,7 @@ export default {
         let node = document.createElement('span');
         const text = this.text?.replace(/\s/g, '');
         node.innerText = this.title ? this.title + text : text;
-        const body = document.querySelector('body');
+        const body = document.body;
         body.appendChild(node);
         const width = node?.getBoundingClientRect().width;
         body.removeChild(node);
@@ -60,7 +60,7 @@ export default {
             placement={placement || 'top-start'}
             popper-class="show-tooltip">
             <div style={{ width: width + 'px' }} class={[tooltipClassName, this.tooltipClass]}>
-              <span class={this.titleClass}>{title ? title : ''}</span> {text}
+              <span class={this.titleClass}>{title ?? ''}</span> {text}
             </div>
           </el-tooltip>
         );
@@ -72,7 +72,7 @@ export default {
               width: this.contentWidth ? this.contentWidth : 'max-content',
             }}
             class={['multi-line-clamp-l' + tooltipLineClamp, this.tooltipClass]}>
-            <span class={this.titleClass}>{title ? title : ''}</span> {text}
+            <span class={this.titleClass}>{title ?? ''}</span> {text}
           </span>
         );
       }

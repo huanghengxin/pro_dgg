@@ -76,12 +76,12 @@ const callMixins = {
           merchantuserid: mchUserId, //商户用户id
           phoneList: phoneList,
         };
-        if (sourceType === 'bus') {
+        if (sourceType === 'bus' || sourceType === 'team-manage') {
           params.bus_info.bizId = multipleSelection.id; //商机Id
           params.bus_info.libType = multipleSelection.bizLabrary
             ? multipleSelection.bizLabrary
             : 'PERSONAL';
-          params.bus_info.type = 1; //商机Id
+          params.bus_info.type = sourceType === 'bus' ? 1 : 5;
         } else {
           params.bus_info.clueId = multipleSelection.id; //商机Id
           params.bus_info.libType = 'CLUE_D'; //线索Id
@@ -105,12 +105,12 @@ const callMixins = {
         customerId: multipleSelection.customerId, //客户Id
         phoneNumber: multipleSelection.customerPhoneCipher || multipleSelection.customerContact,
       };
-      if (sourceType === 'bus') {
+      if (sourceType === 'bus' || sourceType === 'team-manage') {
         validateCall.bizId = multipleSelection.id; //商机Id
         validateCall.libType = multipleSelection.bizLabrary
           ? multipleSelection.bizLabrary
           : 'PERSONAL';
-        validateCall.type = 1;
+        validateCall.type = sourceType === 'bus' ? 1 : 5;
       } else {
         validateCall.clueId = multipleSelection.id; //商机Id
         validateCall.libType = 'CLUE_D'; //线索Id
@@ -130,9 +130,9 @@ const callMixins = {
         if (type === 'one') {
           this.multipleSelection = [item];
           //单个打电话需要判断当前是否可以打电话
-          const { code } = await this.validateCall(sourceType);
+          const { code, message } = await this.validateCall(sourceType);
           if (code !== 200) {
-            this.$message.warning('你操作的数据已不在当前位置，请重新选择哦！');
+            this.$message.warning(message);
             typeof this.flowRefresh === 'function' && this.flowRefresh(); //调用页面刷新方法
             this.callLoading = false;
             return;

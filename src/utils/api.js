@@ -63,6 +63,9 @@ class Api {
       }
     }
     const token = store.get('token') || undefined;
+    const mchDetailId = store.get('mchInfo')?.mchDetailId || undefined;
+    const mchUserId = store.get('mchInfo')?.mchUserId || undefined;
+    const userId = store.get('userInfo')?.id || undefined;
     // 签名
     const signData = sign({
       method,
@@ -77,6 +80,10 @@ class Api {
         'Content-Type': isForm ? 'multipart/form-data' : 'application/json',
         ...headers,
         ...signData,
+        //调试阶段需要用到 商户Id 商户用户Id
+        'X-Req-MerchantId': mchDetailId,
+        'X-Req-MerchantUserId': mchUserId,
+        'X-Req-UserId': userId,
       },
     };
     data = paramsMethods.indexOf(method) !== -1 ? { params: data, ...config } : data;
@@ -93,10 +100,6 @@ class Api {
         }
       })
       .catch(async (error) => {
-        Vue.prototype.$message({
-          message: data?.message,
-          type: 'error',
-        });
         reject(error);
       });
   }

@@ -113,7 +113,6 @@
               >
                 写跟进
               </p>
-
               <el-dropdown
                 v-show="activeTabcode !== 'SIGN_ORDER'"
                 trigger="click"
@@ -126,9 +125,6 @@
                     :command="{ component: 'callPhoneRef', item: scope.row }"
                     >打电话</el-dropdown-item
                   >
-                  <!-- <el-dropdown-item :command="{ component: 'pushSheetRef', item: scope.row }"
-                  >推单</el-dropdown-item
-                > -->
                   <el-dropdown-item
                     :data-tid="'setGroup' + scope.$index"
                     :command="{ component: 'setGroupRef', item: scope.row }"
@@ -140,31 +136,37 @@
                     >邀约面谈</el-dropdown-item
                   >
                   <el-dropdown-item
-                    :data-tid="'noAttention' + scope.$index"
+                    :data-tid="'imChat' + scope.$index"
                     :command="{
-                      component: 'noAttentionRef',
-                      item: { code: 'BUS_ZBGZ', busId: scope.row.id },
+                      component: 'IMchat',
+                      item: scope.row,
                     }"
-                    >暂不关注</el-dropdown-item
-                  >
-                  <el-dropdown-item
-                    :data-tid="'noUse' + scope.$index"
-                    :command="{
-                      component: 'noAttentionRef',
-                      item: { code: 'BUS_WXSJ', busId: scope.row.id },
-                    }"
-                    >无效</el-dropdown-item
+                    >在线聊</el-dropdown-item
                   >
                 </el-dropdown-menu>
               </el-dropdown>
-              <p
+              <el-dropdown
                 v-show="activeTabcode === 'SIGN_ORDER'"
-                :data-tid="'listHandleCallUp' + scope.$index"
-                class="list-handle_follow"
-                @click="callPhone(scope.row)"
+                trigger="click"
+                @command="handleCommand"
               >
-                打电话
-              </p>
+                <p class="list-handle_more">更多操作</p>
+                <el-dropdown-menu slot="dropdown" key="el-dropdown-menu" data-tid="dropdown">
+                  <el-dropdown-item
+                    :data-tid="'callPone' + scope.$index"
+                    :command="{ component: 'callPhoneRef', item: scope.row }"
+                    >打电话</el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    :data-tid="'imChat' + scope.$index"
+                    :command="{
+                      component: 'IMchat',
+                      item: scope.row,
+                    }"
+                    >在线聊</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </el-dropdown>
             </div>
             <div v-else>
               <p
@@ -195,7 +197,6 @@
       <write-follow-record ref="writeFollowRecordRef" @on-submit="onSubmitHandle" />
       <set-group ref="setGroupRef" @on-submit="onSubmitHandle" />
       <invite-interview ref="inviteInterviewRef" @on-submit="onSubmitHandle" />
-      <no-attention ref="noAttentionRef" @on-submit="onSubmitHandle" />
       <show-more-require ref="showMoreRequireRef" :is-sign-order="params.type" />
     </div>
   </div>
@@ -215,8 +216,8 @@ import SetGroup from '../set-group';
 import InviteInterview from '../invite-interview/index.vue';
 import { PREDICT_DROP_TYPE_MAP } from 'constants/type';
 // import { accControlsList } from 'constants/access-controls';
-import NoAttention from '../no-attention';
 import callMixins from 'utils/mixins/callMixins';
+import imChatMinixs from 'utils/mixins/imChatMinixs';
 export default {
   name: 'BusinessList',
   components: {
@@ -224,7 +225,7 @@ export default {
     WriteFollowRecord,
     SetGroup,
     InviteInterview,
-    NoAttention,
+
     SvgIcon,
     MoreRequire,
     ShowMoreRequire,
@@ -237,7 +238,7 @@ export default {
       return PREDICT_DROP_TYPE_MAP[val];
     },
   },
-  mixins: [callMixins],
+  mixins: [callMixins, imChatMinixs],
   provide() {
     return {
       parentLoadMore: this.loadMore,
@@ -291,9 +292,7 @@ export default {
       this.$eventBus.$on('my-business_transfer-params', (val) => {
         let searchInput = val[2];
         //判断tab切换，需要清空排序
-        if (val[3] === 'clearSort' || searchInput) {
-          this.$refs.tableRef.clearSort();
-        }
+        this.$refs.tableRef.clearSort();
         //判断是否是综合筛选，综合筛选需要清空之前得筛选项
         if (searchInput) {
           this.paramsData = {};
@@ -352,7 +351,9 @@ export default {
         case 'callPhoneRef':
           this.callPhone(command.item);
           break;
-
+        case 'IMchat':
+          this.IMChatOpen(command.item);
+          break;
         case 'pushSheetRef':
           this.$router.push('/push-sheet');
           break;

@@ -107,20 +107,19 @@
         </template>
         <el-table-column type="selection" min-width="44" class-name="list-selection">
         </el-table-column>
-        <el-table-column class="list-name" fixed="left" label="姓名" min-width="180">
+        <el-table-column class="list-name" fixed="left" label="姓名" min-width="140">
           <template slot-scope="scope">
-            <router-link
-              v-show="scope.row.customerName"
-              :to="`/team-manage/business-details?businessId=${
-                scope.row.id || ''
-              }&from=team-manage`"
+            <div
+              class="customerName"
+              :data-tid="'handleDetails' + scope.$index"
+              @click="handleDetails(scope.row)"
             >
               <show-tooltip
                 v-if="scope.row.customerName"
                 :text="scope.row.customerName"
                 :width="110"
               ></show-tooltip>
-            </router-link>
+            </div>
             <div v-show="scope.row.intentionLevel">
               <el-rate
                 :value="Number(scope.row.intentionLevel)"
@@ -207,15 +206,24 @@
           </template>
           <p v-else>暂无数据</p>
         </el-table-column>
-        <el-table-column min-width="70" label="操作" fixed="right">
+        <el-table-column label="操作" min-width="130" fixed="right" class-name="list-last">
           <template slot-scope="scope">
-            <p
-              class="move"
-              :data-tid="'remindHandleMove' + scope.$index"
-              @click="handleMove(scope.row)"
-            >
-              移交
-            </p>
+            <div class="list-handle">
+              <p
+                class="list-handle_follow"
+                :data-tid="'handleDetails' + scope.$index"
+                @click="handleDetails(scope.row)"
+              >
+                商机详情
+              </p>
+              <p
+                class="list-handle_follow"
+                :data-tid="'remindHandleMove' + scope.$index"
+                @click="handleMove(scope.row)"
+              >
+                移交
+              </p>
+            </div>
           </template>
         </el-table-column>
       </el-table>

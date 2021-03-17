@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="备注"
+    :title="from === 'prospective' ? '写跟进' : '备注'"
     custom-class="library-records"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
@@ -28,7 +28,11 @@
           placeholder="请输入跟进内容"
         ></el-input>
       </el-form-item>
-      <el-form-item v-if="feedbackList.length" label="情况反馈：" prop="feedback">
+      <el-form-item
+        v-if="feedbackList.length && from !== 'prospective'"
+        label="情况反馈："
+        prop="feedback"
+      >
         <el-radio-group v-model="ruleForm.feedback">
           <div class="">
             <el-radio
@@ -41,7 +45,7 @@
             >
           </div>
         </el-radio-group>
-        <p v-show="hideDays" class="note-remind">
+        <p v-show="hideDays && from !== 'prospective'" class="note-remind">
           <i class="iconfont-qds-crm icon-attention"></i> 注：提交后商机将隐藏
           <span>{{ hideDays }}</span
           >天，感谢您的反馈。
@@ -70,9 +74,16 @@ import './index.scss';
 // 新增线索公海库备注
 import { add_remark_to_high_seas, noteHide } from 'api/cule';
 import { get_dictionary_data_by_parent_code } from 'api/common';
+import { add_follow_up_content } from 'api/cule';
 // 新增公共库备注
 export default {
   name: 'LibraryRecords',
+  props: {
+    from: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     const validateContent = (rule, value, callback) => {
       value = value.trim();
@@ -94,7 +105,7 @@ export default {
         text: [
           {
             validator: validateContent,
-            trigger: 'blur',
+            trigger: 'change',
             required: true,
           },
         ],
@@ -160,6 +171,35 @@ export default {
           this.loading = false;
         });
     },
+    /**a
+     * @description 写跟进潜在客户
+     * @param {}  线索id
+     */
+    addFollowContent() {
+      this.loading = true;
+      const param = {
+        clueId: this.ruleForm.bizId,
+        noteContent: this.ruleForm.text.trim(),
+        clueSourceType: this.type,
+      };
+      add_follow_up_content(param)
+        .then((res) => {
+          if (res.code === 200) {
+            this.$emit('reset-list', '看看传的参数');
+            this.$message({
+              type: 'success',
+              message: '写跟进成功！',
+            });
+            this.dialogVisible = false;
+          } else {
+            this.$message.warning(res.message);
+          }
+          this.loading = false;
+        })
+        .catch((rej) => {
+          this.loading = false;
+        });
+    },
     /**
      * @description 公共库备注接口
      */
@@ -197,8 +237,8 @@ export default {
       this.type = type;
       this.ruleForm.bizId = item?.id || '111';
       if (this.type === 'clue-seas-library') {
-        this.getDictionary('QDS_ClUE_FEEDBACK');
-      } else {
+        this.getDictionary('QDS_CLUE_FEEDBACK');
+      } else if (this.type === 'public-library') {
         this.getDictionary('CRM_BIZ_FEEDBACK');
       }
       this.dialogVisible = true;
@@ -217,6 +257,9 @@ export default {
           }
           if (this.type === 'public-library') {
             this.publicLibraryNoteHide();
+          }
+          if (this.from === 'prospective') {
+            this.addFollowContent();
           }
         } else {
           this.loading = false;

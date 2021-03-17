@@ -3,8 +3,6 @@ import Vue from 'vue';
 export const storeError = Vue.observable({
   errorList: [],
   rowIndex: '',
-  failTotal: 0,
-  succeedTotal: 0,
 });
 export const mutations = {
   saveErrorList(value) {

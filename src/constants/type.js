@@ -58,4 +58,5 @@ export const HANDLE_LOG = {
   CRM_OPER_SET_NEXT_FOLLOW_TIME: '设置下次跟进时间',
   CRM_OPER_SET_GROUP: '设置分组',
   CRM_OPER_ADD_CONTACT: '新增联系人',
+  CRM_OPER_CANCEL_INTERVIEW: '取消面谈',
 };

@@ -5,6 +5,7 @@
       :visible.sync="dialogVisible"
       width="620px"
       :close-on-click-modal="false"
+      :close-on-press-escape="closeEscape"
       @closed="dialogColsed"
     >
       <el-form
@@ -19,21 +20,32 @@
         <el-form-item label="限制人员：" prop="limitPerson">
           <el-select
             v-model="ruleForm.limitPerson"
+            v-loadmore="'plannerList'"
             filterable
             value-key="mchUserId"
             remote
-            placeholder="请输入"
+            placeholder="输入姓名/工号/联系方式"
             :remote-method="remoteMethod"
             :loading="selectLoading"
             clearable
+            popper-class="limit-select"
+            :popper-append-to-body="false"
+            data-tid="addLimitPageSearchPlanner"
             @change="selectChangeHandle"
+            @focus="resetStart"
           >
             <el-option
               v-for="people in plannerList"
               :key="people.mchUserId"
-              :label="people.userName + '（' + people.userCenterNo + '）'"
+              :label="people.userName + '/' + people.userCenterNo"
               :value="people"
             >
+              <show-tooltip
+                :text="people.userName + '/' + people.userCenterNo"
+                title-class="content-title"
+                :width="242"
+                tooltip-class="content-record"
+              ></show-tooltip>
             </el-option>
           </el-select>
         </el-form-item>
@@ -54,13 +66,15 @@
                 value-key="code"
                 placeholder="请选择限制方式"
                 class="limit-way-select"
-                @change="changeLimitWay(index)"
+                data-tid="addLimitPageChangeLimitWay"
+                @change="changeLimitWay($event, index)"
               >
                 <el-option
                   v-for="option in limitWay"
                   :key="option.id"
                   :label="option.name"
                   :value="option"
+                  :disabled="option.disabled"
                 >
                 </el-option>
               </el-select>
@@ -79,15 +93,21 @@
               ></el-input>
             </el-form-item>
             <span>%</span>
-            <span v-show="index !== 0" class="limit-way-button" @click="delLimitWay(index)"
+            <span
+              v-show="index !== 0"
+              class="limit-way-button"
+              data-tid="addLimitPageDelLimitWay"
+              @click="delLimitWay(index, item)"
               >删除</span
             >
             <span
               v-show="
-                ruleForm.limitWayList.length === index + 1 && ruleForm.limitWayList.length < 3
+                ruleForm.limitWayList.length === index + 1 &&
+                  ruleForm.limitWayList.length < limitWay.length
               "
               class="limit-way-button"
-              @click="addLimitWay()"
+              data-tid="addLimitPageAddLimitWay"
+              @click="addLimitWay"
               >新增</span
             >
           </el-form-item>
@@ -111,7 +131,7 @@
           <el-input
             v-model="ruleForm.remark"
             type="textarea"
-            placeholder="说说这个客户的情况吧，对接收的规划师有帮助哦"
+            placeholder="说说被限制的原因吧，对规划师有帮助哦！"
             maxlength="50"
             show-word-limit
             resize="none"
@@ -120,8 +140,20 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button plain @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitLimitWay('ruleForm')">添加</el-button>
+        <el-button
+          plain
+          :disabled="disButton"
+          data-tid="addLimitPageCancelButton"
+          @click="dialogVisible = false"
+          >取消</el-button
+        >
+        <el-button
+          type="primary"
+          :disabled="disButton"
+          data-tid="addLimitPageSubmitLimitWay"
+          @click="submitLimitWay('ruleForm')"
+          >添加</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -129,18 +161,23 @@
 <script>
 import './index.scss';
 import dayjs from 'dayjs';
-import store from 'storejs';
+import scrollLoad from 'utils/mixins/scrollLoad';
+import ShowTooltip from 'components/show-tooltip';
 import { get_dictionary_data_by_parent_code } from 'api/common';
-import { insert, get_plat_form_user_info_list } from 'api/close-black-limit';
+import { insert } from 'api/close-black-limit';
 import validateCloseBlackCurrentLimit from 'utils/mixins/closeBlackCurrentLimit';
 export default {
-  mixins: [validateCloseBlackCurrentLimit],
+  components: {
+    ShowTooltip,
+  },
+  mixins: [validateCloseBlackCurrentLimit, scrollLoad],
   data() {
     return {
       delIndex: '',
       dialogVisible: false, //控制dialog开关
-      mchDetailId: '', //商户ID
       selectLoading: false, //搜索输入框的加载
+      disButton: false,
+      closeEscape: true,
       plannerList: [], //远程搜索人员名单
       //禁用当前时间之前的时间
       pickerOptions: {
@@ -149,7 +186,8 @@ export default {
           return day < dayjs().subtract(1, 'day');
         },
       },
-      limitWay: [],
+      limitWay: [], //数据字典
+      disLimitWay: {},
       ruleForm: {
         limitPerson: '',
         limitWayList: [{ limitTypeName: '', limitProportion: '', limitTime: '' }],
@@ -164,9 +202,6 @@ export default {
         limitTime: [{ required: true, validator: this.checkLimitTime, trigger: 'change' }],
       },
     };
-  },
-  created() {
-    this.mchDetailId = store.get('mchInfo')?.mchDetailId || '';
   },
   methods: {
     openModal() {
@@ -188,9 +223,11 @@ export default {
       this.delIndex = '';
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.disButton = true;
+          this.closeEscape = false;
           let params = {};
           params.limitWayList = [];
-          this.ruleForm.limitWayList.forEach((item, index) => {
+          this.ruleForm.limitWayList.forEach((item) => {
             let { limitTime, ...obj } = item;
             if (limitTime) {
               obj.startTime = dayjs(limitTime[0]).format('YYYY-MM-DD ') + '00:00:00';
@@ -199,23 +236,30 @@ export default {
               obj.limitTypeName = obj.limitTypeName.name;
             }
             params.limitWayList.push(obj);
-            params.merchantId = this.ruleForm.limitPerson.mchDetailId;
-            params.merchantName = this.ruleForm.limitPerson.recentCompany;
-            params.plannerContact = this.ruleForm.limitPerson.phone;
-            params.plannerId = this.ruleForm.limitPerson.mchUserId;
-            params.plannerName = this.ruleForm.limitPerson.userName;
-            params.plannerNo = this.ruleForm.limitPerson.userCenterNo;
-            params.remark = this.ruleForm.remark;
           });
-          insert(params).then((res) => {
-            this.$emit('add-limit');
-            if (res.code === 200) {
-              this.$message.success(res.message);
-            } else {
-              this.$message.warning(res.message);
-            }
-            this.dialogVisible = false;
-          });
+          params.merchantId = this.ruleForm.limitPerson.mchDetailId;
+          params.merchantName = this.ruleForm.limitPerson.recentCompany;
+          params.plannerContact = this.ruleForm.limitPerson.phone;
+          params.plannerId = this.ruleForm.limitPerson.mchUserId;
+          params.plannerName = this.ruleForm.limitPerson.userName;
+          params.plannerNo = this.ruleForm.limitPerson.userCenterNo;
+          params.remark = this.ruleForm.remark?.trim();
+          insert(params)
+            .then((res) => {
+              this.$emit('update-list');
+              if (res.code === 200) {
+                this.$message.success(res.message);
+              } else {
+                this.$message.warning(res.message);
+              }
+              this.dialogVisible = false;
+              this.disButton = false;
+              this.closeEscape = true;
+            })
+            .catch(() => {
+              this.disButton = false;
+              this.closeEscape = true;
+            });
         } else {
           return false;
         }
@@ -230,7 +274,10 @@ export default {
         parentCode: code,
       };
       get_dictionary_data_by_parent_code(paramCode).then((res) => {
-        if (res.code === 200) this.limitWay = Object.freeze(res.data);
+        if (res.code === 200) {
+          const result = res.data;
+          this.limitWay = Object.assign(result);
+        }
       });
     },
     /**
@@ -239,6 +286,18 @@ export default {
     delLimitWay(index) {
       this.delIndex = index;
       this.ruleForm.limitWayList?.splice(index, 1);
+      const disLimitWay = this.disLimitWay;
+      if (disLimitWay[index]) {
+        disLimitWay[index].disabled = false;
+      }
+      delete disLimitWay[index];
+      let i = 0;
+      for (let key in disLimitWay) {
+        const value = disLimitWay[key];
+        delete disLimitWay[key];
+        disLimitWay[i] = value;
+        i++;
+      }
     },
     /**
      * @description 新增按钮
@@ -255,10 +314,20 @@ export default {
      * @param {}
      * @returns {}
      */
-    changeLimitWay(index) {
+    changeLimitWay(val, index) {
       this.delIndex = '';
-      console.log(this.ruleForm.limitWayList[index].limitTypeName.code);
-      if (this.ruleForm.limitWayList[index].limitTypeName.code == 'RULE_FLOW_LIMIT_COOPERATION') {
+      const disLimitWay = this.disLimitWay;
+      disLimitWay[index] = val;
+      this.limitWay.forEach((item) => {
+        item.disabled = false;
+      });
+      for (const key in disLimitWay) {
+        const value = disLimitWay[key];
+        if (value) {
+          value.disabled = true;
+        }
+      }
+      if (val.code == 'RULE_FLOW_LIMIT_COOPERATION') {
         this.ruleForm.limitWayList[index].limitProportion = 100;
       } else {
         this.ruleForm.limitWayList[index].limitProportion = '';
@@ -269,21 +338,8 @@ export default {
      */
     remoteMethod(keyword) {
       if (!keyword.trim()) return;
-      this.selectLoading = true;
-      const params = {
-        start: 1,
-        limit: 1000,
-        userCenterStatus: -1,
-        userCenterAuthStatus: '',
-        status: -1,
-      };
-      const regPhone = /^1[3-9]\d{9}$/;
-      if (regPhone.test(keyword)) {
-        params.phone = keyword;
-      } else {
-        params.searchKey = keyword;
-      }
-      this.getPeopleList(params);
+      this.optionKey = keyword.trim();
+      this.getPeopleList(keyword.trim(), 'plannerList');
     },
     /**
      * @description 限制人员搜索后选中方法
@@ -294,20 +350,10 @@ export default {
       }
     },
     /**
-     * @description 获取限制人员名单
+     * @description 重置start
      */
-    getPeopleList(params) {
-      get_plat_form_user_info_list(params)
-        .then((res) => {
-          if (res.code === 200) {
-            res = res.data;
-            this.plannerList = res.records || [];
-            this.selectLoading = false;
-          } else {
-            this.$message.warning(res.message);
-          }
-        })
-        .catch(() => (this.selectLoading = false));
+    resetStart() {
+      this.optionPage = 1;
     },
   },
 };

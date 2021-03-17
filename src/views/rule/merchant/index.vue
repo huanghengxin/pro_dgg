@@ -58,8 +58,19 @@
                     :width="420"
                     :tooltip-line-clamp="2"
                   ></show-tooltip>
+                  <!--LZ_PUB_BATCH_CLUE_RETRIEVE 删-->
                   <el-tag
-                    v-if="scope.row.max && scope.row.ruleCode !== 'LZ_PUB_INV'"
+                    v-if="
+                      scope.row.max &&
+                      scope.row.ruleCode !== 'LZ_PUB_INV' &&
+                      scope.row.ruleCode !== 'LZ_PUB_HID' &&
+                      scope.row.ruleCode !== 'LZ_PUB_SE' &&
+                      scope.row.ruleCode !== 'RULE_LZ_PUBLIC_TRANSFER_MOVE' &&
+                      scope.row.ruleCode !== 'RULE_DELAY' &&
+                      scope.row.ruleCode !== 'LZ_PRE_DROP_MSG' &&
+                      scope.row.ruleCode !== 'LZ_CA_INT' &&
+                      scope.row.ruleCode !== 'LZ_PUB_BATCH_CLUE_RETRIEVE'
+                    "
                     type="info"
                     effect="dark"
                     >最大值 {{ scope.row.max }} {{ scope.row.timeCode | getTimeName }}</el-tag
@@ -74,15 +85,25 @@
                   :rules="handleRule(scope.row)"
                 >
                   <el-input
+                    v-if="
+                      scope.row.ruleCode === 'LZ_PUB_INV' ||
+                      scope.row.ruleCode === 'LZ_PUB_HID' ||
+                      scope.row.ruleCode === 'LZ_PUB_SE' ||
+                      scope.row.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE' ||
+                      scope.row.ruleCode === 'RULE_DELAY' ||
+                      scope.row.ruleCode === 'LZ_PRE_DROP_MSG' ||
+                      scope.row.ruleCode === 'LZ_CA_INT' ||
+                      scope.row.ruleCode === 'LZ_PUB_BATCH_CLUE_RETRIEVE'
+                    "
+                    disabled
+                    type="text"
+                    class="val1"
+                  ></el-input>
+                  <el-input
+                    v-else
                     v-model="scope.row.val1"
                     :placeholder="scope.row.max"
-                    :disabled="
-                      !scope.row.max ||
-                      !edit ||
-                      scope.row.status === 2 ||
-                      scope.row.ruleCode === 'LZ_PRE_DROP_MSG' ||
-                      scope.row.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE'
-                    "
+                    :disabled="!scope.row.max || !edit || scope.row.status === 2"
                     type="text"
                     :data-tid="'val1Input' + scope.$index"
                     class="val1"
@@ -90,6 +111,13 @@
                 </el-form-item>
                 <el-form-item>
                   <el-input
+                    v-if="scope.row.ruleCode === 'LZ_PUB_HID' || scope.row.ruleCode === 'LZ_PUB_SE'"
+                    disabled
+                    type="text"
+                    class="val2"
+                  ></el-input>
+                  <el-input
+                    v-else
                     v-model="scope.row.val2"
                     disabled
                     type="text"
