@@ -15,6 +15,9 @@ const mainApplicationStyle = `.show-tooltip {
     top: 10%;
     transform: translateY(0%);
     font-size: 18px !important;
+}
+.business-right-more-handle{
+  min-width:100px
 }`;
 
 export default mainApplicationStyle;
