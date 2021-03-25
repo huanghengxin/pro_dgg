@@ -238,7 +238,7 @@ export default {
       this.ruleForm.bizId = item?.id || '111';
       if (this.type === 'clue-seas-library') {
         this.getDictionary('QDS_CLUE_FEEDBACK');
-      } else if (this.type === 'public-library') {
+      } else {
         this.getDictionary('CRM_BIZ_FEEDBACK');
       }
       this.dialogVisible = true;

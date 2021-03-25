@@ -14,7 +14,7 @@ export default {
    * @description 过滤单位
    */
   filters: {
-    getTimeName: function (val) {
+    getTimeName: function(val) {
       const map = {
         U_N_DAYS: '天',
         U_MINUTE: '分钟',
@@ -156,7 +156,6 @@ export default {
         if (typeof unit == 'undefined') {
           if (data === 'getRuleList') {
             this[data]?.data1.push({
-              id: '',
               ruleCode: item1.code || '',
               description: item1.description || '',
               name: item1.name || '',
@@ -168,7 +167,6 @@ export default {
             });
           } else {
             this[data]?.data2.push({
-              id: '',
               ruleCode: item1.code || '',
               description: item1.description || '',
               name: item1.name || '',
@@ -290,13 +288,13 @@ export default {
             const d = indexArr[0];
             if (
               value.trim() === '' ||
-              item.ruleCode === 'LZ_PUB_INV' ||
-              item.ruleCode === 'LZ_PUB_HID' ||
-              item.ruleCode === 'LZ_PUB_SE' ||
-              item.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE' ||
-              item.ruleCode === 'RULE_DELAY' ||
-              item.ruleCode === 'LZ_PRE_DROP_MSG' ||
-              item.ruleCode === 'LZ_CA_INT'
+              item.ruleCode ===
+                ('LZ_PUB_INV' ||
+                  'LZ_PUB_HID' ||
+                  'LZ_PUB_SE' ||
+                  'RULE_LZ_PUBLIC_TRANSFER_MOVE' ||
+                  'LZ_PRE_DROP_MSG' ||
+                  'LZ_CA_INT')
             ) {
               callback();
             } else {
@@ -344,6 +342,13 @@ export default {
      * @description 规则数据接口
      */
     async getRulesMerchantLists() {
+      // const headers = {
+      //   'X-Req-UserId': '607961108833008473',
+      //   'X-User-Agent': '4b43c3f3-d817-4576-95b1-ad8519a2f14e',
+      //   'X-Auth-Token': '767576181782375349',
+      //   sysCode: 'crisps-crm',
+      //   'X-Req-MerchantId': '31231',
+      // };
       try {
         const result = await merchants_query_rules();
         if (result.code !== 200) {
@@ -364,11 +369,9 @@ export default {
       let check2 = null;
       this.$refs.getStaffListRef.validate((valid) => {
         check2 = valid;
-        console.log(check2, 'check2check2check2check2check2');
       });
       this.$refs.getRuleListRef.validate((valid) => {
         check1 = valid;
-        console.log(check1, 'check2check2check2check2check2');
       });
       if (check1 && check2) {
         this.$messageBox
@@ -404,16 +407,17 @@ export default {
             val2: item?.val2.trim(),
           };
         }) || [];
-
       update_merchants(rulesMerchant)
         .then((res) => {
+          if (res.code !== 200) {
+            this.$message.warning(res.message);
+            return;
+          }
           if (res.code === 200) {
             this.$message({
               type: 'success',
               message: '保存成功!',
             });
-          } else {
-            this.$message.warning(res.message);
           }
         })
         .catch(() => {});

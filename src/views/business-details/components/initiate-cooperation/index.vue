@@ -6,6 +6,7 @@
     :close-on-click-modal="false"
     width="620px"
     @close="diologHandleClose"
+    @opened="handleOpened"
   >
     <!-- 内容 -->
     <el-form
@@ -23,18 +24,25 @@
       </el-form-item>
 
       <!-- 客户需求 选择该商机中未签单、未推单且未处于合作联盟待建立和已建立的有效需求-->
-      <el-form-item label="客户需求:" prop="requirementCode" class="contents-is-require">
-        <p v-if="requireNameList.length === 1">{{ ruleForms.requirementName }}</p>
+      <el-form-item
+        label="客户需求:"
+        prop="requirementCode"
+        class="contents-is-require"
+        :class="requireNameList.length == 1 ? 'contents-requirement' : ''"
+      >
+        <span v-if="requireNameList.length === 0">无可发起合作需求</span>
+        <span v-else-if="requireNameList.length === 1">{{ ruleForms.requirementName }}</span>
         <el-select
           v-else
           v-model="ruleForms.requirementCode"
           data-tid="requirementCode"
           class="contents-beiyong-select"
+          @change="requireChange"
         >
           <el-option
             v-for="(item, index) in requireNameList"
             :key="item.id"
-            :label="item.name"
+            :label="item.intentionName"
             :value="item.id"
             :data-tid="'value' + index"
           ></el-option>
@@ -67,7 +75,7 @@
             v-for="(item, index) in typeList"
             :key="item.value"
             :label="item.value"
-            :value="item.key"
+            :value="item.id"
             :data-tid="'value' + index"
           ></el-option>
         </el-select>
@@ -103,23 +111,25 @@
       </el-form-item>
       <!-- 合作比例  定向分单-->
       <el-form-item
-        v-if="ruleForms.allocationMode == 1"
         label="合作比例:"
         prop="ratio"
         class="contents-is-require no-bottom cooperationProportion"
       >
-        <el-input v-model="ruleForms.ratio" data-tid="ratio" placeholder="平台规定比例30%~45%" />
-        <p class="warn-text">合作方分得的比例，平台规定最高比例30%-45%</p>
-      </el-form-item>
-      <!-- 合作比例 抢单-->
-      <el-form-item
-        v-else
-        label="合作比例:"
-        prop="ratio"
-        class="contents-is-require no-bottom cooperationProportion"
-      >
-        <el-input v-model="ruleForms.ratio" data-tid="ratio" placeholder="平台规定比例20%~45%" />
-        <p class="warn-text">合作方分得的比例，平台规定最高比例20%-45%</p>
+        <el-input
+          v-model="ruleForms.ratio"
+          data-tid="ratio"
+          :placeholder="
+            ratio.minCooperationRatio && ratio.maxCooperationRatio
+              ? '平台规定比例' + ratio.minCooperationRatio + '%-' + ratio.maxCooperationRatio + '%'
+              : '平台规定比例'
+          "
+        />
+        <p v-if="ratio" class="warn-text">
+          合作方分得的比例<span v-if="ruleForms.type">
+            ，平台规定最高比例{{ ratio.minCooperationRatio ? ratio.minCooperationRatio + '%-' : ''
+            }}{{ ratio.maxCooperationRatio ? ratio.maxCooperationRatio + '%' : '' }}
+          </span>
+        </p>
       </el-form-item>
       <!-- 合作接收方 -->
       <el-form-item
@@ -130,24 +140,25 @@
       >
         <el-select
           v-model="ruleForms.receiveUserName"
-          data-tid="receiveUserId"
+          v-loadmore
           class="contents-beiyong-select"
           filterable
           value-key="mchUserId"
           remote
           reserve-keyword
-          placeholder="请选择合作接收方"
+          placeholder="请输入合作接收方号码/工号/姓名进行搜索"
           :remote-method="remoteMethod"
           :loading="selectLoading"
           popper-class="select-remote"
           clearable
+          data-tid="receiveUserId"
           @change="selectChangeHandle"
           @blur="handleBlue"
         >
           <el-option
             v-for="(item, index) in peopleList"
             :key="item.mchUserId"
-            :label="item.userName"
+            :label="item.userName + '(' + item.userCenterNo + ')'"
             :value="item"
             :data-tid="'value' + index"
           ></el-option>
@@ -155,20 +166,20 @@
       </el-form-item>
 
       <!-- 抢单人员范围 发起人可选择参与抢单的人员范围，默认选择“本商户内”-->
-      <el-form-item v-else label="抢单人员范围:" class="singleRange">
+      <el-form-item v-else prop="grabOrderScope" label="抢单人员范围:" class="singleRange">
         <el-radio
           v-model="ruleForms.grabOrderScope"
-          label="1"
+          :label="1"
           class="contents-radio-man"
           data-tid="contents-radio-man"
           >本商户内</el-radio
         >
-        <el-radio v-model="ruleForms.grabOrderScope" label="2" data-tid="contents-radio-woman"
+        <el-radio v-model="ruleForms.grabOrderScope" :label="2" data-tid="contents-radio-woman"
           >薯片平台</el-radio
         >
       </el-form-item>
       <!-- 备注行！ -->
-      <el-form-item label="合作原因：" data-tid="reason" class="workingReason">
+      <el-form-item label="合作原因：" prop="reason" data-tid="reason" class="workingReason">
         <el-input
           v-model="ruleForms.reason"
           v-emoji="'textarea'"
@@ -195,7 +206,7 @@
         >提交合作</el-button
       >
     </span>
-    <NewRequire ref="newRequireRef" />
+    <NewRequire ref="newRequireRef" @init-cooperation="initCoopration" />
   </el-dialog>
 </template>
 

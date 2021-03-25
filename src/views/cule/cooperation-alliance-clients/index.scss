@@ -15,26 +15,33 @@
   .el-table th,
   .el-table td {
     padding: 12px 20px;
+    text-align: center;
   }
   .el-tabs__nav-wrap::after {
     height: 1px;
   }
+  .receive {
+    text-align: left;
+  }
+
   &-seasBox {
     width: 100%;
     display: flex;
     overflow: hidden;
     position: relative;
+    padding: $list-search-padding;
     .tabList {
       width: 100%;
+      user-select: none;
       .tab-container {
         margin-top: 0;
-        padding: 0 0 0 24px;
+        // padding: 0 0 0 24px;
       }
     }
     .tocooperationBox {
       position: absolute;
       right: 0;
-      padding: 5px 19px 0 0;
+      padding: 5px 20px 0 0;
       .el-button {
         height: 28px;
         line-height: 10px;
@@ -96,12 +103,19 @@
     }
   }
 
-  &__main &__main-warp {
+  &__main-warp {
     margin-top: 12px;
+    .el-table__empty-block {
+      display: flex;
+      justify-content: center;
+    }
   }
 
   &__main {
     background-color: $white;
     position: relative;
+    .el-table__row {
+      height: 68px;
+    }
   }
 }

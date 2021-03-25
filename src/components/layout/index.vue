@@ -91,23 +91,6 @@
                 </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
-            <el-submenu index="6">
-              <template slot="title">订单</template>
-              <el-menu-item-group>
-                <el-menu-item index="6-1">
-                  <router-link to="/order-list" tag="div">订单列表</router-link>
-                </el-menu-item>
-                <el-menu-item index="6-2">
-                  <router-link to="/order-details" tag="div">订单详情</router-link>
-                </el-menu-item>
-                <el-menu-item index="6-3">
-                  <router-link to="/production-information" tag="div">生产信息</router-link>
-                </el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
-            <!-- <el-menu-item index="7">
-              <router-link to="/push-sheet" tag="div">推单</router-link>
-            </el-menu-item> -->
           </el-menu>
         </div>
 

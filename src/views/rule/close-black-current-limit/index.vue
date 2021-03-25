@@ -5,72 +5,29 @@
       <div>
         <span>关黑限流进行中</span>
       </div>
-      <el-form ref="limitForm" :model="limitForm">
+      <el-form>
         <el-form-item label="限制人员：">
-          <!--  v-loadmore 触底滚动加载事件 -->
-          <el-select
-            ref="select"
-            v-model="limitForm.limitPerson"
-            v-loadmore="'plannerList'"
-            filterable
+          <drop-select
+            ref="plannerRefs"
+            key="planner"
             value-key="mchUserId"
-            remote
             placeholder="输入姓名/工号/联系方式"
-            :remote-method="searchPlannerName"
-            :loading="selectLoading"
-            clearable
-            popper-class="limit-select"
-            :popper-append-to-body="false"
+            type="plannerList"
+            auto-focus
             data-tid="limitPageSearchPlanner"
             @change="selectChangeHandle"
-            @focus="resetStart"
-          >
-            <el-option
-              v-for="people in plannerList"
-              :key="people.mchUserId"
-              :label="people.userName + '/' + people.userCenterNo"
-              :value="people"
-            >
-              <show-tooltip
-                :text="people.userName + '/' + people.userCenterNo"
-                title-class="content-title"
-                :width="242"
-                tooltip-class="content-record"
-              ></show-tooltip>
-            </el-option>
-          </el-select>
+          ></drop-select>
         </el-form-item>
         <el-form-item v-permission="['merchantSearch']" label="商户：">
-          <el-select
-            v-model="limitForm.bizPerson"
-            v-loadmore="'merchantList'"
-            filterable
+          <drop-select
+            ref="merchantRefs"
+            key="merchant"
             value-key="id"
-            remote
             placeholder="输入商户名称/商户编号"
-            :remote-method="searchMerchantName"
-            :loading="selectLoading"
-            clearable
-            popper-class="limit-select"
-            :popper-append-to-body="false"
+            type="merchantList"
             data-tid="limitPageSearchMerchant"
             @change="selectChangeHandle"
-            @focus="resetStart"
-          >
-            <el-option
-              v-for="people in merchantList"
-              :key="people.id"
-              :label="people.name + '/' + people.mchNo"
-              :value="people"
-            >
-              <show-tooltip
-                :text="people.name + '/' + people.mchNo"
-                title-class="content-title"
-                :width="242"
-                tooltip-class="content-record"
-              ></show-tooltip>
-            </el-option>
-          </el-select>
+          ></drop-select>
         </el-form-item>
         <el-form-item>
           <el-button
@@ -198,8 +155,8 @@ import AddLimit from './components/add-limit';
 import BatchAddLimit from './components/batch-add-limit';
 import ShowTooltip from 'components/show-tooltip';
 import SvgIcon from 'components/svg-icon';
+import DropSelect from 'components/drop-select';
 import './index.scss';
-import scrollLoad from 'utils/mixins/scrollLoad';
 export default {
   name: 'CloseBlackCurrentLimit',
   components: {
@@ -209,24 +166,19 @@ export default {
     BatchAddLimit,
     ShowTooltip,
     SvgIcon,
+    DropSelect,
   },
-  mixins: [scrollLoad],
   data() {
     return {
       closeBlackTableData: [],
-      limitForm: {
-        limitPerson: '',
-        bizPerson: '',
-      },
-      plannerId: undefined, //规划师id
-      mchId: undefined, //商户id
-      selectLoading: false, //搜索输入框的加载
-      plannerList: [], //限制人员搜索名单
-      merchantList: [], //商户搜索名单
       loading: false,
+      closeBlackTotal: 0, //总条数
       limit: 10, //每页显示多少条
       start: 1, //页数
-      closeBlackTotal: 0, //总条数
+      params: {
+        plannerId: undefined, //规划师id
+        mchId: undefined, //商户id
+      },
     };
   },
   mounted() {
@@ -251,10 +203,6 @@ export default {
      * @description 搜索
      */
     searchData() {
-      const limitPerson = this.limitForm.limitPerson;
-      const bizPerson = this.limitForm.bizPerson;
-      this.plannerId = limitPerson ? limitPerson.mchUserId : undefined;
-      this.mchId = bizPerson ? bizPerson.id : undefined;
       this.start = 1;
       this.getCloseBlackTable();
     },
@@ -262,20 +210,11 @@ export default {
      * @description 重置
      */
     resetInput() {
-      this.limitForm = {};
-      this.plannerList = []; //限制人员搜索名单
-      this.merchantList = []; //商户搜索名单
-      this.plannerId = undefined;
-      this.mchId = undefined;
-      this.$refs.select.focus();
+      this.params = {};
       this.start = 1;
+      this.$refs.plannerRefs.resetInput();
+      this.$refs.merchantRefs.resetInput();
       this.getCloseBlackTable();
-    },
-    /**
-     * @description 重置start
-     */
-    resetStart() {
-      this.optionPage = 1;
     },
     /**
      * @description 分页
@@ -378,12 +317,9 @@ export default {
      */
     getCloseBlackTable() {
       this.loading = true;
-      let params = {
-        limit: this.limit,
-        start: this.start,
-        plannerId: this.plannerId,
-        mchId: this.mchId,
-      };
+      let params = this.params;
+      params.limit = this.limit;
+      params.start = this.start;
       limit_list(params)
         .then((res) => {
           if (res.code === 200) {
@@ -399,28 +335,13 @@ export default {
         });
     },
     /**
-     * @description 限制人员远程搜索方法
-     */
-    searchPlannerName(keyword) {
-      if (!keyword.trim()) return;
-      this.optionKey = keyword.trim();
-      this.getPeopleList(keyword.trim(), 'plannerList');
-    },
-    /**
-     * @description 商户远程搜索方法
-     */
-    searchMerchantName(keyword) {
-      if (!keyword.trim()) return;
-      this.optionKey = keyword.trim();
-      this.getPeopleList(keyword.trim(), 'merchantList');
-    },
-    /**
      * @description 限制人员搜索后选中方法
      */
-    selectChangeHandle(val) {
-      if (val === '') {
-        this.plannerList = [];
-        this.merchantList = [];
+    selectChangeHandle(val, type) {
+      if (type === 'plannerList') {
+        this.params.plannerId = val.mchUserId;
+      } else {
+        this.params.mchId = val.id;
       }
     },
   },

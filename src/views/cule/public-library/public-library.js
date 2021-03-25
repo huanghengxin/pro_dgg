@@ -114,10 +114,12 @@ export default {
         treeCode: code,
       };
       const result = await get_common_lib_menu(param);
+      if (result.code !== 200) {
+        this.$message.warning(result.message);
+        return;
+      }
       if (result.code === 200) {
         this.screeningItems = result.data || {};
-      } else {
-        this.$message.warning(result.message);
       }
     },
     /**

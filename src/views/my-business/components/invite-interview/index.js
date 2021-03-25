@@ -3,7 +3,7 @@ import store from 'storejs';
 import AddContactPhone from '../add-contact-phone';
 import AddStandbyContact from '../add-standby-contact';
 import nextOneHourLate from 'utils/mixins/dateTimeValidate';
-import scrollLoad from 'utils/mixins/scrollLoad';
+import DropSelect from 'components/drop-select';
 import {
   get_dictionary_data_by_parent_code,
   list_mch_address,
@@ -16,8 +16,9 @@ export default {
   components: {
     AddContactPhone,
     AddStandbyContact,
+    DropSelect,
   },
-  mixins: [scrollLoad, nextOneHourLate('inviteTime', 30, 'day', true)],
+  mixins: [nextOneHourLate('inviteTime', 30, 'day', true)],
   props: {
     isPlace: {
       type: String,
@@ -50,8 +51,6 @@ export default {
       sparePhone: false,
       currentComponent: '',
       phoneList: [],
-      peopleList: [],
-      defaultPeopleList: [],
       addressList: [],
       resourceList: [],
       switchDialog: true,
@@ -99,53 +98,7 @@ export default {
      * @description 陪谈人搜索选中方法
      */
     selectChangeHandle(val) {
-      if (val === '') {
-        this.peopleList = this.defaultPeopleList;
-      }
       this.accompanyInfo = val;
-    },
-    /**
-     * @description 远程搜索陪谈人
-     */
-    remoteMethod(keyword) {
-      // if (!keyword.trim()) return;
-      // this.selectLoading = true;
-      // const params = {
-      //   start: 1,
-      //   limit: 1000,
-      //   mchDetailId: this.mchDetailId,
-      // };
-      // const regPhone = /^1[3-9]\d{9}$/;
-      // if (regPhone.test(keyword)) {
-      //   params.phone = keyword;
-      // } else {
-      //   params.searchKey = keyword;
-      // }
-      // this.getPeopleList(params);
-      if (!keyword.trim()) return;
-      this.optionKey = keyword.trim();
-      this.getPeopleList(keyword.trim(), 'peopleList');
-    },
-    // getPeopleList(params, type) {
-    //   get_mch_user_info_list(params)
-    //     .then((res) => {
-    //       if (res.code === 200) {
-    //         res = res.data;
-    //         this.peopleList = res.records || [];
-    //         if (type) {
-    //           this.defaultPeopleList = res.records;
-    //         }
-    //         this.selectLoading = false;
-    //       } else {
-    //         this.$message.warning(res.message);
-    //       }
-    //     })
-    //     .catch(() => (this.selectLoading = false));
-    // },
-    handleBlue() {
-      if (this.peopleList.length === 0) {
-        this.peopleList = this.defaultPeopleList;
-      }
     },
     /**
      * @description 弹框关闭方法
@@ -215,15 +168,6 @@ export default {
       this.getResourceList();
       this.getAddressList();
       this.getPhoneList();
-      // this.getPeopleList(
-      //   {
-      //     start: 1,
-      //     limit: 20,
-      //     mchDetailId: this.mchDetailId,
-      //   },
-      //   'default',
-      // );
-      this.getPeopleList(undefined, 'default');
     },
     /**
      * @description 获取面谈地点
@@ -257,6 +201,7 @@ export default {
       });
     },
     diologHandleClose() {
+      this.$refs.inviteRefs.resetInput();
       this.ruleForm.inviteType = 0;
       this.$refs.ruleForm.resetFields();
       this.addPhoneNumber = 3;

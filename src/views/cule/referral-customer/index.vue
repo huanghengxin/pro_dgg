@@ -334,10 +334,11 @@ export default {
         parentCode: code,
       };
       const result = await get_dictionary_data_by_parent_code(param);
+      if (result.code !== 200) {
+        this.$message.warning(result.message);
+      }
       if (result.code === 200) {
         this.receiveTime = result.data || [];
-      } else {
-        this.$message.warning(result.message);
       }
     },
     /**

@@ -29,10 +29,16 @@
             ></i>
           </template>
         </div>
+
         <div class="warp-tabs_right">
           <slot>
             <el-button
-              v-if="from !== 'team-manage'"
+              v-if="
+                from !== 'team-manage' &&
+                  (isCurUser ||
+                    permissionType.info == 'RETENTION_SPONSOR' ||
+                    permissionType.info == 'TRANSFER_RECEIVE')
+              "
               v-accControls:noAttention="noAttentionStatus"
               type="primary"
               icon="iconfont-qds-crm icon-plusoutline"
@@ -55,7 +61,9 @@
               >更新时间：<em>{{ currentDemand.updateTime || '暂无数据' }}</em></span
             >
             <span
-              >需求进度：<em>{{ currentDemand.requireProgress | requireProgressMap }}</em></span
+              >需求进度：<em>{{
+                getProgressMap[currentDemand.requireProgress] || '暂无数据'
+              }}</em></span
             >
           </p>
         </div>
@@ -64,7 +72,9 @@
           class="warp-top_right"
         >
           <span
-            v-if="from !== 'team-manage'"
+            v-if="
+              from !== 'team-manage' && (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')
+            "
             v-accControls:noAttention="noAttentionStatus"
             class="button-warp_item"
             data-tid="demandEditDemandHandleClick"
@@ -73,7 +83,12 @@
           >
           <span
             v-show="isShowDel"
-            v-if="from !== 'team-manage'"
+            v-if="
+              from !== 'team-manage' &&
+                (isCurUser ||
+                  permissionType.info == 'TRANSFER_RECEIVE' ||
+                  permissionType.info == 'RETENTION_SPONSOR')
+            "
             v-accControls:noAttention="noAttentionStatus"
             class="button-warp_item"
             data-tid="demandDelectDemandHandleClick"
@@ -118,19 +133,16 @@ import './index.scss';
 import EditDemandInfo from '../edit-demand-info';
 import { CLIENT_DEMAND_INFO } from 'constants/constants';
 import { get_requirement_info, del_demand } from 'api/business-details';
-import { REQUIRE_PROGRESS_TYPE_MAP } from 'constants/type';
+import stores from 'storejs';
+import { get_dictionary_data_by_parent_code } from 'api/common';
 import dayjs from 'dayjs';
 export default {
   name: 'BusinessDemandInfo',
   components: {
     EditDemandInfo,
   },
-  filters: {
-    requireProgressMap(val) {
-      return REQUIRE_PROGRESS_TYPE_MAP[val] || '暂无数据';
-    },
-  },
 
+  inject: ['permissionType'],
   props: {
     businessId: {
       type: String,
@@ -162,9 +174,14 @@ export default {
       warpWidth: '',
       noAttentionStatus: '',
       CallEventBus: undefined,
+      businessInfoUserId: undefined,
+      getProgressMap: {},
     };
   },
   computed: {
+    isCurUser() {
+      return stores.get('mchInfo')?.mchUserId == this.businessInfoUserId;
+    },
     currentDemand() {
       const cur = this.demandInfoList[this.tabActive] || {};
       cur.expectedCompletedTime = cur.expectedCompletedTime
@@ -197,12 +214,17 @@ export default {
     this.CallEventBus?.$on('terminated', this.getDemandInfoList);
     //监听基础信息获取数据后，打开基础信息的按钮限制
     this.$eventBus.$on('get-business-info', (value) => {
+      this.businessInfoUserId = value?.plannerId;
       this.noAttentionStatus = value.noAttention;
     });
     this.$eventBus.$on('update-demand-list', () => {
       this.getDemandInfoList();
     });
     this.getDemandInfoList();
+    this.$eventBus.$on('reload-require-list', (flag) => {
+      if (!flag) return;
+      this.getDemandInfoList();
+    });
   },
   mounted() {
     this.warpWidth = this.$el.offsetWidth;
@@ -211,10 +233,26 @@ export default {
   destroyed() {
     this.CallEventBus?.$off('terminated', this.getDemandInfoList);
     this.$eventBus.$off('get-business-info');
+    this.$eventBus.$off('reload-require-list');
     this.$eventBus.$off('update-demand-list');
     window.removeEventListener('resize', this.resize);
   },
   methods: {
+    /**
+     * @description 请求数据字典
+     */
+    async getParentCode(parentCode) {
+      let params = {
+        parentCode: parentCode,
+      };
+      const { code, data } = await get_dictionary_data_by_parent_code(params);
+      if (code === 200) {
+        return data?.reduce((acc, cur) => {
+          acc[cur.code] = cur.name;
+          return acc;
+        }, {});
+      }
+    },
     onSubmit() {
       this.getDemandInfoList();
     },
@@ -322,7 +360,9 @@ export default {
     /**
      * @description 获取客户需求列表
      */
-    getDemandInfoList() {
+    async getDemandInfoList() {
+      const progressData = await this.getParentCode('CRM_BIZ_PROGRESS');
+      this.getProgressMap = Object.freeze(progressData);
       const params = {
         bizId: this.businessId,
       };
@@ -332,7 +372,9 @@ export default {
           if (res.code === 200) {
             res = res.data;
             this.clinetDemandInfo = Object.freeze(CLIENT_DEMAND_INFO);
-            if (!res?.length) return;
+            if (!res?.length) {
+              this.loading = false;
+            }
             this.demandInfoList = res;
             this.followDemandList = this.demandInfoList.reduce((acc, cur) => {
               if (cur.requireStatus !== 'CRM_REQ_STATUS_SIGN') {

@@ -10,6 +10,7 @@ import MultipCuleRetrieveDialog from '../components/multip-cule-retrieve-dialog'
 import callMixins from 'utils/mixins/callMixins';
 
 export default {
+  name: 'ClueSeasLibrary',
   components: {
     ShowTooltip,
     MultipCuleRetrieveDialog,
@@ -71,7 +72,7 @@ export default {
      * @description 打电话需要刷新页面方法
      */
     flowRefresh() {
-      this.recordsResetList(true);
+      this.resetList();
     },
     /**
      * @description 更多需求
@@ -80,16 +81,8 @@ export default {
       this.$refs.showMoreRequireRefs.openModal(val);
     },
     /**
-     * @description
+     * @description 刷新列表
      */
-    // recordsResetList(val) {
-    //   if (this.publicLibraryList?.length == 1 && this.param.start != 1 && val) {
-    //     this.param.start--;
-    //   }
-    //   setTimeout(() => {
-    //     this.getSeasLibraryList(this.param);
-    //   }, 2000);
-    // },
     resetList(val) {
       this.timeId = setTimeout(() => {
         if (
@@ -99,7 +92,6 @@ export default {
         ) {
           this.param.start--;
         }
-        console.log('8888888888');
         this.getSeasLibraryList(this.param);
         this.timeId = null;
       }, 2000);
@@ -114,11 +106,12 @@ export default {
       const result = await get_dictionary_data_by_parent_code(param).catch(() => {
         this.loading = false;
       });
-
+      if (result.code !== 200) {
+        this.$message.warning(result.message);
+        return;
+      }
       if (result.code === 200) {
         this.enterTimeList = result.data || [];
-      } else {
-        this.$message.warning(result.message);
       }
     },
     /**
@@ -129,6 +122,7 @@ export default {
         lastRemarkTime: '2',
       };
       if (map[val.prop]) {
+        console.log(val, 'val');
         if (val.order) {
           this.param.orderBy = map[val.prop];
           this.param.isAsc = val.order === 'descending' ? 1 : 0;
@@ -200,7 +194,7 @@ export default {
               })
               .then(() => {
                 this.$router.push(
-                  `/add-business?clueId=${command.item.id}&type=QDS_ClUE_SOURCE_HIGH_SEAS`,
+                  `/add-business?clueId=${command.item.id}&type=${command.item.clueSourceType}`,
                 );
               })
               .catch(() => {
@@ -233,7 +227,7 @@ export default {
         clueId: id,
       };
       this.$messageBox
-        .confirm('请确定拾回此商机, 是否继续?', '提示', {
+        .confirm('请确定拾回此线索, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning',
@@ -305,7 +299,7 @@ export default {
      */
     selectAllClick(row) {
       if (this.limit <= 50) {
-        this.multipleSelectionId = row?.map(function (val) {
+        this.multipleSelectionId = row?.map(function(val) {
           return val.id;
         });
       } else {
@@ -319,7 +313,7 @@ export default {
      * @description 多选
      */
     handleSelectionChange(val) {
-      this.multipleSelectionId = val.map(function (val) {
+      this.multipleSelectionId = val.map(function(val) {
         return val.id;
       });
     },

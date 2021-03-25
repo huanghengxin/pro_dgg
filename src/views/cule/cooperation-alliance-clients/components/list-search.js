@@ -1,5 +1,7 @@
-import { store, mutations } from './observable';
+import { store, mutations, actions } from './observable';
+
 import './index.scss';
+
 export default {
   props: {
     //展示已选择项
@@ -24,7 +26,11 @@ export default {
     },
     tabActiveProp: {
       type: String,
-      default: 'DJS',
+      default: '1',
+    },
+    changeFiled: {
+      type: Array,
+      default: () => ['buildStatus', 'receiveStatus'],
     },
   },
   data() {
@@ -32,11 +38,12 @@ export default {
       //请求参数
       listSearchLoading: false,
       tabActive: this.tabActiveProp, //当前选中tab页
-      curPageActive: '',
-      dateFlag: false, //控制自定义时间显示隐藏
+      curPageActive: {},
+      dateFlag: {}, //控制自定义时间显示隐藏
       datetime: '',
     };
   },
+
   computed: {
     tabActiveItem() {
       return this.tabList.find((item) => item.code === this.tabActive);
@@ -46,11 +53,16 @@ export default {
     },
   },
   created() {
-    this.curPageActive = this.tabActiveItem.curPageActive;
-    mutations.setFieldParams(this.tabActiveProp, 'acceptStatus', 'waitAccept');
-    console.log(this.tabActiveProp, 'this.tabActiveProp');
+    const tabActive = this.tabActive;
+    this.curPageActive[tabActive] = this.tabActiveItem.curPageActive;
+    mutations.setActiveTab(tabActive);
+    actions.getDataList();
   },
   methods: {
+    /**
+     * @description 定义一个方法清空时间选中
+     */
+    clearDefaultCheck() {},
     /**
      * @description 渲染tab页方法
      */
@@ -79,7 +91,7 @@ export default {
     /**
      * @description 渲染自定义时间
      */
-    genDateTime() {
+    genDateTime(type) {
       return (
         <div class="date-picker">
           <el-date-picker
@@ -89,7 +101,9 @@ export default {
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             data-tid="dynamicSureDate"
-            onInput={this.sureDate}
+            onInput={(e) => {
+              this.sureDate(e, type);
+            }}
           />
         </div>
       );
@@ -99,7 +113,7 @@ export default {
      */
     genFilterItem() {
       const tabActiveItem = this.tabActiveItem;
-      const curPageActive = this.curPageActive;
+      const curPageActive = this.curPageActive[this.tabActive];
       let filter, filterItem;
       if (Array.isArray(tabActiveItem.filter)) {
         filter = tabActiveItem.filter;
@@ -117,15 +131,21 @@ export default {
                 <div
                   class={{
                     'filter-item': true,
-                    'filter-item_active': this.fieldParams[item.code] == child.code,
+                    'filter-item_active': ['receive', 'create'].includes(item.code)
+                      ? this.dateFlag[this.tabActive] == child.code
+                      : this.fieldParams[item.code] == child.code,
                   }}
                   data-field-code={item.code}
-                  data-field-child-code={child.code}>
+                  data-field-child-code={child.code}
+                  data-cur-page-code={child.curPage}>
                   {child.name}
                 </div>
               );
             })}
-            {this.dateFlag && item.code == 'acceptTime' ? this.genDateTime() : ''}
+            {['receive', 'create'].includes(item.code) &&
+            this.dateFlag[this.tabActive] === 'datetime'
+              ? this.genDateTime(item.code)
+              : ''}
           </div>
         );
       });
@@ -138,14 +158,19 @@ export default {
       const code = e.target.dataset.code;
       if (!code) return;
       this.tabActive = code;
-      console.log(this.tabActive, 'this.tabActive');
-      this.curPageActive = this.tabActiveItem.curPageActive;
+      mutations.setActiveTab(code);
+      const curPageActive = this.curPageActive;
+      if (!curPageActive[code]) {
+        curPageActive[code] = this.tabActiveItem.curPageActive;
+      }
+      actions.getDataList();
     },
     /**
      * @description 自定义事件点击
      */
-    sureDate(e) {
-      mutations.setFieldTimeParams(this.tabActive, '', e);
+    sureDate(e, type) {
+      this.datetime = e;
+      mutations.setFieldTimeParams(this.tabActive, type, e);
     },
     /**
      * @description 筛选项点击事件
@@ -154,22 +179,32 @@ export default {
       const dataset = e.target.dataset;
       const fieldCode = dataset.fieldCode;
       const fieldChildCode = dataset.fieldChildCode;
-      console.log(dataset.fieldCode, dataset.fieldChildCode);
+      const curPageCode = dataset.curPageCode;
       if (!fieldCode) return;
-      if (
-        fieldCode === 'acceptStatus' ||
-        (fieldCode === 'buildStatus' && fieldChildCode === 'builded')
-      ) {
-        this.curPageActive = fieldChildCode;
-        mutations.clearFieldParams(this.tabActive);
+      const tabActive = this.tabActive;
+      //清空排序参数
+      mutations.clearSortParams();
+      this.$emit('clear-sort');
+
+      if (this.changeFiled.includes(fieldCode)) {
+        this.curPageActive[tabActive] = curPageCode;
       }
-      //如果父類code是acceptStatus 并且 未自定義時間
-      if (fieldCode == 'acceptTime' && fieldChildCode == 'datetime') {
-        this.dateFlag = true;
-      } else {
-        this.dateFlag = false;
+      if (['receiveStatus', 'buildStatus'].includes(fieldCode)) {
+        console.log(tabActive, fieldCode, fieldChildCode, '状态');
+        mutations.setDefaultSort(tabActive, fieldCode, fieldChildCode);
       }
-      mutations.setFieldParams(this.tabActive, fieldCode, fieldChildCode);
+      if (['receive', 'create'].includes(fieldCode)) {
+        if (fieldChildCode == 'datetime') {
+          this.$set(this.dateFlag, tabActive, 'datetime');
+          return;
+        } else {
+          this.$set(this.dateFlag, tabActive, fieldChildCode);
+          mutations.setTimeParams(tabActive, fieldCode, fieldChildCode);
+          return;
+        }
+      }
+      mutations.setFieldParams(tabActive, fieldCode, fieldChildCode);
+      actions.getDataList();
     },
 
     /**

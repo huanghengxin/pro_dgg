@@ -119,7 +119,12 @@
                 @command="handleCommand"
               >
                 <p class="list-handle_more">更多操作</p>
-                <el-dropdown-menu slot="dropdown" key="el-dropdown-menu" data-tid="dropdown">
+                <el-dropdown-menu
+                  slot="dropdown"
+                  key="el-dropdown-menu"
+                  data-tid="dropdown"
+                  class="business-right-more-handle"
+                >
                   <el-dropdown-item
                     :data-tid="'callPone' + scope.$index"
                     :command="{ component: 'callPhoneRef', item: scope.row }"
@@ -139,7 +144,7 @@
                     :data-tid="'imChat' + scope.$index"
                     :command="{
                       component: 'IMchat',
-                      item: scope.row,
+                      item: { code: 'BUS_ZBGZ', item: scope.row },
                     }"
                     >在线聊</el-dropdown-item
                   >
@@ -214,7 +219,6 @@ import SvgIcon from 'components/svg-icon';
 import WriteFollowRecord from '../write-follow-record';
 import SetGroup from '../set-group';
 import InviteInterview from '../invite-interview/index.vue';
-import { PREDICT_DROP_TYPE_MAP } from 'constants/type';
 // import { accControlsList } from 'constants/access-controls';
 import callMixins from 'utils/mixins/callMixins';
 import imChatMinixs from 'utils/mixins/imChatMinixs';
@@ -233,9 +237,6 @@ export default {
   filters: {
     filterTimes(val) {
       return val ? filterTime(val) : '';
-    },
-    dropTypeMap(val) {
-      return PREDICT_DROP_TYPE_MAP[val];
     },
   },
   mixins: [callMixins, imChatMinixs],
@@ -320,6 +321,7 @@ export default {
       }
     },
     sortHandleChange(val) {
+      console.log(val);
       const map = {
         ascending: 'asc',
         descending: 'desc',
@@ -327,6 +329,7 @@ export default {
       const sort = val.order ? map[val?.order] : undefined;
       this.$set(this.paramsData, 'sortFeild', val.order ? val.prop : undefined);
       this.$set(this.paramsData, 'sort', sort);
+      console.log(this.paramsData, 'this.paramsData');
     },
 
     handleCurrentChange(val) {
@@ -352,7 +355,7 @@ export default {
           this.callPhone(command.item);
           break;
         case 'IMchat':
-          this.IMChatOpen(command.item);
+          this.IMChatOpen(command.item.item);
           break;
         case 'pushSheetRef':
           this.$router.push('/push-sheet');

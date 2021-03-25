@@ -18,7 +18,6 @@
         <!-- v-emoji="'input'" -->
         <el-input
           v-model="ruleForm.customerName"
-          onkeyup="this.value=this.value.replace(/^\s+/g,'')"
           clearable
           maxlength="20"
           data-tid="nameInput"

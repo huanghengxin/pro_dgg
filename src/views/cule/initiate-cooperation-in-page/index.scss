@@ -68,7 +68,9 @@
       }
       .warn-text {
         font-size: 12px;
-        margin-left: 4px;
+        height: 17px;
+        line-height: 17px;
+        margin-top: 6px;
       }
     }
     .new-add {
@@ -148,6 +150,10 @@
     }
     .el-form-item__content {
       line-height: 32px;
+      .el-form-item__error {
+        top: 100%;
+        padding-top: 6px;
+      }
     }
     .el-form-item__label {
       line-height: 32px;
@@ -207,6 +213,7 @@
         font-size: 12px;
         margin: 6px 0 0;
       }
+
       .inputFlexBox {
         color: #222;
         &-flex {
@@ -214,6 +221,7 @@
           height: 32px;
           .el-form-item__error {
             top: 100%;
+            padding-top: 6px;
           }
           p {
             width: 32px;
@@ -230,7 +238,7 @@
     }
     .cooperationProportion {
       .el-input__inner {
-        width: 300px;
+        width: 320px;
       }
     }
     .workingReason {

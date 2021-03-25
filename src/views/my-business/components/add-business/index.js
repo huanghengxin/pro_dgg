@@ -142,6 +142,8 @@ export default {
           if (res.code === 200) {
             res = res.data;
             this.ruleForm.customerName = res.customerName;
+            //客户电话
+            this.ruleForm.customerPhone = res.customerPhone;
             this.desensitization = res.desensitization;
             this.isRelevance = true;
             this.separatePhoneList(res.list);
@@ -264,8 +266,8 @@ export default {
             phone: ruleForm.customerPhone,
           }).catch(() => (this.loading = false));
           if (!checkBiz) return;
+          ruleForm.customerName = ruleForm.customerName.trim();
           let { phoneArray, customerPhone, ...elseFrom } = ruleForm;
-          // console.log(phoneArray, '1212121');
           let params = elseFrom;
           if (this.query.clueId) {
             params.clueSourceType = this.query.type;

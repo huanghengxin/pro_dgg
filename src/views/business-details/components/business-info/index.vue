@@ -24,7 +24,7 @@
       ></show-tooltip>
       <span v-else>暂无备注</span>
       <i
-        v-if="from !== 'team-manage'"
+        v-if="from !== 'team-manage' && (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')"
         class="iconfont-qds-crm icon-offlinesign"
         data-tid="infoShowModalHandleClick"
         @click="
@@ -46,12 +46,18 @@
             {{ businessInfo.customerPhone }}
           </span>
           <i
-            v-if="from !== 'team-manage'"
+            v-if="
+              from !== 'team-manage' &&
+                (isCurUser ||
+                  permissionType.info == 'RETENTION_SPONSOR' ||
+                  permissionType.info == 'TRANSFER_RECEIVE')
+            "
             class="iconfont-qds-crm icon-view1 phone-info_icon"
             data-tid="infoShowModalHandleClick"
             @click="showModalHandleClick('showPhoneRef', businessInfo.customerContact)"
           ></i>
           <i
+            v-if="isCurUser || permissionType.info != 'TRANSFER_SPONSOR'"
             v-callLoading="callLoading"
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
@@ -59,16 +65,23 @@
             @click="businessInfoCall"
           ></i>
         </div>
+
         <div v-for="item in businessInfo.relation" :key="item.id" class="phone-info_sen">
           <span>
             {{ item.contactNo }}
           </span>
           <i
-            v-if="from !== 'team-manage'"
+            v-if="
+              from !== 'team-manage' &&
+                (isCurUser ||
+                  permissionType.info == 'RETENTION_SPONSOR' ||
+                  permissionType.info == 'TRANSFER_RECEIVE')
+            "
             class="iconfont-qds-crm icon-view1 phone-info_icon"
             data-tid="infoShowModalHandleClick"
             @click="showModalHandleClick('showPhoneRef', item.contactNoFull)"
           ></i>
+
           <i
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
@@ -108,13 +121,13 @@
       <span class="item-label">预计掉库类型：</span>
       <span v-if="businessInfo.noAttention == 1" class="color-info">暂不关注/不掉库</span>
       <span v-else-if="businessInfo.dropTypeCode" class="color-info">
-        {{ businessInfo.dropTypeCode | dropTypeMap }}
+        {{ businessInfo.dropTypeName || '暂无数据' }}
       </span>
       <span v-else>-</span>
     </div>
     <div class="business-info_item-small">
       <span class="item-label">获取方式：</span>
-      <span>{{ businessInfo.getWay | getWayTypeMap }}</span>
+      <span>{{ getWayMap[businessInfo.getWay] || '暂无数据' }}</span>
     </div>
     <div class="business-info_item-small">
       <span class="item-label">获取时间：</span>
@@ -130,7 +143,7 @@
       ></show-tooltip>
       <span
         v-else
-        v-show="from !== 'team-manage'"
+        v-show="from !== 'team-manage' && (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')"
         key="business-bakRelation"
         :class="{
           'iconfont-qds-crm': true,
@@ -148,12 +161,13 @@
       <span class="item-label">备用联系号码：</span
       ><span>{{ businessInfo.bakRelation.contactNo }}</span>
       <i
-        v-if="from !== 'team-manage'"
+        v-if="from !== 'team-manage' && (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')"
         class="iconfont-qds-crm icon-view1 phone-info_icon"
         data-tid="infoShowModalHandleClick"
         @click="showModalHandleClick('showPhoneRef', businessInfo.bakRelation.contactNoFull)"
       ></i>
       <i
+        v-if="isCurUser || permissionType.info != 'TRANSFER_SPONSOR'"
         v-accControls:noAttention="businessInfo"
         class="iconfont-qds-crm icon-dianhua phone-info_icon"
         data-tid="infoBusinessInfoCall"
@@ -178,9 +192,10 @@ import ShowPhone from '../show-phone';
 import EditRemark from '../edit-remark';
 import AddStandby from '../../../my-business/components/add-standby-contact';
 import { get_business_info } from 'api/business-details';
+import { get_dictionary_data_by_parent_code } from 'api/common';
 import callMixins from 'utils/mixins/callMixins';
-import { GET_WAY_TYPE_MAP, PREDICT_DROP_TYPE_MAP } from 'constants/type';
 import dayjs from 'dayjs';
+import stores from 'storejs';
 export default {
   name: 'BusinessInfo',
   components: {
@@ -190,17 +205,12 @@ export default {
     AddStandby,
   },
   filters: {
-    dropTypeMap(val) {
-      return PREDICT_DROP_TYPE_MAP[val];
-    },
-    getWayTypeMap(val) {
-      return GET_WAY_TYPE_MAP[val];
-    },
     filterSecond(val) {
       return val && dayjs(val).isValid() ? dayjs(val).format('YYYY-MM-DD HH:mm') : '';
     },
   },
   mixins: [callMixins],
+  inject: ['permissionType'],
   props: {
     businessId: {
       type: String,
@@ -215,6 +225,9 @@ export default {
     return {
       businessInfo: {},
       loading: false,
+      busInfo: {},
+      businessInfoUserId: undefined,
+      getWayMap: {},
     };
   },
   computed: {
@@ -228,22 +241,44 @@ export default {
           : '';
       return businessInfo.bakRelation.contactName + sex;
     },
+    isCurUser() {
+      return stores.get('mchInfo')?.mchUserId == this.businessInfoUserId;
+    },
   },
   created() {
     if (this.businessId) {
       this.getBusinessInfo();
     }
   },
-
   mounted() {
     this.$eventBus.$on('edit-on-submit_update-business-info', () => {
       this.getBusinessInfo();
     });
+    console.log(
+      stores.get('mchInfo')?.mchUserId,
+      this.businessInfo,
+      '12312412asd 31231231231123312',
+    );
   },
   beforeDestroy() {
     this.$eventBus.$off('edit-on-submit_update-business-info');
   },
   methods: {
+    /**
+     * @description 请求数据字典
+     */
+    async getParentCode(parentCode) {
+      let params = {
+        parentCode: parentCode,
+      };
+      const { code, data } = await get_dictionary_data_by_parent_code(params);
+      if (code === 200) {
+        return data?.reduce((acc, cur) => {
+          acc[cur.code] = cur.name;
+          return acc;
+        }, {});
+      }
+    },
     /**
      * @description 打电话需要刷新页面方法
      */
@@ -273,7 +308,9 @@ export default {
     /**
      * @description 获取商机基本信息
      */
-    getBusinessInfo() {
+    async getBusinessInfo() {
+      const wayData = await this.getParentCode('CRM_GET_WAY');
+      this.getWayMap = Object.freeze(wayData);
       this.loading = true;
       const params = { bizId: this.businessId };
       get_business_info(params)
@@ -290,6 +327,7 @@ export default {
               : '';
             this.$eventBus.$emit('get-business-info', data);
             this.businessInfo = Object.freeze(data) || {};
+            this.businessInfoUserId = data.plannerId;
           } else {
             this.$message.warning(message);
             if (res.code === 5002) {

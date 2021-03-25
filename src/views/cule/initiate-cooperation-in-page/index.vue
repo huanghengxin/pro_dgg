@@ -17,9 +17,7 @@
         ><!-- 手机行！ -->
         <el-form-item label="手机号码：" prop="customerPhone" class="content-phone">
           <div class="phone-warp">
-            <div v-if="desensitization" key="desensitization">{{ desensitization }}</div>
             <el-input
-              v-else
               key="desensitization"
               v-model.trim="ruleForm.customerPhone"
               maxlength="11"
@@ -106,22 +104,24 @@
         </el-form-item>
 
         <!-- 客户需求： 客户需求可选择全平台所有启用业务。-->
-        <el-form-item label="客户需求：" prop="customerRequire">
+        <el-form-item label="客户需求：" prop="requirementArray">
           <el-cascader
             ref="requirementRef"
-            v-model="ruleForm.customerRequire"
+            v-model="ruleForm.requirementArray"
             placeholder="请选择客户需求"
-            data-tid="customerRequire"
+            data-tid="requirementArray"
             :props="props"
           ></el-cascader>
           <!-- 新增需求？ -->
-          <span
+          <!-- 
+            <span
             v-show="isNewRequire"
             class="iconfont-qds-crm icon-plus"
             data-tid="addNewRequire"
             @click="addNewRequire"
             ><em>新增需求</em>
           </span>
+           -->
         </el-form-item>
         <!-- 意向等级： -->
         <el-form-item prop="intentionLevel" label="意向等级：" :show-message="false" required>
@@ -137,17 +137,13 @@
           </el-rate>
         </el-form-item>
         <!-- 业务区域： -->
-        <el-form-item label="业务区域：" prop="bizAreaCode">
-          <el-select
-            v-model="ruleForm.bizAreaCode"
-            data-tid="bizAreaCode"
-            class="content-beiyong-select"
-          >
+        <el-form-item label="业务区域：" prop="areaCode">
+          <el-select v-model="ruleForm.areaCode" data-tid="areaCode" class="content-beiyong-select">
             <el-option
               v-for="(item, index) in areaList"
-              :key="item.value"
-              :label="item.value"
-              :value="item.key"
+              :key="item.name"
+              :label="item.name"
+              :value="item.code"
               :data-tid="'value' + index"
             ></el-option>
           </el-select>
@@ -164,7 +160,7 @@
               v-for="(item, index) in typeList"
               :key="item.value"
               :label="item.value"
-              :value="item.key"
+              :value="item.id"
               :data-tid="'value' + index"
             ></el-option>
           </el-select>
@@ -185,7 +181,7 @@
         <!-- 分配方式 -->
         <el-form-item
           label="分配方式:"
-          prop="allocation_mode"
+          prop="allocationMode"
           class="content-is-require content-cooperationType"
         >
           <span
@@ -193,60 +189,69 @@
             :key="item.id"
             :class="{
               normal: true,
-              active: item.id === isActive,
+              active: item.id == isActive,
             }"
-            data-tid="allocation_mode"
+            data-tid="allocationMode"
             @click="changeFullFree(item.id)"
           >
             <span>{{ item.name }}</span>
           </span>
         </el-form-item>
-        <!-- 合作比例 定向分单-->
+        <!-- 合作比例 -->
         <el-form-item
-          v-if="ruleForm.allocation_mode == 1"
           label="合作比例:"
           prop="ratio"
-          class="content-is-require no-bottom cooperationProportion"
+          class="contents-is-require no-bottom cooperationProportion warn"
         >
-          <el-input v-model="ruleForm.ratio" data-tid="ratio" placeholder="平台规定比例30%~45%" />
-          <p class="warn-text">合作方分得的比例</p>
-        </el-form-item>
-        <el-form-item
-          v-else
-          label="合作比例:"
-          prop="ratio"
-          class="content-is-require no-bottom cooperationProportion"
-        >
-          <el-input v-model="ruleForm.ratio" data-tid="ratio" placeholder="平台规定比例20%~45%" />
-          <p class="warn-text">合作方分得的比例，平台规定最高比例20%-45%</p>
+          <el-input
+            v-model="ruleForm.ratio"
+            data-tid="ratio"
+            :placeholder="
+              ratio.minCooperationRatio && ratio.maxCooperationRatio
+                ? '平台规定比例' +
+                  ratio.minCooperationRatio +
+                  '%-' +
+                  ratio.maxCooperationRatio +
+                  '%'
+                : '平台规定比例'
+            "
+          />
+          <p v-if="ratio" class="warn-text">
+            合作方分得的比例<span v-if="ruleForm.type">
+              ，平台规定最高比例{{
+                ratio.minCooperationRatio ? ratio.minCooperationRatio + '%-' : ''
+              }}{{ ratio.maxCooperationRatio ? ratio.maxCooperationRatio + '%' : '' }}
+            </span>
+          </p>
         </el-form-item>
         <!-- 合作接收方 -->
         <el-form-item
-          v-if="ruleForm.allocation_mode == 1"
+          v-if="ruleForm.allocationMode == 1"
           label="合作接收方:"
           prop="receiveUserId"
           class="content-is-require cooperationType cooperationAcceptor"
         >
           <el-select
             v-model="ruleForm.receiveUserId"
-            data-tid="receiveUserId"
+            v-loadmore
             class="content-beiyong-select"
             filterable
             value-key="mchUserId"
             remote
             reserve-keyword
-            placeholder="请输入合作接收方号码/系统号/姓名进行搜索"
+            placeholder="请输入合作接收方号码/工号/姓名进行搜索"
             :remote-method="remoteMethod"
             :loading="selectLoading"
             popper-class="select-remote"
             clearable
+            data-tid="receiveUserId"
             @change="selectChangeHandle"
             @blur="handleBlue"
           >
             <el-option
               v-for="(item, index) in peopleList"
               :key="item.mchUserId"
-              :label="item.userName"
+              :label="item.userName + '(' + item.userCenterNo + ')'"
               :value="item"
               :data-tid="'value' + index"
             ></el-option>

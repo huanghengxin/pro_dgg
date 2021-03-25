@@ -1,32 +1,6 @@
 /**
  * @description 数据字典翻译
  */
-export const GET_WAY_TYPE_MAP = {
-  CRM_GET_WAY_MOVE: '移交',
-  CRM_GET_WAY_REFERRAL: '转介绍',
-  CRM_GET_WAY_PICK: '拾回',
-  CRM_GET_WAY_SELF_DEV: '自开发',
-  CRM_GET_WAY_CLUE_CONVERT: '线索转商机',
-  CRM_GET_WAY_ALLOCATION: 'IBOSS系统分配',
-};
-
-export const PREDICT_DROP_TYPE_MAP = {
-  LZ_FIR: '首跟收回',
-  LZ_PRI_CON: '未连跟掉库',
-  LZ_PRI_SAC: '未签单掉库',
-  RULE_LZ_PUBLIC_TRANSFER_MOVE: '移交商机跟进',
-};
-
-export const REQUIRE_PROGRESS_TYPE_MAP = {
-  CRM_BIZ_PROGRESS_FIRST_FOLLOW: '首跟',
-  CRM_BIZ_PROGRESS_FOLLOWING: '跟进中',
-  CRM_BIZ_PROGRESS_INVITE: '邀约',
-  CRM_BIZ_PROGRESS_INTERVIEW: '面谈',
-  CRM_BIZ_PROGRESS_PHSH_ORDER: '推单',
-  CRM_BIZ_PROGRESS_SIGN_ORDER: '签单',
-  CRM_BIZ_PROGRESS_BACK_ORDER: '退单',
-};
-
 export const PRODUCE_TYPE_MAP = {
   PRO_CLASS_TYPE_SERVICE: 1, //服务
   PRO_CLASS_TYPE_SERVICE_RESOURCE: 2, //资源

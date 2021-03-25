@@ -58,7 +58,7 @@ export default {
         plannerId: '',
         start: 1,
       },
-      result: [],
+
       source: {},
       userName: '',
       selectLoading: false,
@@ -89,14 +89,6 @@ export default {
      * @description 团队商机跳转详情
      */
     handleDetails(row) {
-      // 判断是否认证，后台给字段
-      // if (row.id) {
-      //   this.$message({
-      //     message: '该商机未授权，不能跳转商机详情！',
-      //     type: 'warning',
-      //   });
-      //   return;
-      // }
       this.$router.push(`/team-manage/business-details?businessId=${row.id}&from=team-manage`);
     },
     /**
@@ -123,12 +115,6 @@ export default {
         this.peopleList = this.defaultPeopleList;
       }
     },
-    // handleVisibleChange(e) {
-    //   if (e === true) {
-    //     this.peopleList = this.defaultPeopleList;
-    //   }
-    //  @visible-change="handleVisibleChange"
-    // },
     /**
      * @description 弹窗时间重新刷新列表
      */
@@ -184,58 +170,40 @@ export default {
       this.sortClear();
     },
     /**
-     * @description 确定自定义时间
-     * @param {String}
-     */
-    sureTimes() {
-      if ((this.times && this.times[0]) === null || (this.times && this.times[1]) === null) {
-        this.ruleForm.startTime = '';
-        this.ruleForm.endTime = '';
-        this.ruleForm.start = 1;
-      } else {
-        this.ruleForm.startTime =
-          dayjs(this.times && this.times[0]).format('YYYY-MM-DD HH:mm:ss') || '';
-        this.ruleForm.endTime =
-          dayjs(this.times && this.times[1]).format('YYYY-MM-DD HH:mm:ss') || '';
-        this.ruleForm.start = 1;
-        this.sortClear();
-        this.getTeamBusyList();
-      }
-    },
-    /**
      * @description 进库时间筛选
      * @param {String} 点击的选项
      */
     changeEnterTime(item, index) {
-      this.timeType = item?.ext2;
       this.enterTimeIndex = index;
-      if (item?.ext2 && item?.ext2 !== 'custom') {
-        this.result = new FilterTime(item.ext2).time;
-        this.ruleForm.startTime = this.result[0];
-        this.ruleForm.endTime = this.result[1];
-        this.ruleForm.start = 1;
-        if (this.times?.length > 0) {
-          this.times = [];
-          this.ruleForm.start = 1;
-        }
-        this.sortClear();
-        this.getTeamBusyList();
+      this.sortClear();
+      if (index == 4) return;
+      const ruleForm = this.ruleForm;
+      this.times = []; //切换其他时间后清空自定义时间
+      // 今天 本周 本月
+      if (this.enterTimeIndex == 0) {
+        ruleForm.startTime = '';
+        ruleForm.endTime = '';
+      } else if (index < 4) {
+        const result = new FilterTime(item.ext2).time;
+        ruleForm.startTime = result[0];
+        ruleForm.endTime = result[1];
       }
-      if (item?.ext2 && item?.ext2 === 'custom') {
-        this.times = [];
+
+      this.getTeamBusyList();
+    },
+    /**
+     * @description 确定自定义时间
+     * @param {String}
+     */
+    sureTimes(time) {
+      // 自定义时间清空点击搜索
+      this.sortClear();
+      if (!time) {
         this.ruleForm.startTime = '';
         this.ruleForm.endTime = '';
-        this.ruleForm.start = 1;
-      }
-      if (!item.ext2) {
-        if (this.times?.length > 0) {
-          this.times = [];
-          this.ruleForm.start = 1;
-        }
-        this.ruleForm.startTime = '';
-        this.ruleForm.endTime = '';
-        this.ruleForm.start = 1;
-        this.sortClear();
+      } else {
+        this.ruleForm.startTime = dayjs(time[0]).format('YYYY-MM-DD HH:mm:ss') || '';
+        this.ruleForm.endTime = dayjs(time[1]).format('YYYY-MM-DD HH:mm:ss') || '';
         this.getTeamBusyList();
       }
     },
@@ -264,6 +232,7 @@ export default {
      */
     sortClear() {
       this.$refs.multipleTable.clearSort();
+      this.ruleForm.start = 1;
       this.ruleForm.isAsc = 0;
       this.ruleForm.orderBy = '1';
     },
@@ -373,7 +342,7 @@ export default {
      */
     selectAllClick(row) {
       if (this.limit <= 50) {
-        this.multipleSelectionList = row?.map(function (val) {
+        this.multipleSelectionList = row?.map(function(val) {
           return { bizId: val.id, plannerId: val.plannerId };
         });
       } else {
@@ -387,7 +356,7 @@ export default {
      * @description 选择框
      */
     handleSelectionChange(val) {
-      this.multipleSelectionList = val?.map(function (val) {
+      this.multipleSelectionList = val?.map(function(val) {
         return { bizId: val.id, plannerId: val.plannerId };
       });
     },

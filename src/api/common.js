@@ -172,7 +172,12 @@ export function verify_call(params) {
   );
 }
 
-//打电话前调用接口判断当前商机是否在个人库
+//通过客户id查询群组id
 export function get_group_id_biz(params) {
   return api.get('/crm-middle-pc/api/crisps-crm/service/yk/v1/get_group_id_biz', params);
+}
+
+//通过商户用户id查询群组id
+export function get_group_id(params) {
+  return api.get('/crm-middle-pc/api/crisps-crm/service/yk/v1/get_group_id.do', params);
 }

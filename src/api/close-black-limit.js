@@ -69,14 +69,6 @@ export function limit_detail(params) {
   );
 }
 
-// 限制方式  数据字典
-export function get_dictionary_data_by_parent_code(params) {
-  return api.get(
-    '/crm-middle-pc/api/crisps-crm/service/yk/v1/personal/get_dictionary_data_by_parent_code.do',
-    params,
-  );
-}
-
 //查询人员列表接口
 export function get_plat_form_user_info_list(params) {
   return api.post(

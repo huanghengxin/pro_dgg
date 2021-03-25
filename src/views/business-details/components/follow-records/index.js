@@ -16,6 +16,7 @@ import {
   cancel_interview,
   count_interview,
 } from 'api/business-details';
+import stores from 'storejs';
 const ThreeMonthAgo = dayjs()
   .subtract(3, 'month')
   .format('YYYY-MM');
@@ -48,6 +49,7 @@ export default {
       default: '',
     },
   },
+  inject: ['permissionType'],
   data() {
     return {
       noAttentionStatus: '',
@@ -80,9 +82,14 @@ export default {
         },
       },
       textContent: '90天内无数据，请勾选 “查看90天以前” 哦。',
+      businessInfoUserId: undefined,
     };
   },
-  computed: {},
+  computed: {
+    isCurUser() {
+      return stores.get('mchInfo')?.mchUserId == this.businessInfoUserId;
+    },
+  },
   created() {
     this.tabList = Object.freeze(FOLLOW_RECORDS);
     this.fieldList = Object.freeze(RECORD_FIELD_BASE);
@@ -90,8 +97,10 @@ export default {
     this.disabledButton = true;
     //监听基础信息获取数据后，打开基础信息的按钮限制
     this.$eventBus.$on('get-business-info', (value) => {
+      console.log(value, 'valuevaluevalue');
       this.disabledButton = false;
       this.groupId = value.groupId;
+      this.businessInfoUserId = value?.plannerId;
       this.nextFollowTime = value.nextFollowTime;
       this.customerName = value.customerName;
       this.noAttentionStatus = value.noAttention;

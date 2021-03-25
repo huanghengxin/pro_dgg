@@ -52,7 +52,6 @@ export default {
       clueSourceList: [], //线索来源数据字典
       potentialCustomerList: [], //列表数据
       total: 0,
-      clueSourceTypeActive: 'QDS_CLUE_SOURCE_SEAS',
       param: {
         start: 1,
         limit: 10,
@@ -73,6 +72,22 @@ export default {
       return map[this.param.clueSourceType];
     },
   },
+  watch: {
+    'param.clueSourceType': {
+      handler: function(val, oldval) {
+        this.param.keyword = '';
+        this.param.keywordType = '';
+        if (val === 'QDS_CLUE_SOURCE_IM') {
+          this.param.accredit = 'NOT';
+          this.param.clueStatus = 'QDS_CLUE_STATUS_NOT';
+        } else {
+          this.param.accredit = '';
+          this.param.clueStatus = 'QDS_CLUE_STATUS_NOT';
+        }
+        this.getClueList(this.param);
+      },
+    },
+  },
   created() {
     this.clueSourceList = Object.freeze(CLUE_SOURCE_LIST);
     this.getClueList(this.param);
@@ -81,6 +96,7 @@ export default {
   methods: {
     onActiveHandle(val) {
       this.param[val[1]] = val[0];
+      this.param.pageNum = 1;
       this.sortClear();
       this.getClueList(this.param);
     },
@@ -92,17 +108,15 @@ export default {
         this.param.accredit = 'NO';
         this.param.clueStatus = 'QDS_CLUE_STATUS_NOT';
         this.clueSourceTypeActive = 'QDS_CLUE_SOURCE_IM';
-        this.param.keyword = '';
-        this.param.keywordType = '';
       } else if (item.code === 'QDS_CLUE_SOURCE_SEAS') {
         this.param.accredit = '';
         this.param.clueStatus = 'QDS_CLUE_STATUS_NOT';
         this.clueSourceTypeActive = 'QDS_CLUE_SOURCE_SEAS';
-        this.param.keyword = '';
-        this.param.keywordType = '';
       }
       this.param[field] = item.code;
+      this.param.pageNum = 1;
       this.sortClear();
+      if (field === 'clueSourceType') return;
       this.getClueList(this.param);
     },
     /**
@@ -116,6 +130,7 @@ export default {
         this.param.accredit = '';
         this.param.clueStatus = 'QDS_CLUE_STATUS_NOT';
       }
+
       this.sortClear();
       this.param.keyword = params.keyword;
       this.param.keywordType = params.keywordType;
@@ -126,6 +141,7 @@ export default {
      */
     handleInputValue(content) {
       if (content == '') {
+        this.param.start = 1;
         this.sortClear();
         this.param.keyword = '';
         this.param.keywordType = '';
@@ -139,7 +155,19 @@ export default {
     loadMore(val) {
       this.$refs.showMoreRequireRefs.openModal(val);
     },
-
+    /**
+     * @description 监听子组件的事件跟进响应成功后刷新列表
+     */
+    submitHandle() {
+      if (
+        this.param.clueStatus === 'QDS_CLUE_STATUS_NOT' &&
+        this.potentialCustomerList?.length == 1 &&
+        this.param.start != 1
+      ) {
+        this.param.start--;
+      }
+      this.getClueList(this.param);
+    },
     /**
      * @description 排序查询
      */
@@ -165,9 +193,18 @@ export default {
      */
     sortClear() {
       this.$refs.tableRef.clearSort();
-      this.param.start = 1;
       this.param.isAsc = 0;
       this.param.orderBy = '1';
+    },
+    /**
+     * @description 线索来源
+     * @param {String} 点击的选项
+     */
+    changeCuleFrom(item) {
+      this.param.clueSourceType = item.code;
+      this.activeTabField = item.code;
+      this.param.start = 1;
+      this.getClueList(this.param);
     },
     /**
      * @description 打电话需要刷新页面方法
@@ -176,18 +213,14 @@ export default {
       this.submitHandle();
     },
     /**
-     * @description 监听子组件的事件跟进响应成功后刷新列表 留资线索无效和写跟进后未联系
+     * @description 刷新
      */
-    submitHandle(val) {
-      if (
-        (this.param.clueSourceType === 'QDS_CLUE_SOURCE_SEAS' ||
-          this.param.clueStatus === 'QDS_CLUE_STATUS_NOT') &&
-        this.potentialCustomerList?.length == 1 &&
-        this.param.start != 1
-      ) {
+    onSubmitHandle(val) {
+      if (val === 'CULE_WXSJ' && this.potentialCustomerList?.length == 1 && this.param.start != 1) {
         this.param.start--;
+      } else {
+        this.getClueList(this.param);
       }
-      this.getClueList(this.param);
     },
     /**
      * @description 框架上打电话方法
@@ -200,10 +233,10 @@ export default {
         this.$message.warning('该线索未授权电话号码');
       }
     },
-    /**
-     * @description 写跟进点击事件，打开弹层
-     * @param {Object} 当前点击行
-     */
+    // /**
+    //  * @description 写跟进点击事件，打开弹层
+    //  * @param {Object} 当前点击行
+    //  */
     listHandleClick(row) {
       this.$refs['libraryRecordsRef'].openModal(row, this.param.clueSourceType);
     },
@@ -291,13 +324,16 @@ export default {
       this.loading = true;
       get_my_potential_customer_lists(param)
         .then((result) => {
+          if (result.code !== 200) {
+            this.loading = false;
+            this.$message.warning(result.message);
+            return;
+          }
           if (result.code === 200) {
             this.total = result.data.totalCount * 1;
             this.potentialCustomerList = result.data.records;
-          } else {
-            this.$message.warning(result.message);
+            this.loading = false;
           }
-          this.loading = false;
         })
         .catch(() => {
           this.loading = false;

@@ -76,7 +76,7 @@ export const MY_BUSINESS_FIELD = {
 //我的商机筛选项待跟进类型
 export const followType = [
   { text: '即将掉库', ext1: 'UPCOMING_DROP' },
-  { text: '今日掉库', ext1: 'TODAY_DROP' },
+  { text: '今晚掉库', ext1: 'TODAY_DROP' },
   { text: '设置今日跟进', ext1: 'SET_TODAY_FOLLOWING' },
   { text: '其他待跟进', ext1: 'OTHER' },
 ];
@@ -148,9 +148,11 @@ export const defaultMapFilterList = {
 };
 //暂不关注和无效商机
 export const NO_ATTENTION = {
+  //无效线索弹层
   //无效商机弹层
   BUS_WXSJ: {
     title: '无效商机',
+    title2: '无效线索',
     label1: '无效原因：',
     label2: '无效原因：',
     placeholder1: '请选择无效原因',
@@ -173,7 +175,6 @@ export const NO_ATTENTION = {
     labelWidth: '125px',
   },
 };
-
 //商机详情更多操作
 export const FOLLOW_RECORDS = [
   { name: '全部', code: '' },

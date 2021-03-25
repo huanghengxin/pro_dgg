@@ -13,6 +13,7 @@ const envs = [
     // apiProxies是项目中调用后端API的地址，请根据项目需要修改其中的参数
     apiProxies: {
       '/api/*': 'https://dspmicrouag.shupian.cn',
+      // '/api/api0415/*': 'http://172.16.133.156:10105',
     },
     hosts: {},
     // 需要额外注入的全局变量，代码中可直接通过 window.__EXTERNAL_ENVIRONMENT__.xx 使用
@@ -61,7 +62,7 @@ const envs = [
     hosts: {},
     // 需要额外注入的全局变量，代码中可直接通过 window.__EXTERNAL_ENVIRONMENT__.xx 使用
     externalEnvironment: {},
-    baseUrl: 'https://p.shupian.cn/',
+    baseUrl: 'https://crm.shupian.cn/',
     //应用运行环境如:开发环境、测试环境、生产环境
     SP_SERVER_ENV: 'production',
   },

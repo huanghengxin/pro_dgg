@@ -4,7 +4,7 @@
       <div>
         <search-button
           show-word-limit
-          placeholder="请输入姓名/联系方式/商机编号查询"
+          placeholder="请输入姓名/客户号码/联系号码"
           data-tid="prospectiveHandleInputValue"
           :from="'cule'"
           @search="searchUser"
@@ -17,7 +17,7 @@
           :key="item.id"
           :class="{
             'tabs-item': true,
-            'tabs-item_active': item.code === clueSourceTypeActive,
+            'tabs-item_active': item.code === param.clueSourceType,
           }"
           data-tid="customerChangeCuleFrom"
           @click="filterTag(item, 'clueSourceType')"
@@ -72,7 +72,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
+            v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_SEAS'"
             label="信息来源"
             min-width="220"
           >
@@ -96,7 +96,31 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
+            v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_SEAS'"
+            label="联系号码"
+            min-width="180"
+          >
+            <template slot-scope="scope">
+              <show-tooltip
+                v-if="scope.row.hideNumber"
+                :text="scope.row.hideNumber"
+                :width="150"
+              ></show-tooltip>
+              <span v-else>暂无数据</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="客户号码" min-width="180">
+            <template slot-scope="scope">
+              <show-tooltip
+                v-if="scope.row.customerPhone"
+                :text="scope.row.customerPhone"
+                :width="150"
+              ></show-tooltip>
+              <span v-else>暂无数据</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_SEAS'"
             label="联系号码"
             min-width="180"
           >
@@ -145,6 +169,7 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="param.clueStatus !== 'QDS_CLUE_STATUS_NOT'"
             prop="lastRemarkTime"
             class="refresh-follow"
             label="最新跟进信息"
@@ -175,7 +200,7 @@
             <template slot-scope="scope">
               <div class="list-handle">
                 <p
-                  v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
+                  v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_SEAS'"
                   class="list-handle_follow"
                   :data-tid="'customerListHandleClick' + scope.$index"
                   @click="callPhone(scope.row)"
@@ -183,7 +208,7 @@
                   打电话
                 </p>
                 <p
-                  v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_IM'"
+                  v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_IM'"
                   class="list-handle_follow"
                   :data-tid="'IMchat' + scope.$index"
                   @click="onlineChatClick({ code: 'CULE_WXSJ', item: scope.row })"
@@ -212,7 +237,7 @@
                       >写跟进</el-dropdown-item
                     >
                     <el-dropdown-item
-                      v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
+                      v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_SEAS'"
                       :data-tid="'IMchat' + scope.$index"
                       :command="{
                         component: 'IMchat',
@@ -221,7 +246,7 @@
                       >在线聊</el-dropdown-item
                     >
                     <el-dropdown-item
-                      v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_IM'"
+                      v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_IM'"
                       :data-tid="'callPhoneRef' + scope.$index"
                       :command="{ component: 'callPhoneRef', item: scope.row }"
                       >打电话</el-dropdown-item
@@ -232,7 +257,7 @@
                       >转商机</el-dropdown-item
                     >
                     <el-dropdown-item
-                      v-if="clueSourceTypeActive === 'QDS_CLUE_SOURCE_SEAS'"
+                      v-if="param.clueSourceType === 'QDS_CLUE_SOURCE_SEAS'"
                       :data-tid="'InvalidRef' + scope.$index"
                       :command="{
                         component: 'noAttentionRef',
@@ -261,7 +286,6 @@
         </div>
       </div>
     </div>
-
     <library-records
       ref="libraryRecordsRef"
       data-tid="publicResetList"
@@ -270,7 +294,7 @@
     />
     <more-follow-record ref="moreFollowRecordRef" />
     <show-more-require ref="showMoreRequireRefs" />
-    <no-attention ref="noAttentionRef" @on-submit="submitHandle" />
+    <no-attention ref="noAttentionRef" @on-submit="onSubmitHandle" />
   </div>
 </template>
 <script>

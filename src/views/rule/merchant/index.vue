@@ -62,14 +62,14 @@
                   <el-tag
                     v-if="
                       scope.row.max &&
-                      scope.row.ruleCode !== 'LZ_PUB_INV' &&
-                      scope.row.ruleCode !== 'LZ_PUB_HID' &&
-                      scope.row.ruleCode !== 'LZ_PUB_SE' &&
-                      scope.row.ruleCode !== 'RULE_LZ_PUBLIC_TRANSFER_MOVE' &&
-                      scope.row.ruleCode !== 'RULE_DELAY' &&
-                      scope.row.ruleCode !== 'LZ_PRE_DROP_MSG' &&
-                      scope.row.ruleCode !== 'LZ_CA_INT' &&
-                      scope.row.ruleCode !== 'LZ_PUB_BATCH_CLUE_RETRIEVE'
+                        scope.row.ruleCode !== 'LZ_PUB_INV' &&
+                        scope.row.ruleCode !== 'LZ_PUB_HID' &&
+                        scope.row.ruleCode !== 'LZ_PUB_SE' &&
+                        scope.row.ruleCode !== 'RULE_LZ_PUBLIC_TRANSFER_MOVE' &&
+                        scope.row.ruleCode !== 'RULE_DELAY' &&
+                        scope.row.ruleCode !== 'LZ_PRE_DROP_MSG' &&
+                        scope.row.ruleCode !== 'LZ_CA_INT' &&
+                        scope.row.ruleCode !== 'LZ_PUB_BATCH_CLUE_RETRIEVE'
                     "
                     type="info"
                     effect="dark"
@@ -87,13 +87,13 @@
                   <el-input
                     v-if="
                       scope.row.ruleCode === 'LZ_PUB_INV' ||
-                      scope.row.ruleCode === 'LZ_PUB_HID' ||
-                      scope.row.ruleCode === 'LZ_PUB_SE' ||
-                      scope.row.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE' ||
-                      scope.row.ruleCode === 'RULE_DELAY' ||
-                      scope.row.ruleCode === 'LZ_PRE_DROP_MSG' ||
-                      scope.row.ruleCode === 'LZ_CA_INT' ||
-                      scope.row.ruleCode === 'LZ_PUB_BATCH_CLUE_RETRIEVE'
+                        scope.row.ruleCode === 'LZ_PUB_HID' ||
+                        scope.row.ruleCode === 'LZ_PUB_SE' ||
+                        scope.row.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE' ||
+                        scope.row.ruleCode === 'RULE_DELAY' ||
+                        scope.row.ruleCode === 'LZ_PRE_DROP_MSG' ||
+                        scope.row.ruleCode === 'LZ_CA_INT' ||
+                        scope.row.ruleCode === 'LZ_PUB_BATCH_CLUE_RETRIEVE'
                     "
                     disabled
                     type="text"
@@ -103,7 +103,17 @@
                     v-else
                     v-model="scope.row.val1"
                     :placeholder="scope.row.max"
-                    :disabled="!scope.row.max || !edit || scope.row.status === 2"
+                    :disabled="
+                      !scope.row.max ||
+                        !edit ||
+                        scope.row.status === 2 ||
+                        scope.row.ruleCode === 'LZ_PUB_INV' ||
+                        scope.row.ruleCode === 'LZ_PUB_HID' ||
+                        scope.row.ruleCode === 'LZ_PUB_SE' ||
+                        scope.row.ruleCode === 'RULE_LZ_PUBLIC_TRANSFER_MOVE' ||
+                        scope.row.ruleCode === 'RULE_DELAY' ||
+                        scope.row.ruleCode === 'LZ_PRE_DROP_MSG'
+                    "
                     type="text"
                     :data-tid="'val1Input' + scope.$index"
                     class="val1"

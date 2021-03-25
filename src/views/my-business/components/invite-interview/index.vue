@@ -107,32 +107,16 @@
         </el-form-item>
         <!-- 陪谈人 -->
         <el-form-item label="陪谈人：" class="invite-interview_people" prop="people">
-          <el-select
-            v-model="ruleForm.people"
-            filterable
+          <drop-select
+            ref="inviteRefs"
+            key="invite"
             value-key="mchUserId"
-            remote
-            reserve-keyword
             placeholder="请输入陪谈人号码/工号/姓名进行搜索"
-            :remote-method="remoteMethod"
-            :loading="selectLoading"
-            popper-class="select-remote"
-            clearable
+            type="inviteList"
+            is-default
             data-tid="selectChangeHandle"
             @change="selectChangeHandle"
-            @blur="handleBlue"
-          >
-            <el-option
-              v-for="item in peopleList"
-              :key="item.mchUserId"
-              :label="item.userName + '（' + item.userCenterNo + '）'"
-              :value="item"
-            >
-              <div>
-                <p>{{ item.userName + '（' + item.userCenterNo + '）' }}</p>
-              </div>
-            </el-option>
-          </el-select>
+          ></drop-select>
         </el-form-item>
         <!-- 客户需携带资料 -->
         <el-form-item

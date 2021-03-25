@@ -128,14 +128,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="客户需求" min-width="150">
+          <el-table-column label="客户需求" min-width="180">
             <template slot-scope="scope">
               <more-require
                 v-if="scope.row.requireNameStr || scope.row.requireProgress"
                 :require-item="scope.row.requireNameStr"
                 :require-progress="scope.row.requireProgress"
                 is-separate
-                :width-num="166"
+                :width-num="98"
                 :require-id="scope.row.id"
                 @open-details="handleNeedDetails"
               />

@@ -18,69 +18,29 @@
         class="handle-record-title-input"
       >
         <el-form-item label="操作人：">
-          <el-select
-            ref="select"
-            v-model="limitForm.handlePeople"
-            v-loadmore="'plannerList'"
-            filterable
+          <drop-select
+            ref="plannerRefs"
+            key="planner"
             value-key="mchUserId"
-            remote
             placeholder="输入姓名/工号/联系方式"
-            :remote-method="searchPlannerName"
-            :loading="selectLoading"
-            clearable
-            popper-class="limit-select"
-            :popper-append-to-body="false"
+            type="plannerList"
+            auto-focus
+            is-dimission
             data-tid="recordPageSearchPlanner"
             @change="selectChangeHandle"
-            @focus="resetStart"
-          >
-            <el-option
-              v-for="people in plannerList"
-              :key="people.mchUserId"
-              :label="people.userName + '/' + people.userCenterNo"
-              :value="people"
-            >
-              <show-tooltip
-                :text="people.userName + '/' + people.userCenterNo"
-                title-class="content-title"
-                :width="242"
-                tooltip-class="content-record"
-              ></show-tooltip>
-            </el-option>
-          </el-select>
+          ></drop-select>
         </el-form-item>
         <el-form-item label="操作对象：">
-          <el-select
-            v-model="limitForm.handleObject"
-            v-loadmore="'handleObjList'"
-            filterable
+          <drop-select
+            ref="handleRefs"
+            key="handle"
             value-key="mchUserId"
-            remote
             placeholder="输入姓名/工号/联系方式"
-            :remote-method="searchHandleObj"
-            :loading="selectLoading"
-            clearable
-            popper-class="limit-select"
-            :popper-append-to-body="false"
+            type="handleObjList"
+            is-dimission
             data-tid="recordPageSearchHandleObj"
             @change="selectChangeHandle"
-            @focus="resetStart"
-          >
-            <el-option
-              v-for="people in handleObjList"
-              :key="people.mchUserId"
-              :label="people.userName + '/' + people.userCenterNo"
-              :value="people"
-            >
-              <show-tooltip
-                :text="people.userName + '/' + people.userCenterNo"
-                title-class="content-title"
-                :width="242"
-                tooltip-class="content-record"
-              ></show-tooltip>
-            </el-option>
-          </el-select>
+          ></drop-select>
         </el-form-item>
         <el-form-item label="限制方式：">
           <el-select v-model="limitForm.limitType">
@@ -105,36 +65,15 @@
           </el-select>
         </el-form-item>
         <el-form-item v-permission="['merchantSearch']" label="商户：">
-          <el-select
-            v-model="limitForm.merchantName"
-            v-loadmore="'merchantList'"
-            filterable
+          <drop-select
+            ref="merchantRefs"
+            key="merchant"
             value-key="id"
-            remote
             placeholder="输入商户名称/商户编号"
-            :remote-method="searchMerchantName"
-            :loading="selectLoading"
-            clearable
-            popper-class="limit-select"
-            :popper-append-to-body="false"
+            type="merchantList"
             data-tid="recordPageSearchMerchant"
             @change="selectChangeHandle"
-            @focus="resetStart"
-          >
-            <el-option
-              v-for="people in merchantList"
-              :key="people.id"
-              :label="people.name + '/' + people.mchNo"
-              :value="people"
-            >
-              <show-tooltip
-                :text="people.name + '/' + people.mchNo"
-                title-class="content-title"
-                :width="242"
-                tooltip-class="content-record"
-              ></show-tooltip>
-            </el-option>
-          </el-select>
+          ></drop-select>
         </el-form-item>
         <el-form-item label="操作时间：">
           <el-date-picker
@@ -175,8 +114,7 @@
 </template>
 <script>
 import './index.scss';
-import scrollLoad from 'utils/mixins/scrollLoad';
-import ShowTooltip from 'components/show-tooltip';
+import DropSelect from 'components/drop-select';
 import { export_log_list } from 'api/close-black-limit';
 import { get_dictionary_data_by_parent_code } from 'api/common';
 import { mutations, store } from '../../observable';
@@ -184,18 +122,14 @@ import { HANDLE_TYPE } from '../../configuration';
 export default {
   name: 'CloseBlackHandleRecordTitle',
   components: {
-    ShowTooltip,
+    DropSelect,
   },
-  mixins: [scrollLoad],
   data() {
     return {
       limitNumber: '',
       operation: '', //操作时间
       limit: '', //限制周期
       selectLoading: false, //搜索输入框的加载
-      plannerList: [], //操作人搜索名单
-      handleObjList: [], //操作对象搜索名单
-      merchantList: [], //商户搜索名单
       limitForm: {
         handlePeople: undefined,
         handleObject: undefined,
@@ -290,11 +224,9 @@ export default {
         merchantName: undefined,
       };
       this.limit = '';
-      this.operation = '';
-      this.plannerList = [];
-      this.handleObjList = [];
-      this.merchantList = [];
-      this.$refs.select.focus();
+      this.$refs.plannerRefs.resetInput();
+      this.$refs.handleRefs.resetInput();
+      this.$refs.merchantRefs.resetInput();
       mutations.clearFieldParams();
       this.$eventBus.$emit('reset-start');
     },
@@ -313,43 +245,15 @@ export default {
       });
     },
     /**
-     * @description 重置start
-     */
-    resetStart() {
-      this.optionPage = 1;
-    },
-    /**
-     * @description 操作人远程搜索方法
-     */
-    searchPlannerName(keyword) {
-      if (!keyword.trim()) return;
-      this.optionKey = keyword.trim();
-      this.getPeopleList(keyword.trim(), 'plannerList');
-    },
-    /**
-     * @description 操作对象远程搜索方法
-     */
-    searchHandleObj(keyword) {
-      if (!keyword.trim()) return;
-      this.optionKey = keyword.trim();
-      this.getPeopleList(keyword.trim(), 'handleObjList');
-    },
-    /**
-     * @description 商户远程搜索方法
-     */
-    searchMerchantName(keyword) {
-      if (!keyword.trim()) return;
-      this.optionKey = keyword.trim();
-      this.getPeopleList(keyword.trim(), 'merchantList');
-    },
-    /**
      * @description 限制人员搜索后选中方法
      */
-    selectChangeHandle(val) {
-      if (val === '') {
-        this.plannerList = [];
-        this.merchantList = [];
-        this.handleObjList = [];
+    selectChangeHandle(val, type) {
+      if (type === 'plannerList') {
+        this.limitForm.handlePeople = val;
+      } else if (type === 'handleObjList') {
+        this.limitForm.handleObject = val;
+      } else {
+        this.limitForm.merchantName = val;
       }
     },
   },

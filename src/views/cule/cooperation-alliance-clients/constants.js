@@ -16,29 +16,36 @@ const filterField = function(field) {
  * @description 列表筛选字段
  */
 const ALL_LIST = {
-  acceptStatus: { name: '接收状态', code: 'acceptStatus' },
+  receiveStatus: { name: '接收状态', code: 'receiveStatus' },
   buildStatus: { name: '建立状态', code: 'buildStatus' },
-  teamworkStatus: { name: '合作状态', code: 'teamworkStatus' },
-  teamworkType: { name: '合作类型', code: 'teamworkType' },
-  acceptTime: { name: '接收时间', code: 'acceptTime' },
-  startTime: { name: '发起时间', code: 'startTime' },
-  distributionType: { name: '分配方式', code: 'distributionType' },
+  cooperationStatus: { name: '合作状态', code: 'cooperationStatus' },
+  cooperationType: { name: '合作类型', code: 'cooperationType' },
+  /*
+  receiveTimeStart	接收时间-开始(格式:"2021-02-19 00:00:00")	
+  receiveTimeEnd	接收时间-结束(格式:"2021-02-19 23:59:59")*/
+  receive: { name: '接收时间', code: 'receive' },
+  /*
+  createTimeStart	发起时间-开始(格式:"2021-02-19 00:00:00")	
+  createTimeEnd	发起时间-结束(格式:"2021-02-19 23:59:59")
+  */
+  create: { name: '发起时间', code: 'create' },
+  allocationMode: { name: '分配方式', code: 'allocationMode' },
 };
-const RECEIVED_LIST = ['acceptStatus', 'teamworkType'];
+const RECEIVED_LIST = ['receiveStatus', 'cooperationType'];
 const RECEIVED_LIST2 = [
-  'acceptStatus',
-  'teamworkStatus',
-  'teamworkType',
-  'acceptTime',
-  'distributionType',
+  'receiveStatus',
+  'cooperationStatus',
+  'cooperationType',
+  'receive',
+  'allocationMode',
 ];
-const RECEIVED_LIST3 = ['buildStatus', 'teamworkType', 'distributionType', 'startTime'];
+const RECEIVED_LIST3 = ['buildStatus', 'cooperationType', 'allocationMode', 'create'];
 const RECEIVED_LIST4 = [
   'buildStatus',
-  'teamworkStatus',
-  'teamworkType',
-  'distributionType',
-  'startTime',
+  'cooperationStatus',
+  'cooperationType',
+  'allocationMode',
+  'create',
 ];
 
 const list1 = filterField(RECEIVED_LIST);
@@ -49,47 +56,44 @@ const list4 = filterField(RECEIVED_LIST4);
 /**
  * @description 默认字段，前端页面写死
  */
-const acceptStatus = [
-  { name: '待接收', code: 'waitAccept' },
-  { name: '已接收', code: 'accepted' },
+
+const receiveStatus = [
+  { name: '待接收', code: undefined, curPage: '2' },
+  { name: '已接收', code: 1, curPage: '1' },
 ];
 const buildStatus = [
-  { name: '待建立' },
-  { name: '建立失敗', code: 'buildFild' },
-  { name: '已建立', code: 'builded' },
+  { name: '待建立', curPage: '1' },
+  { name: '建立失败', code: 9, curPage: '1' },
+  { name: '已建立', code: 1, curPage: '3' },
 ];
 
-const teamworkType = [
+const cooperationType = [
   { name: '不限' },
   { name: '自留维护权', code: 1 },
   { name: '转出维护权', code: 2 },
 ];
 
-const teamworkStatus = [
+const cooperationStatus = [
   { name: '不限' },
   { name: '合作中', code: 1 },
-  { name: '已解散', code: 2 },
-  { name: '合作成功', code: 3 },
+  { name: '合作成功', code: 2 },
+  { name: '已解散', code: 3 },
 ];
 
-const acceptTime = [
+const receive = [
   { name: '不限' },
   { name: '本周', code: 'week' },
   { name: '本月', code: 'month' },
   { name: '自定义时间', code: 'datetime' },
 ];
-const startTime = [
+const create = [
   { name: '不限' },
   { name: '本周', code: 'week' },
   { name: '本月', code: 'month' },
   { name: '自定义时间', code: 'datetime' },
 ];
 
-const distributionType = [
-  { name: '不限' },
-  { name: '定向分配', code: 1 },
-  { name: '抢单', code: 2 },
-];
+const allocationMode = [{ name: '不限' }, { name: '定向分配', code: 1 }, { name: '抢单', code: 2 }];
 
 /**
  * @description tab页
@@ -98,32 +102,32 @@ const distributionType = [
 const tabList = [
   {
     name: '我接收的',
-    code: 'DJS',
-    filter: { waitAccept: list1, accepted: list2 },
-    curPageActive: 'waitAccept',
+    code: '0',
+    filter: { 2: list1, 1: list2 },
+    curPageActive: '2',
     filterItem: {
-      waitAccept: { acceptStatus, teamworkType },
-      accepted: { acceptStatus, teamworkStatus, teamworkType, acceptTime, distributionType },
+      2: { receiveStatus, cooperationType },
+      1: { receiveStatus, cooperationStatus, cooperationType, receive, allocationMode },
     },
   },
   {
     name: '我发起的',
-    code: 'YJS',
-    curPageActive: 'build',
-    filter: { builded: list4, build: list3 },
+    code: '1',
+    curPageActive: '1',
+    filter: { 3: list4, 1: list3 },
     filterItem: {
-      build: {
+      1: {
         buildStatus,
-        teamworkType,
-        distributionType,
-        startTime,
+        cooperationType,
+        allocationMode,
+        create,
       },
-      builded: {
+      3: {
         buildStatus,
-        teamworkType,
-        distributionType,
-        startTime,
-        teamworkStatus,
+        cooperationType,
+        allocationMode,
+        create,
+        cooperationStatus,
       },
     },
   },

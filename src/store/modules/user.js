@@ -33,6 +33,7 @@ const actions = {
         },
       });
       if (res.code === 200) {
+        console.log(res, 'res');
         const { token, userId, mchInfo, userType } = res.data;
         store.set('token', token);
         store.set('userType', userType);
@@ -75,6 +76,7 @@ const actions = {
 const mutations = {
   SET_USERINFO: (state, data) => {
     store.set('userInfo', data?.data);
+    store.set('platformType', 'COMDIC_PLATFORM_QIDASHUN');
     state.userInfo = data?.data;
     state.fullName = store.get('userInfo').fullName;
   },

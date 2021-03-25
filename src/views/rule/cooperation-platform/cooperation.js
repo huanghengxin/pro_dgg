@@ -1,7 +1,8 @@
 import './index.scss';
 import ShowTooltip from 'components/show-tooltip';
 // import dayjs from 'dayjs';
-import { queryTreeBook, merchants_query_rules, update_merchants } from 'api/rule';
+import { query_cooperate, save_cooperate, get_tree_book_by_codes } from 'api/rule';
+import { get_dictionary_data_by_parent_code } from 'api/common';
 import SvgIcon from 'components/svg-icon';
 export default {
   name: 'cooperation',
@@ -9,7 +10,7 @@ export default {
    * @description 过滤单位
    */
   filters: {
-    getTimeName: function (val) {
+    getTimeName: function(val) {
       const map = {
         U_N_DAYS: '天',
         U_MINUTE: '分钟',
@@ -30,7 +31,7 @@ export default {
       } else {
         var reg = /^[1-9][0-9]{0,3}$/;
         if (!reg.test(value)) {
-          callback(new Error('数值≤9999正整数'));
+          callback(new Error('≤9999正整数'));
         }
         callback();
       }
@@ -40,6 +41,7 @@ export default {
       rules: {
         val1: [{ validator: validateVal1, trigger: 'blur' }],
       },
+      ruleList: [],
       cooperationHeight: null,
       switchboardStatus: null,
       loading: false,
@@ -48,8 +50,8 @@ export default {
       libraryRule: [],
       changeForm: [],
       parma: [],
-      rulesMerchantLists: [],
-      // getRuleList: { data1: [] },
+      // rulesMerchantLists: [],
+      upperLimit: [],
       edit: true,
     };
   },
@@ -88,18 +90,20 @@ export default {
     // 请求数据字段
     this.ruleList = (await this.getRulesMerchantLists()) || [];
     // 后台
-    const dictionaryTree = (await this.getDictionary()) || {};
-    this.unitCode = dictionaryTree.rule_date_code || [];
+    this.unitCode = (await this.getDictionary('rule_date_code')) || [];
+    this.upperLimit =
+      (await this.getDictionaryBycodes('BUSINESS_REFERRAL_MAN,ASSOCIATION_SINGLE')) || [];
     // 字典和code码一一对应
     this.libraryRule =
-      dictionaryTree.lz_code?.map((item) => {
+      (await this.getDictionary('RULE_COOPERATE'))?.map((item) => {
+        this.regDescription(item, 'RULE_COOPERATE_PCN');
         return {
           name: item.name,
           code: item.code,
           description: item.description,
         };
       }) || [];
-    console.log(this.libraryRule, 'this.libraryRule');
+    this.loading = false;
   },
   mounted() {
     this.$nextTick(() => {
@@ -111,6 +115,21 @@ export default {
     window.removeEventListener('resize', this.getHeight);
   },
   methods: {
+    /**
+     * @description 匹配RULE_COOPERATE_PCN 最大值
+     */
+    regDescription(item, code) {
+      let arr = [this.upperLimit[0].ext5, this.upperLimit[0].ext5];
+      if (item.code === code) {
+        let reg1 = /35/g;
+        for (const item1 of arr) {
+          let execItme = reg1.exec(item.description);
+          if (execItme && execItme[0]) {
+            item.description = item.description?.replace(execItme[0], item1);
+          }
+        }
+      }
+    },
     /**
      * @description 获取高度
      */
@@ -128,10 +147,29 @@ export default {
       const rule = [
         {
           validator: (rule, value, callback) => {
-            console.log(item.code, '12121');
-            if (item.code === 'LZ_FIR' || item.code === 'LZ_PRI_CON') {
+            value = value?.trim();
+            if (item.code === 'RULE_COOPERATE_SPONSOR_TERMINATION') {
               callback();
-            } else if (value.trim() === '') {
+            }
+            if (value !== '') {
+              if (
+                item.code === 'RULE_COOPERATE_RELIEVE_TIMEOUT' ||
+                item.code === 'RULE_COOPERATE_ORDER_TURN' ||
+                item.code === 'RULE_COOPERATE_NOT_RECEIVED'
+              ) {
+                var regex = /^[A-Z_]+$/gi;
+                if (!regex.test(value)) {
+                  callback(new Error('请输入大写字母或下划线'));
+                }
+                callback();
+              } else {
+                var reg = /^[1-9][0-9]{0,3}$/;
+                if (!reg.test(value)) {
+                  callback(new Error('≤9999正整数'));
+                }
+                callback();
+              }
+            } else {
               callback(new Error('必填项'));
             }
             callback();
@@ -141,36 +179,116 @@ export default {
       ];
       return rule;
     },
-
+    /**
+     * @description val3输入框校验
+     */
+    handleRuleVal3(item) {
+      const rule = [
+        {
+          validator: (rule, value, callback) => {
+            value = value?.trim();
+            if (item.code === 'RULE_COOPERATE_ORDER_TURN') {
+              if (value === '') {
+                callback(new Error('必填项'));
+              } else {
+                var reg = /^[1-9][0-9]{0,3}$/;
+                if (!reg.test(value)) {
+                  callback(new Error('≤9999正整数'));
+                }
+                callback();
+              }
+            }
+            callback();
+          },
+          trigger: ['blur'],
+        },
+      ];
+      return rule;
+    },
+    /**
+     * @description val4输入框校验
+     */
+    handleRuleVal4(item) {
+      const rule = [
+        {
+          validator: (rule, value, callback) => {
+            value = value?.trim();
+            if (item.code === 'RULE_COOPERATE_ORDER_TURN') {
+              if (value === '') {
+                callback(new Error('必填项'));
+              } else {
+                var regex = /^[A-Z_]+$/gi;
+                if (!regex.test(value)) {
+                  callback(new Error('请输入大写字母或下划线'));
+                }
+                callback();
+              }
+            }
+            callback();
+          },
+          trigger: ['blur'],
+        },
+      ];
+      return rule;
+    },
+    /**
+     * @description 多个code查询数据字典
+     */
+    async getDictionaryBycodes(codes) {
+      try {
+        const param = {
+          codes: codes,
+        };
+        const result = await get_tree_book_by_codes(param);
+        if (result.code !== 200) {
+          this.$message.warning(result.message);
+          return;
+        }
+        if (result.code === 200) {
+          return result.data;
+        }
+        this.loading = false;
+      } catch (error) {
+        this.loading = false;
+      }
+    },
     /**
      * @description 数据字典接口
      */
-    async getDictionary() {
-      const param = {
-        code: 'rule_code',
-      };
-      const result = await queryTreeBook(param).catch(() => {
+    async getDictionary(code) {
+      try {
+        const param = {
+          parentCode: code,
+        };
+        const result = await get_dictionary_data_by_parent_code(param);
+        if (result.code !== 200) {
+          this.$message.warning(result.message);
+          return;
+        }
+        if (result.code === 200) {
+          return result.data;
+        }
         this.loading = false;
-      });
-      if (result.code === 200) {
+      } catch (error) {
         this.loading = false;
-        return result.data;
-      } else {
-        this.loading = false;
-        this.$message.warning(result.message);
       }
     },
     /**
      * @description 规则数据接口
      */
     async getRulesMerchantLists() {
-      const result = await merchants_query_rules().catch(() => {
+      try {
+        const result = await query_cooperate();
+        if (result.code !== 200) {
+          this.$message.warning(result.data.message);
+          return;
+        }
+        if (result.code === 200) {
+          return result.data;
+        }
         this.loading = false;
-      });
-      if (result.code === 200) {
-        return result.data;
-      } else {
-        this.$message.warning(result.message);
+      } catch (error) {
+        this.loading = false;
       }
     },
     /**
@@ -203,7 +321,6 @@ export default {
      */
     updateMerchants() {
       const getRule = this.getRuleList?.data1 || [];
-
       const rulesMerchant =
         getRule?.map((item) => {
           return {
@@ -216,8 +333,7 @@ export default {
             val4: item?.val4.trim(),
           };
         }) || [];
-
-      update_merchants(rulesMerchant)
+      save_cooperate(rulesMerchant)
         .then((res) => {
           if (res.code === 200) {
             this.$message({

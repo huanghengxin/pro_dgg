@@ -14,7 +14,7 @@
       <div class="title-time">
         <span>动态时间</span>
         <span
-          v-for="(item, index) in time"
+          v-for="(item, index) in timeList"
           :key="item.id"
           :class="{
             'filter-item': true,
@@ -124,13 +124,15 @@ import SearchButton from 'components/search-button';
 import MoreRequire from './components/more-require';
 import ShowMoreRequire from './components/show-more-require';
 import ShowTooltip from 'components/show-tooltip';
+import SvgIcon from 'components/svg-icon';
 import FilterTime from 'utils/filter-time'; // 使用日期过滤
 import dayjs from 'dayjs'; // 使用日期过滤
 import { dynamic_list, pickUp } from 'api/dynamic-business';
 import { get_dictionary_data_by_parent_code } from 'api/common';
-import SvgIcon from 'components/svg-icon';
+import { TIME_TYPE } from './configuration';
 import './index.scss';
 export default {
+  name: 'DynamicBusiness',
   components: {
     SearchButton,
     SvgIcon,
@@ -159,28 +161,25 @@ export default {
       date: '', //自定义时间
       isActive: 0, //时间选择
       loading: false,
-      //tab-text-动态时间
-      time: [
-        { id: 1, timing: 'day' },
-        { id: 2, timing: 'seven' },
-        { id: 3, timing: 'thirty' },
-        { id: 4, timing: '自定义时间' },
-      ],
+      timeList: [],
       tableDataRecords: [],
       tableDataPage: 0, //总页数
+      params: {
+        bizNo: undefined, //商机编号
+        customerName: undefined, //用户名称
+        phoneNo: undefined, //手机号
+        orderBy: undefined, //排序时间
+        isAsc: undefined, //排序的顺序
+      },
       limit: 10, //每页显示多少条
       start: 1, //页数
-      bizNo: undefined, //商机编号
-      customerName: undefined, //用户名称
-      phoneNo: undefined, //手机号
       dropTimeStart: undefined, //查询时间段开始
       dropTimeEnd: undefined, //查询时间段结束
-      orderBy: undefined, //排序时间
-      isAsc: undefined, //排序的顺序
     };
   },
   mounted() {
     this.getCode('rule_biz_db_code'); //请求数据字典，再加载列表
+    this.timeList = Object.freeze(TIME_TYPE);
   },
   methods: {
     loadMore(val) {
@@ -192,11 +191,7 @@ export default {
     handleInputValue(content) {
       if (content == '') {
         this.$refs.multipleTable.clearSort();
-        this.isAsc = undefined;
-        this.orderBy = undefined;
-        this.customerName = undefined;
-        this.phoneNo = undefined;
-        this.bizNo = undefined;
+        this.params = {};
         this.getTable();
       }
     },
@@ -204,13 +199,13 @@ export default {
      * @description 分页
      * @param {Number}
      */
+    //每页多少条
     handleSizeChange(val) {
-      //每页多少条
       this.limit = val;
       this.getTable();
     },
+    //第几页
     handleCurrentChange(val) {
-      //第几页
       this.start = val;
       this.getTable();
     },
@@ -280,14 +275,15 @@ export default {
      * @param {Number}
      */
     changeTime(index) {
+      const params = this.params;
       this.start = 1;
       this.isActive = index;
       this.$refs.multipleTable.clearSort();
-      this.isAsc = undefined;
-      this.orderBy = undefined;
+      params.isAsc = undefined;
+      params.orderBy = undefined;
       if (this.isActive < 3) {
-        this.dropTimeStart = new FilterTime(this.time[index].timing, 'YYYY-MM-DD').time[0];
-        this.dropTimeEnd = new FilterTime(this.time[index].timing, 'YYYY-MM-DD').time[1];
+        this.dropTimeStart = new FilterTime(this.timeList[index].timing, 'YYYY-MM-DD').time[0];
+        this.dropTimeEnd = new FilterTime(this.timeList[index].timing, 'YYYY-MM-DD').time[1];
         this.date = '';
         this.getTable();
       }
@@ -295,17 +291,18 @@ export default {
     /**
      * @description 搜索按钮
      */
-    searchUser(params, content) {
+    searchUser(value, content) {
       if ((this.isActive === 3 && this.date == '') || this.date === null) {
         this.changeTime(0);
       } else {
+        const params = this.params;
         this.start = 1;
         this.$refs.multipleTable.clearSort();
-        this.isAsc = undefined;
-        this.orderBy = undefined;
-        this.bizNo = params.bizNo;
-        this.customerName = params.customerName;
-        this.phoneNo = params.phoneNo;
+        params.isAsc = undefined;
+        params.orderBy = undefined;
+        params.bizNo = value.bizNo;
+        params.customerName = value.customerName;
+        params.phoneNo = value.phoneNo;
         this.getTable();
       }
     },
@@ -314,22 +311,19 @@ export default {
      * @param {Object}
      */
     sortOrder(val) {
+      const params = this.params;
       if (val.order == 'ascending') {
-        this.isAsc = true;
-        this.orderBy = val.prop;
-        this.start = 1;
-        this.getTable();
+        params.isAsc = true;
+        params.orderBy = val.prop;
       } else if (val.order == 'descending') {
-        this.isAsc = false;
-        this.orderBy = val.prop;
-        this.start = 1;
-        this.getTable();
+        params.isAsc = false;
+        params.orderBy = val.prop;
       } else {
-        this.isAsc = undefined;
-        this.orderBy = val.prop;
-        this.start = 1;
-        this.getTable();
+        params.isAsc = undefined;
+        params.orderBy = undefined;
       }
+      this.start = 1;
+      this.getTable();
     },
 
     /**
@@ -342,6 +336,7 @@ export default {
       };
       const result = await get_dictionary_data_by_parent_code(paramCode);
       const obj = result.data?.reduce((acc, cur) => {
+        console.log(acc, cur, '22121');
         acc[cur.code] = cur.name;
         return acc;
       }, {});
@@ -353,17 +348,11 @@ export default {
      */
     getTable() {
       this.loading = true;
-      let params = {
-        limit: this.limit,
-        start: this.start,
-        bizNo: this.bizNo,
-        customerName: this.customerName,
-        phoneNo: this.phoneNo,
-        dropTimeStart: this.dropTimeStart,
-        dropTimeEnd: this.dropTimeEnd,
-        orderBy: this.orderBy,
-        isAsc: this.isAsc,
-      };
+      let params = this.params;
+      params.limit = this.limit;
+      params.start = this.start;
+      params.dropTimeStart = this.dropTimeStart;
+      params.dropTimeEnd = this.dropTimeEnd;
       dynamic_list(params)
         .then((res) => {
           if (res.code === 200) {

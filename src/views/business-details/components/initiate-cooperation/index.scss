@@ -7,6 +7,8 @@
     }
     &-customerName {
       .el-form-item__label {
+        width: 86px !important;
+        margin-left: 12px;
         margin-top: -4px;
       }
       .el-form-item__content {
@@ -14,7 +16,16 @@
         height: 32px;
       }
     }
-
+    &-requirement {
+      .el-form-item__label {
+        // padding-left: 12px !important;
+      }
+      .el-form-item__label:before {
+        content: '*';
+        color: #f56c6c;
+        margin-right: 4px;
+      }
+    }
     &-is-require {
       .el-form-item__label {
         width: 98px !important;

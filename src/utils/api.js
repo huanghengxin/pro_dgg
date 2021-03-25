@@ -73,7 +73,6 @@ class Api {
       sysCode: CONFIG.SYS_CODE,
       secret: CONFIG.SECRET,
       token: token,
-      // token: '758741708686645825',
     });
     const config = {
       headers: {

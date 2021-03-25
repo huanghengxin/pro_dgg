@@ -7,7 +7,7 @@ export const CLUE_IMPOWER_LIST = [
   { code: 'YES', name: '已授权' },
 ];
 export const CLUE_STATUS_LIST = [
-  { code: 'QDS_CLUE_STATUS_NOT', name: '未联系' },
+  { code: 'QDS_CLUE_STATUS_NOT', name: '待联系' },
   { code: 'QDS_CLUE_STATUS_ALREADY', name: '已联系' },
 ];
 

@@ -32,7 +32,12 @@
       </el-form-item>
       <!-- 业务区域： -->
       <el-form-item class="from-name" label="业务区域：" prop="demandArea">
-        <el-select v-model="ruleForm.demandArea" data-tid="demandAreaSelect" placeholder="请选择">
+        <el-select
+          v-model="ruleForm.demandArea"
+          :disabled="isDisabled"
+          data-tid="demandAreaSelect"
+          placeholder="请选择"
+        >
           <el-option v-for="item in areaList" :key="item.key" :label="item.value" :value="item.key">
           </el-option>
         </el-select>
@@ -128,6 +133,7 @@ export default {
   components: {
     TowInput,
   },
+  inject: ['permissionType'],
   data() {
     const validateRequire = (rule, value, callback) => {
       if (!value) {
@@ -188,6 +194,7 @@ export default {
         expectFinishTime: '',
         service: {},
       },
+      isDisabled: false,
       busAttrList: [],
       areaList: [], //地区
       expectFinishTimeList: [], //预计完成时间
@@ -383,8 +390,13 @@ export default {
      * @description 供父组件调用打开弹层
      */
     openModal(item, bizId, attributeList, followDemandList) {
-      let ruleForm = this.ruleForm;
       this.businessId = bizId;
+      if (this.permissionType.info == 'RETENTION_RECEIVE') {
+        this.isDisabled = true;
+      } else {
+        this.isDisabled = false;
+      }
+      let ruleForm = this.ruleForm;
       if (item.requireId) {
         //回显
         this.demandId = item.requireId;

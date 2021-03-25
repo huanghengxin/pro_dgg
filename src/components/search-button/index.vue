@@ -55,8 +55,6 @@ export default {
       this.$emit('on-input', this.content);
     },
     handleClick() {
-      // if (this.content.trim() === '') return;
-      // const regName = /^[\u4e00-\u9fa5]+$/;
       const regPhone = /^1[3-9]\d{9}$/;
       const regNumber = /^BSJ[0-9]|bsj[0-9]*$/;
       let params = {};

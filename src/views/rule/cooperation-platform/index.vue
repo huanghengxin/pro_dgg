@@ -84,21 +84,25 @@
                     :data-tid="'val2Input' + scope.$index"
                   ></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item
+                  :prop="'data1.' + scope.$index + '.val3'"
+                  :rules="handleRuleVal3(scope.row)"
+                >
                   <el-input
                     v-model="scope.row.val3"
                     :placeholder="scope.row.val3"
-                    disabled
                     type="text"
                     :data-tid="'val3Input' + scope.$index"
                     class="val1"
                   ></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item
+                  :prop="'data1.' + scope.$index + '.val4'"
+                  :rules="handleRuleVal4(scope.row)"
+                >
                   <el-input
                     v-model="scope.row.val4"
                     :placeholder="scope.row.val4"
-                    disabled
                     type="text"
                     class="val1"
                     :data-tid="'val4Input' + scope.$index"

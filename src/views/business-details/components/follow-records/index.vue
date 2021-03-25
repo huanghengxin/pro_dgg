@@ -38,7 +38,9 @@
             @change="clearTimeHandleClick"
             >查看90天以前</el-checkbox
           >
+          <!-- v-if="from !== 'team-manage'" -->
           <el-button
+            v-if="isCurUser || permissionType.info != 'TRANSFER_SPONSOR'"
             v-accControls:noAttention="noAttentionStatus"
             type="primary"
             :disabled="disabledButton"

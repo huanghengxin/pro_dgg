@@ -15,22 +15,5 @@ export default {
     ListSearch,
     BusinessList,
   },
-  inject: ['reload'],
-  beforeRouteLeave(to, from, next) {
-    //缓存
-    if (to.path == '/my-business/business-details') {
-      if (!from.meta.keepAlive) from.meta.keepAlive = true;
-    } else {
-      this.reload();
-      //不缓存
-      // from.meta.keepAlive = false;
-    }
-    next();
-  },
-  data() {
-    return {};
-  },
-
-  methods: {},
 };
 </script>

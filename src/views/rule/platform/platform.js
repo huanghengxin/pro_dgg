@@ -274,6 +274,10 @@ export default {
           .then(() => {
             exe_platform_rule_switch(obj)
               .then((res) => {
+                if (res.code !== 200) {
+                  this.$message.warning(res.message);
+                  return;
+                }
                 if (res.code === 200) {
                   // this.edit = true;
                   this.$message({
@@ -281,8 +285,6 @@ export default {
                     message: '操作成功!',
                   });
                   this.getSwitchboard();
-                } else {
-                  this.$message.warning(res.message);
                 }
               })
               .catch(() => {
@@ -340,33 +342,40 @@ export default {
      * @returns {Object} 返回数据
      */
     async getDictionary() {
-      const param = {
-        code: 'rule_code',
-      };
-      const result = await queryTreeBook(param).catch(() => {
+      try {
+        const param = {
+          code: 'rule_code',
+        };
+        const result = await queryTreeBook(param);
+        if (result.code !== 200) {
+          this.loading = false;
+          this.$message.warning(result.message);
+          return;
+        }
+        if (result.code === 200) {
+          this.loading = false;
+          return result.data;
+        }
+      } catch (error) {
         this.loading = false;
-      });
-
-      if (result.code === 200) {
-        this.loading = false;
-        return result.data;
-      } else {
-        this.loading = false;
-        this.$message.warning(result.message);
       }
     },
     /**
      * @description 规则数据接口
      */
     async getRulesPlatformLists() {
-      this.loading = true;
-      const result = await query_rules().catch(() => {
+      try {
+        this.loading = true;
+        const result = await query_rules();
+        if (result.code !== 200) {
+          this.$message.warning(result.message);
+          return;
+        }
+        if (result.code === 200) {
+          return result.data;
+        }
+      } catch (error) {
         this.loading = false;
-      });
-      if (result.code === 200) {
-        return result.data;
-      } else {
-        this.$message.warning(result.message);
       }
     },
     /**
@@ -420,13 +429,15 @@ export default {
         }) || [];
       update_platform_ruleList(rulesPlatform)
         .then((res) => {
+          if (res.code !== 200) {
+            this.$message.warning(res.message);
+            return;
+          }
           if (res.code === 200) {
             this.$message({
               type: 'success',
               message: '保存成功!',
             });
-          } else {
-            this.$message.warning(res.message);
           }
         })
         .catch(() => {
@@ -442,14 +453,16 @@ export default {
       };
       await rules_switch_boarded(param)
         .then((res) => {
+          if (res.code !== 200) {
+            this.$message.warning(res.message);
+            return;
+          }
           if (res.code === 200) {
             this.switchboardStatus = res.data.status;
             this.start = res.data.val1;
             this.end = res.data.val2;
             this.switchboardEndDate(this.end, this.start);
             this.switchboardId = res.data.id;
-          } else {
-            this.$message.warning(res.message);
           }
         })
         .catch(() => {

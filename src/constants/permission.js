@@ -18,6 +18,7 @@ export const MORE_HANDLE = [
   { name: '在线聊', openModal: 'im-chat', auth: 'crmChatIm' },
   { name: '邀约面谈', openModal: 'invite-interview', auth: 'crmInviteInterview' },
   { name: '操作日志', openModal: 'handle-log', auth: 'crmHandleLog' },
+  { name: '发起合作', openModal: 'initiate-cooperation', auth: 'crmInitiateCooperation' },
   // { name: '下单', openModal: 'push-sheet' },
   { name: '设置分组', openModal: 'set-group', auth: 'crmSetGroup' },
   { name: '暂不关注', code: 'BUS_ZBGZ', openModal: 'no-attention', auth: 'crmNoAttention' },
@@ -34,6 +35,7 @@ export const SIGNED_BUSINESS = [
   { name: '在线聊', openModal: 'im-chat', auth: 'crmChatIm' },
   { name: '邀约面谈', openModal: 'invite-interview', auth: 'crmInviteInterview' },
   { name: '操作日志', openModal: 'handle-log', auth: 'crmHandleLog' },
+  // { name: '发起合作', openModal: 'initiate-cooperation', auth: 'crmInitiateCooperation' },
   // { name: '下单', openModal: 'push-sheet' },
   { name: '设置分组', openModal: 'set-group', auth: 'crmSetGroup' },
   {
@@ -42,6 +44,13 @@ export const SIGNED_BUSINESS = [
     auth: 'crmSetNextFollowTime',
   },
 ];
+//自留维护-合作接收人
+export const RETENTION_RECEIVE = [
+  { name: '基本信息修改', openModal: 'edit-base-info', auth: 'crmEditBaseInfo' },
+  { name: '邀约面谈', openModal: 'invite-interview', auth: 'crmInviteInterview' },
+];
+//转出维护-合作发起人
+export const TRANSFER_SPONSOR = [];
 
 //经理
 export const MORE_TEAM_MANAGE = [
@@ -57,6 +66,7 @@ export const MORE_HANDLE_COMPONENT = [
   'set-group',
   'no-attention',
   'set-next-follow-time',
+  'initiate-cooperation',
 ];
 //已签单组件
 export const SIGNED_BUSINESS_COMPONENT = [
@@ -66,6 +76,10 @@ export const SIGNED_BUSINESS_COMPONENT = [
   'set-group',
   'set-next-follow-time',
 ];
+//自留维护-合作接收人
+export const RETENTION_RECEIVE_COMPONENT = ['edit-base-info', 'invite-interview'];
+//转出维护-合作发起人
+export const TRANSFER_SPONSOR_COMPONENT = [];
 //暂不关注组件
 export const NO_ATTENTION_MORE_HANDLE_COMPONENT = ['edit-base-info', 'handle-log'];
 //经理组件

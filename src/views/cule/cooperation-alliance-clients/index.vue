@@ -1,7 +1,12 @@
 <template>
   <div class="cooperationCustomer">
     <div class="cooperationCustomer-seasBox">
-      <list-search :tab-list="tabList" :tab-active-prop="activeName" class="tabList" />
+      <list-search
+        :tab-list="tabList"
+        class="tabList"
+        :tab-active-prop="activeName"
+        @clear-sort="clearSort"
+      />
       <div class="tocooperationBox">
         <el-button type="primary" size="small" class="tocooperation" @click="tocooperation"
           >发起合作</el-button
@@ -27,78 +32,124 @@
             prop="customerName"
             label="姓名"
             fixed="left"
-            min-width="70"
+            min-width="120"
             class-name="list-name"
           >
             <template slot-scope="scope">
               <show-tooltip
                 v-if="scope.row.customerName"
-                :text="scope.row.customerName"
-                :width="70"
+                :text="scope.row.customerName || '-'"
+                :width="80"
               ></show-tooltip>
-              <span v-else>暂无数据</span>
+              <span v-else>-</span>
             </template>
           </el-table-column>
           <el-table-column label="联系号码" min-width="160">
             <template slot-scope="scope">
               <show-tooltip
                 v-if="scope.row.customerPhone"
-                :text="scope.row.customerPhone"
-                :width="120"
+                :text="scope.row.customerPhone || '-'"
+                :width="100"
               ></show-tooltip>
-              <span v-else>暂无数据</span>
+              <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column label="客户需求" min-width="100">
+          <el-table-column label="客户需求" min-width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.customerRequirementName">
+              <div v-if="scope.row.requirementName">
                 <show-tooltip
-                  :text="scope.row.customerRequirementName.replace(/\|/g, ',')"
-                  :width="100"
+                  :text="scope.row.requirementName.replace(/\|/g, ',') || ''"
+                  :width="80"
                 ></show-tooltip>
               </div>
-              <span v-else>暂无数据</span>
+              <span v-else>-</span>
             </template>
           </el-table-column>
           <el-table-column label="业务区域" min-width="100">
             <template slot-scope="scope">
-              <div v-if="scope.row.customerBizAreaName">
+              <div v-if="scope.row.bizAreaName">
                 <show-tooltip
-                  :text="scope.row.customerBizAreaName.replace(/\|/g, ',')"
+                  :text="scope.row.bizAreaName.replace(/\|/g, ',') || '-'"
                   :width="80"
                 ></show-tooltip>
               </div>
-              <span v-else>暂无数据</span>
+              <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column label="合作状态" min-width="100">
+          <el-table-column v-if="map.cooperationStatus" label="合作状态" min-width="100">
             <template slot-scope="scope">
               <div v-if="scope.row.status">
-                <show-tooltip
-                  :text="
-                    scope.row.status == 0 ? '合作中' : scope.row.status == 1 ? '合作成功' : '已解散'
-                  "
-                  :width="100"
-                ></show-tooltip>
-                <p v-if="scope.row.status == 2 && scope.row.abandonStatus == 2" style="color: #999">
-                  {{ scope.row.abandonReason }}
+                <p class="receive">
+                  <show-tooltip
+                    title-class="receive"
+                    :text="
+                      scope.row.dissolutionStatus == 3
+                        ? '已解散'
+                        : scope.row.status == 1
+                        ? '合作中'
+                        : scope.row.status == 2
+                        ? '合作成功'
+                        : '-'
+                    "
+                    :width="100"
+                  ></show-tooltip>
+                </p>
+                <p v-if="scope.row.dissolutionStatus == 3" style="color: #999">
+                  <show-tooltip
+                    :text="scope.row.dissolutionReason || '-'"
+                    :width="80"
+                  ></show-tooltip>
                 </p>
               </div>
-              <span v-else>暂无数据</span>
+              <span v-else>-</span>
             </template>
           </el-table-column>
-          <el-table-column prop="lastRemarkTime" label="合作类型" min-width="120">
-            <template slot-scope="scope">
-              <div v-if="scope.row.type">
-                <show-tooltip :text="scope.row.type" :width="80"></show-tooltip>
-              </div>
-              <p v-else>暂无数据</p>
-            </template>
-          </el-table-column>
-
           <el-table-column
             prop="lastRemarkTime"
-            label="合作分得比例"
+            :label="
+              statusType == 'buildStatus' && statusValue == undefined ? '合作类型/比例' : '合作类型'
+            "
+            :min-width="statusType == 'buildStatus' && statusValue == undefined ? '160' : '120'"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.type">
+                <show-tooltip
+                  :text="scope.row.type == 1 ? '自留维护权' : '转出维护权' || '-'"
+                  :width="80"
+                ></show-tooltip>
+                <span v-if="statusType == 'buildStatus' && statusValue == undefined">{{
+                  '/' + scope.row.ratio + '%'
+                }}</span>
+              </div>
+              <p v-else>-</p>
+            </template>
+          </el-table-column>
+          <!--分配方式-->
+          <el-table-column
+            v-if="map.allocationModeStatus"
+            prop="lastRemarkTime"
+            label="分配方式"
+            min-width="120"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.allocationMode">
+                <p>{{ scope.row.allocationMode == 1 ? '定向分单' : '抢单' }}</p>
+              </div>
+              <p v-else>-</p>
+            </template>
+          </el-table-column>
+          <!--合作分得比例-->
+          <el-table-column
+            v-if="map.ratioStatus"
+            prop="lastRemarkTime"
+            :label="
+              (statusType == 'receiveStatus' && statusValue == undefined) ||
+              (statusType == 'receiveStatus' && statusValue == 1)
+                ? '合作分得比例'
+                : statusType == 'buildStatus' && statusValue == 1
+                ? '合作分出比例'
+                : ''
+            "
             sortable="custom"
             min-width="120"
           >
@@ -106,80 +157,164 @@
               <div v-if="scope.row.ratio">
                 <p>{{ scope.row.ratio + '%' }}</p>
               </div>
-              <p v-else>暂无数据</p>
+              <p v-else>-</p>
             </template>
           </el-table-column>
-          <el-table-column prop="returnTime" label="预计退回时间" sortable="custom" min-width="160">
+          <!--预计退回时间-->
+          <el-table-column
+            v-if="map.expectReturnTimeStatus"
+            prop="expectReturnTime"
+            label="预计退回时间"
+            sortable="custom"
+            min-width="160"
+          >
             <template slot-scope="scope">
-              <div v-if="scope.row.returnTime">
-                {{ scope.row.returnTime | filterTime }}
+              <div v-if="scope.row.expectReturnTime">
+                {{ scope.row.expectReturnTime | filterTime }}
                 <!-- <show-tooltip :text="scope.row.returnTime" :width="120"></show-tooltip> -->
               </div>
-              <p v-else>暂无数据</p>
-            </template>
-          </el-table-column>
-          <el-table-column label="发起人/时间" sortable="custom" min-width="160" prop="createDate">
-            <template slot-scope="scope">
-              <div v-if="scope.row.sponsorUserName || scope.row.createDate">
-                <p v-show="scope.row.sponsorUserName">
-                  {{ scope.row.sponsorUserName }}{{ '(' + scope.row.jobNumber + ')' }}
-                </p>
-                {{ scope.row.createDate | filterTime }}
-                <!-- <show-tooltip
-                  v-show="scope.row.createDate"
-                  :text="scope.row.createDate"
-                  :width="140"
-                ></show-tooltip> -->
-              </div>
-              <p v-else>暂无数据</p>
-            </template>
-          </el-table-column>
-          <el-table-column label="接收人" sortable="custom" min-width="160" prop="receiveUserName">
-            <template slot-scope="scope">
-              <div v-if="scope.row.receiveUserName || scope.row.receiveTime">
-                <p v-show="scope.row.receiveUserName">
-                  {{ scope.row.receiveUserName }}
-                </p>
-              </div>
-              <p v-else>暂无数据</p>
-            </template>
-          </el-table-column>
-          <el-table-column label="接收人/时间" sortable="custom" min-width="160" prop="receiveTime">
-            <template slot-scope="scope">
-              <div v-if="scope.row.receiveUserName || scope.row.receiveTime">
-                <p v-show="scope.row.receiveUserName">
-                  {{ scope.row.receiveUserName }}{{ '(' + scope.row.jobNumber + ')' }}
-                </p>
-                {{ scope.row.receiveTime | filterTime }}
-                <!-- <show-tooltip
-                  v-show="scope.row.receiveTime"
-                  :text="scope.row.receiveTime"
-                  :width="140"
-                ></show-tooltip> -->
-              </div>
-              <p v-else>暂无数据</p>
+              <p v-else>-</p>
             </template>
           </el-table-column>
 
-          <el-table-column prop="lastRemarkTime" label="合作原因" min-width="180">
+          <el-table-column
+            v-if="statusType == 'buildStatus' && statusValue == 9"
+            prop="returnTime"
+            label="退回原因/时间"
+            sortable="custom"
+            min-width="220"
+          >
             <template slot-scope="scope">
-              <div v-if="scope.row.reason">
-                <show-tooltip :text="scope.row.reason" :width="140"></show-tooltip>
+              <div v-if="scope.row.returnReason || scope.row.returnTime" style="text-align: left">
+                <show-tooltip
+                  title-class="receive"
+                  :text="scope.row.returnReason || '-'"
+                  :width="180"
+                ></show-tooltip>
+                <p>{{ scope.row.returnTime | filterTime }}</p>
               </div>
-              <p v-else>暂无数据</p>
+              <p v-else>-</p>
             </template>
           </el-table-column>
-          <el-table-column label="接收时间" min-width="180">
+          <!-- 发起人/时间 -->
+          <el-table-column
+            v-if="map.createTimePersonTimeStatus"
+            label="发起人/时间"
+            sortable="custom"
+            min-width="200"
+            prop="createTime"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.sponsorName || scope.row.createTime">
+                <p class="receive">
+                  <show-tooltip
+                    title-class="receive"
+                    :text="scope.row.sponsorName || '-'"
+                    :width="120"
+                  ></show-tooltip>
+                  {{ '(' + scope.row.sponsorJob + ')' }}
+                </p>
+                {{ scope.row.createTime | filterTime }}
+              </div>
+              <p v-else>-</p>
+            </template>
+          </el-table-column>
+          <!-- 发起时间 -->
+          <el-table-column
+            v-if="map.createTimeTimeStatus"
+            label="发起时间"
+            sortable="custom"
+            min-width="170"
+            prop="createTime"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.createTime">
+                {{ scope.row.createTime | filterTime }}
+              </div>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
+          <!-- 接收人 -->
+          <el-table-column
+            v-if="map.receiveUserNameStatus"
+            label="接收人"
+            min-width="180"
+            prop="receiveName"
+          >
+            <template slot-scope="scope">
+              <p v-if="scope.row.allocationMode == 2 && !scope.row.receiveName">暂无</p>
+              <div v-else>
+                <show-tooltip
+                  title-class="receive"
+                  :text="scope.row.receiveName + '(' + scope.row.receiveJob + ')' || '-'"
+                  :width="140"
+                ></show-tooltip>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="statusType == 'buildStatus' && statusValue == 1"
+            label="接收人/时间"
+            sortable="custom"
+            min-width="200"
+            prop="receiveTime"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.receiveName || scope.row.receiveTime">
+                <p class="receive">
+                  <show-tooltip
+                    title-class="receive"
+                    :text="scope.row.receiveName || '-'"
+                    :width="120"
+                  ></show-tooltip>
+                  {{ '(' + scope.row.receiveJob + ')' }}
+                </p>
+                <p v-if="scope.row.receiveTime">
+                  {{ scope.row.receiveTime | filterTime }}
+                </p>
+              </div>
+              <p v-else>-</p>
+            </template>
+          </el-table-column>
+          <!-- 合作原因 -->
+          <el-table-column v-if="map.reasonStatus" prop="reason" label="合作原因" min-width="180">
+            <template slot-scope="scope">
+              <div v-if="scope.row.reason">
+                <show-tooltip :text="scope.row.reason || '-'" :width="140"></show-tooltip>
+              </div>
+              <p v-else>暂无</p>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-if="statusType == 'receiveStatus' && statusValue == 1"
+            sortable="custom"
+            label="接收时间"
+            min-width="180"
+            prop="receiveTime"
+          >
             <template slot-scope="scope">
               <div v-if="scope.row.receiveTime">
                 {{ scope.row.receiveTime | filterTime }}
               </div>
-              <p v-else>暂无数据</p>
+              <p v-else>-</p>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="140" fixed="right" class-name="list-last">
+          <el-table-column
+            label="操作"
+            :min-width="
+              statusType == 'receiveStatus' && statusValue == undefined
+                ? '140'
+                : statusType == 'receiveStatus' && statusValue == 1
+                ? '180'
+                : statusType == 'buildStatus' && statusValue == 1
+                ? '180'
+                : '140'
+            "
+            fixed="right"
+            class-name="list-last"
+          >
             <template slot-scope="scope">
-              <div class="list-handle">
+              <div v-if="map.receiveBtnStatus" class="list-handle">
                 <p
                   class="list-handle_follow"
                   :data-tid="'appcet' + scope.$index"
@@ -195,37 +330,54 @@
                   拒绝
                 </p>
               </div>
-            </template>
-          </el-table-column>
-          <!--<el-table-column label="操作" min-width="180" fixed="right" class-name="list-last">
-            <template slot-scope="scope">
-              <div class="list-handle">
+              <div v-else-if="map.checkBusBtnStatus" class="list-handle">
                 <p
                   class="list-handle_follow"
-                  :data-tid="'refuseCooperation' + scope.$index"
-                  @click="checkBusiness(scope.row.id)"
+                  :data-tid="'checkBusiness' + scope.$index"
+                  @click="checkBusiness(scope.row.bizId)"
                 >
                   查看商机
                 </p>
                 <p
                   class="list-handle_follow"
-                  :data-tid="'refuseCooperation' + scope.$index"
-                  @click="onlineTalk(scope.row.id)"
+                  :data-tid="'onlineTalk' + scope.$index"
+                  @click="onlineTalk(scope.row)"
                 >
                   在线聊
                 </p>
               </div>
+              <div
+                v-else-if="map.remindSomeBtnStatus && scope.row.allocationMode != 2"
+                class="list-handle"
+              >
+                <p
+                  class="list-handle_follow"
+                  :data-tid="'remindSomeBody' + scope.$index"
+                  @click="remindSomeBody(scope.row.id)"
+                >
+                  提醒他（她）
+                </p>
+              </div>
+              <div v-else-if="map.againInitiateStatus" class="list-handle">
+                <p
+                  class="list-handle_follow"
+                  :data-tid="'againInitiate' + scope.$index"
+                  @click="againInitiate(scope.row)"
+                >
+                  重新发起
+                </p>
+              </div>
             </template>
-          </el-table-column> -->
+          </el-table-column>
         </el-table>
         <div class="pagination-footer">
           <el-pagination
             background
-            :current-page="param.start"
-            :page-size="param.limit"
+            :current-page="storeParam.start"
+            :page-size="storeParam.limit"
             :page-sizes="[10, 20, 30, 40, 50]"
             layout="total, prev, pager, next, sizes, jumper"
-            :total="tableData.total"
+            :total="tableData.totalCount"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
           >
@@ -233,11 +385,15 @@
         </div>
       </div>
     </div>
-    <RefusalReleaseReason ref="refusalReleaseReasonRef" class="refusalRelease" />
+    <RefusalReleaseReason
+      ref="refusalReleaseReasonRef"
+      class="refusalRelease"
+      @refresh-list="listRefresh"
+    />
+    <InitiateCooperation ref="initiateCooperationRef" />
   </div>
 </template>
 <script>
-import './index.scss';
 import cooperationAllianceClients from './cooperation-alliance-clients.js';
 export default cooperationAllianceClients;
 </script>
