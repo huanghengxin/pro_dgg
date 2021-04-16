@@ -25,15 +25,20 @@
                   <i slot="prefix" class="input_icon el-input__icon el-icon-lock"></i>
                 </el-input>
               </el-form-item>
-              <el-form-item prop="platformType">
+              <el-form-item prop="user">
                 <el-select
-                  v-model="ruleForm.platformType"
-                  style="width: 100%"
-                  placeholder="请选择商户类型"
+                  v-model="user"
+                  placeholder="请选择"
+                  style="width: 360px"
+                  @change="userChange"
                 >
-                  <el-option label="企大宝" value="COMDIC_PLATFORM_QIDABAO"> </el-option>
-                  <el-option label="企大顺" value="COMDIC_PLATFORM_QIDASHUN"> </el-option>
-                  <el-option label="运营" value="COMDIC_PLATFORM_MANAGMENT"> </el-option>
+                  <el-option
+                    v-for="item in options"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.ruleForm"
+                  >
+                  </el-option>
                 </el-select>
               </el-form-item>
               <div class="remember">
@@ -52,53 +57,8 @@
               </el-button>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="手机号登录" name="phone">
-            <el-form
-              ref="ruleForm"
-              size="medium"
-              label-suffix="："
-              status-icon
-              :model="phoneForm"
-              class="demo-ruleForm"
-            >
-              <el-form-item prop="phone">
-                <el-input
-                  v-model="phoneForm.phone"
-                  type="text"
-                  data-tid="phoneInput"
-                  placeholder="请输入手机号"
-                >
-                  <i slot="prefix" class="input_icon el-input__icon el-icon-user"></i>
-                </el-input>
-              </el-form-item>
-              <el-form-item prop="captcha">
-                <div class="captcha">
-                  <el-input
-                    v-model="phoneForm.captcha"
-                    class="captcha-input"
-                    type="password"
-                    data-tid="captchaInput"
-                    placeholder="请输入验证码"
-                  >
-                    <i slot="prefix" class="input_icon el-input__icon el-icon-lock"></i>
-                  </el-input>
-
-                  <el-button class="captcha-btn" data-tid="getCode">获取验证码</el-button>
-                </div>
-              </el-form-item>
-
-              <div class="remember">
-                <el-checkbox v-model="checked" data-tid="autoLogin">自动登录</el-checkbox>
-                <a data-tid="fingPwd">找回密码</a>
-              </div>
-              <el-button type="primary" class="btn_login" data-tid="login" @click="login">
-                登&nbsp;录
-              </el-button>
-            </el-form>
-          </el-tab-pane>
         </el-tabs>
       </div>
-
       <div class="login-footer">Copyright © 2020-2021 成都薯片科技有限公司</div>
     </div>
   </div>
@@ -112,20 +72,39 @@ export default {
       checked: true,
       activeName: 'passwd',
       loading: false,
-      phoneForm: {
-        phone: '',
-        captcha: '',
-      },
-
+      user: '',
+      options: [
+        {
+          name: '张',
+          ruleForm: 'zhang',
+        },
+        {
+          name: '黄',
+          ruleForm: 'huang',
+        },
+      ],
       ruleForm: {
-        account: '17765488997',
-        password: '488997',
-        platformType: 'COMDIC_PLATFORM_QIDASHUN',
+        account: '18512811263',
+        password: '123456',
       },
     };
   },
   computed: {},
   methods: {
+    userChange(user) {
+      const users = {
+        zhang: {
+          account: '18512811263',
+          password: '123456',
+        },
+        huang: {
+          account: '17765488997',
+          password: '123456',
+        },
+      };
+      this.ruleForm = users[user];
+      this.login();
+    },
     login() {
       if (this.activeName === 'phone') {
         this.$message({
@@ -134,7 +113,7 @@ export default {
         });
         return;
       }
-      const { account, password, platformType } = this.ruleForm;
+      const { account, password } = this.ruleForm;
 
       if (!account || !password) {
         this.$message({
@@ -145,7 +124,7 @@ export default {
         this.$store.dispatch('user/Login', {
           account,
           password,
-          platformType,
+          platformType: 'COMDIC_PLATFORM_QIDASHUN',
         });
       }
     },
@@ -204,6 +183,7 @@ export default {
     .input_icon {
       color: #4974f5;
     }
+
     .btn_login {
       width: 100%;
     }

@@ -49,8 +49,18 @@ export const RETENTION_RECEIVE = [
   { name: '基本信息修改', openModal: 'edit-base-info', auth: 'crmEditBaseInfo' },
   { name: '邀约面谈', openModal: 'invite-interview', auth: 'crmInviteInterview' },
 ];
+//自留维护-合作接收人  暂不关注
+export const RETENTION_RECEIVE_NO_ATTENTION = [
+  { name: '基本信息修改', openModal: 'edit-base-info', auth: 'crmEditBaseInfo' },
+];
 //转出维护-合作发起人
 export const TRANSFER_SPONSOR = [];
+//转出维护-合作接收人  自留发起人  暂不关注
+export const TRANSFER_RETENTION_NO_ATTENTION = [
+  { name: '基本信息修改', openModal: 'edit-base-info', auth: 'crmEditBaseInfo' },
+  { name: '操作日志', openModal: 'handle-log', auth: 'crmHandleLog' },
+  { name: '恢复关注', openModal: 'reset-attention', auth: 'crmResetAttention' },
+];
 
 //经理
 export const MORE_TEAM_MANAGE = [
@@ -78,8 +88,12 @@ export const SIGNED_BUSINESS_COMPONENT = [
 ];
 //自留维护-合作接收人
 export const RETENTION_RECEIVE_COMPONENT = ['edit-base-info', 'invite-interview'];
+//自留维护-合作接收人 暂不关注
+export const RETENTION_RECEIVE_NO_ATTENTION_COMPONENT = ['edit-base-info'];
 //转出维护-合作发起人
 export const TRANSFER_SPONSOR_COMPONENT = [];
+//转出维护-合作接收人  自留发起人  暂不关注
+export const TRANSFER_RETENTION_NO_ATTENTION_COMPONENT = ['edit-base-info', 'handle-log'];
 //暂不关注组件
 export const NO_ATTENTION_MORE_HANDLE_COMPONENT = ['edit-base-info', 'handle-log'];
 //经理组件

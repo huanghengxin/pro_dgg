@@ -28,6 +28,7 @@
           v-model="ruleForms.customerRequire"
           placeholder="请选择客户需求"
           data-tid="customerRequire"
+          style="width: 300px"
           :props="props"
         ></el-cascader>
       </el-form-item>
@@ -37,6 +38,7 @@
           v-model="ruleForms.areaCode"
           data-tid="bizArea"
           class="content-beiyong-select"
+          style="width: 300px"
           @change="change"
         >
           <el-option
@@ -67,7 +69,6 @@
 
 <script>
 import { get_all_businessArea, get_search } from 'api/cooperation-in-page';
-import './index.scss';
 export default {
   name: 'AddRequire',
   components: {},
@@ -134,7 +135,8 @@ export default {
      * @description 获取用户授权的区域范围
      */
     getAreaList() {
-      get_all_businessArea()
+      const params = {};
+      get_all_businessArea(params)
         .then((res) => {
           if (res.code === 200) {
             res = res.data;
@@ -164,6 +166,7 @@ export default {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           const quire = this.$refs.requirementRef.getCheckedNodes();
+          console.log(quire, 'quire');
           let params = this.ruleForms,
             obj = {};
           params.productTypeCode = quire[0]?.data.productTypeCode || ''; //一级产品类型
@@ -171,8 +174,6 @@ export default {
           params.requirementName = quire[0]?.label || ''; //三级需求名称
           params.requirementParentCode = quire[0]?.parent.value || ''; //二级需求编码
           params.requirementParentName = quire[0]?.parent.label || ''; //二级需求名称
-          // params.areaCode = this.ruleForms.bizArea.code;
-          // params.areaName = this.ruleForms.bizArea.name;
           obj.id = params.requirementCode;
           obj.intentionName = params.requirementName;
           params.areaName =
@@ -181,9 +182,10 @@ export default {
               return item.code === params.areaCode;
             })?.name || '';
           let flag = this.parentRequireList.find((item) => {
-            return item.id == params.requirementCode;
+            return item.intentionCode == params.requirementCode;
           });
           //判断需求是否已经存在 如果存在就提示 并return
+          console.log(flag, 'flag');
           if (flag != undefined) {
             this.$message.warning('需求已存在，请重新选择');
             return false;
@@ -196,5 +198,3 @@ export default {
   },
 };
 </script>
-
-<style></style>

@@ -30,13 +30,15 @@ const TeamManage = () => import(/* webpackChunkName: "team-manage" */ 'views/tea
 const ClueSeasLibrary = () =>
   import(/* webpackChunkName: "clue-seas-library" */ 'views/cule/clue-seas-library');
 const ProspectiveCustomer = () =>
-  import(/* webpackChunkName: "prospective-customer" */ 'views/cule/prospective-customer');
+  import(
+    /* webpackChunkName: "prospective-customer" */ 'views/cule/prospective-customer/index.vue'
+  );
 
 const PublicLibrary = () =>
   import(/* webpackChunkName: "public-library" */ 'views/cule/public-library');
 const CooperationAllianceClients = () =>
   import(
-    /* webpackChunkName: "cooperation-alliance-clients" */ 'views/cule/cooperation-alliance-clients'
+    /* webpackChunkName: "cooperation-alliance-clients" */ 'views/cule/cooperation-alliance-clients/index.vue'
   );
 const BusinessDetails = () =>
   import(/* webpackChunkName: "business-details" */ 'views/business-details');
@@ -57,8 +59,8 @@ const Login = () => import(/* webpackChunkName: "login" */ 'views/login');
 export default [
   {
     path: '/',
-    redirect: '/login',
     name: 'Layout',
+    redirect: '/login',
     component: Layout,
     children: [
       {

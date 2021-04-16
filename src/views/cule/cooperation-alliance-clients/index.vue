@@ -32,14 +32,14 @@
             prop="customerName"
             label="姓名"
             fixed="left"
-            min-width="120"
+            min-width="140"
             class-name="list-name"
           >
             <template slot-scope="scope">
               <show-tooltip
                 v-if="scope.row.customerName"
                 :text="scope.row.customerName || '-'"
-                :width="80"
+                :width="120"
               ></show-tooltip>
               <span v-else>-</span>
             </template>
@@ -82,15 +82,7 @@
                 <p class="receive">
                   <show-tooltip
                     title-class="receive"
-                    :text="
-                      scope.row.dissolutionStatus == 3
-                        ? '已解散'
-                        : scope.row.status == 1
-                        ? '合作中'
-                        : scope.row.status == 2
-                        ? '合作成功'
-                        : '-'
-                    "
+                    :text="cooperationStatus(scope.row)"
                     :width="100"
                   ></show-tooltip>
                 </p>
@@ -201,7 +193,7 @@
             v-if="map.createTimePersonTimeStatus"
             label="发起人/时间"
             sortable="custom"
-            min-width="200"
+            min-width="220"
             prop="createTime"
           >
             <template slot-scope="scope">
@@ -209,10 +201,9 @@
                 <p class="receive">
                   <show-tooltip
                     title-class="receive"
-                    :text="scope.row.sponsorName || '-'"
-                    :width="120"
+                    :text="scope.row.sponsorName + '(' + scope.row.sponsorJob + ')' || '-'"
+                    :width="160"
                   ></show-tooltip>
-                  {{ '(' + scope.row.sponsorJob + ')' }}
                 </p>
                 {{ scope.row.createTime | filterTime }}
               </div>
@@ -242,7 +233,14 @@
             prop="receiveName"
           >
             <template slot-scope="scope">
-              <p v-if="scope.row.allocationMode == 2 && !scope.row.receiveName">暂无</p>
+              <p
+                v-if="
+                  (scope.row.allocationMode == 2 && !scope.row.receiveName) ||
+                  !scope.row.receiveName
+                "
+              >
+                暂无
+              </p>
               <div v-else>
                 <show-tooltip
                   title-class="receive"
@@ -253,27 +251,33 @@
             </template>
           </el-table-column>
           <el-table-column
-            v-if="statusType == 'buildStatus' && statusValue == 1"
+            v-if="map.receiveUserNameTimeStatus"
             label="接收人/时间"
             sortable="custom"
-            min-width="200"
+            min-width="220"
             prop="receiveTime"
           >
             <template slot-scope="scope">
-              <div v-if="scope.row.receiveName || scope.row.receiveTime">
+              <div>
                 <p class="receive">
+                  <span
+                    v-if="
+                      (scope.row.allocationMode == 2 && !scope.row.receiveName) ||
+                      !scope.row.receiveName
+                    "
+                    >暂无</span
+                  >
                   <show-tooltip
+                    v-else
                     title-class="receive"
-                    :text="scope.row.receiveName || '-'"
-                    :width="120"
+                    :text="scope.row.receiveName + '(' + scope.row.receiveJob + ')' || '-'"
+                    :width="160"
                   ></show-tooltip>
-                  {{ '(' + scope.row.receiveJob + ')' }}
                 </p>
                 <p v-if="scope.row.receiveTime">
                   {{ scope.row.receiveTime | filterTime }}
                 </p>
               </div>
-              <p v-else>-</p>
             </template>
           </el-table-column>
           <!-- 合作原因 -->
@@ -308,7 +312,7 @@
                 ? '180'
                 : statusType == 'buildStatus' && statusValue == 1
                 ? '180'
-                : '140'
+                : '120'
             "
             fixed="right"
             class-name="list-last"
@@ -334,7 +338,7 @@
                 <p
                   class="list-handle_follow"
                   :data-tid="'checkBusiness' + scope.$index"
-                  @click="checkBusiness(scope.row.bizId)"
+                  @click="checkBusiness(scope.row)"
                 >
                   查看商机
                 </p>
@@ -353,16 +357,17 @@
                 <p
                   class="list-handle_follow"
                   :data-tid="'remindSomeBody' + scope.$index"
-                  @click="remindSomeBody(scope.row.id)"
+                  @click="remindSomeBody(scope.row)"
                 >
-                  提醒他（她）
+                  提醒他(她)
                 </p>
               </div>
               <div v-else-if="map.againInitiateStatus" class="list-handle">
                 <p
                   class="list-handle_follow"
                   :data-tid="'againInitiate' + scope.$index"
-                  @click="againInitiate(scope.row)"
+                  :class="actived === scope.$index ? 'disabledColor' : 'activeColor'"
+                  @click="againInitiate(scope.row, scope.$index)"
                 >
                   重新发起
                 </p>
@@ -394,6 +399,6 @@
   </div>
 </template>
 <script>
-import cooperationAllianceClients from './cooperation-alliance-clients.js';
+import cooperationAllianceClients from './index.js';
 export default cooperationAllianceClients;
 </script>

@@ -1,8 +1,10 @@
+import { keepAliveList } from 'constants/index';
 export default {
   namespaced: true,
   state: {
-    cacheList: ['MyBusiness'],
+    cacheList: keepAliveList.concat(),
   },
+
   mutations: {
     // 设置父应用信息
     PUSH_COMPONENTS_CACHELIST({ cacheList }, data) {
@@ -14,10 +16,10 @@ export default {
       }
     },
     CLEAR_COMPONENTS_CACHELIST({ cacheList }, data) {
-      cacheList.splice(
-        cacheList.findIndex((_) => _ === data),
-        1,
-      );
+      const index = cacheList.findIndex((_) => _ === data);
+      if (index >= 0) {
+        cacheList.splice(index, 1);
+      }
     },
   },
   actions: {

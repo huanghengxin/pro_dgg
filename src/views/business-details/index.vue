@@ -33,6 +33,7 @@ export default {
     BusinessDemandInfo,
     BusinessRole,
   },
+  inject: ['reload'],
   provide() {
     return {
       permissionType: this.permissionInfo,
@@ -44,6 +45,13 @@ export default {
       from: '',
       permissionInfo: {},
     };
+  },
+  watch: {
+    //服务主应用抢单，抢单成功后查看商机如果在当前页面路由没有变化参数变化后不刷新
+    '$route.query'(newValue) {
+      if (this.businessId === newValue.businessId) return;
+      this.reload();
+    },
   },
   created() {
     let query = new getQueryString();

@@ -47,7 +47,11 @@
             >{{ item.description }}</span
           >
         </div>
-        <el-form-item v-if="from !== 'team-manage'" label="下次跟进时间：" prop="nextFollowTime">
+        <el-form-item
+          v-if="from !== 'team-manage' && permissionType.info != 'RETENTION_RECEIVE'"
+          label="下次跟进时间："
+          prop="nextFollowTime"
+        >
           <el-date-picker
             ref="dateTimeRef"
             v-model="ruleForm.nextFollowTime"
@@ -61,7 +65,11 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="from !== 'team-manage'" label="商机分组：" prop="groupId">
+        <el-form-item
+          v-if="from !== 'team-manage' && permissionType.info != 'RETENTION_RECEIVE'"
+          label="商机分组："
+          prop="groupId"
+        >
           <div class="quick-note_group">
             <el-select v-model="ruleForm.groupId" clearable placeholder="请选择分组">
               <el-option
@@ -131,6 +139,12 @@ export default {
       type: String,
       default: '',
     },
+    permissionType: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
   data() {
     const validateContent = (rule, value, callback) => {
@@ -160,6 +174,9 @@ export default {
       quickNoteList: [],
       switchDialog: true,
     };
+  },
+  mounted() {
+    console.log(this.permissionType, 'permissionType1');
   },
   methods: {
     /**
@@ -262,18 +279,30 @@ export default {
     quickNote(data_index, data_name) {
       const item = this.quickNoteList[data_index];
       this.$set(item, 'active', !item.active);
+      const text = this.ruleForm.text;
+      let _text = '';
+      const Reg = /，$/; //判断是否已逗号结尾
       if (item.active) {
-        this.ruleForm.text = this.ruleForm.text + data_name;
+        if (text && !Reg.test(text)) {
+          _text = text + '，' + data_name;
+        } else {
+          _text = text + data_name;
+        }
       } else {
-        this.ruleForm.text = this.ruleForm.text.replace(data_name, '');
+        if (text.includes('，' + data_name) && !Reg.test(text)) {
+          _text = text.replace('，' + data_name, '');
+        } else {
+          _text = text.replace(data_name, '');
+        }
       }
+      this.ruleForm.text = _text.replace(/^，+/g, '');
     },
     /**
      * @description 点击快捷备注添加到文本域中
      * @param {Event} 事件对象
      */
     noteHanleClick(e) {
-      const data_name = e.target.dataset.name + '，';
+      const data_name = e.target.dataset.name;
       const data_index = e.target.dataset.index;
       if (!data_index) return;
       if (this.quickNoteList[data_index].active) {
@@ -316,7 +345,9 @@ export default {
         this.width = '680px';
         this.labelWidth = '100px';
       }
-      this.nextTime = dayjs().add(5, 'm').valueOf();
+      this.nextTime = dayjs()
+        .add(5, 'm')
+        .valueOf();
       this.businessId = id;
       if (nextFollowTime && dayjs(nextFollowTime).isValid()) {
         this.ruleForm.nextFollowTime = dayjs().isBefore(dayjs(nextFollowTime))

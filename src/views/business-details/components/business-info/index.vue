@@ -48,16 +48,19 @@
           <i
             v-if="
               from !== 'team-manage' &&
-                (isCurUser ||
-                  permissionType.info == 'RETENTION_SPONSOR' ||
-                  permissionType.info == 'TRANSFER_RECEIVE')
+              (isCurUser ||
+                permissionType.info == 'RETENTION_SPONSOR' ||
+                permissionType.info == 'TRANSFER_RECEIVE')
             "
             class="iconfont-qds-crm icon-view1 phone-info_icon"
             data-tid="infoShowModalHandleClick"
             @click="showModalHandleClick('showPhoneRef', businessInfo.customerContact)"
           ></i>
           <i
-            v-if="isCurUser || permissionType.info != 'TRANSFER_SPONSOR'"
+            v-if="
+              (isCurUser || permissionType.info != 'TRANSFER_SPONSOR') &&
+              businessInfo.noAttention != '1'
+            "
             v-callLoading="callLoading"
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
@@ -73,16 +76,19 @@
           <i
             v-if="
               from !== 'team-manage' &&
-                (isCurUser ||
-                  permissionType.info == 'RETENTION_SPONSOR' ||
-                  permissionType.info == 'TRANSFER_RECEIVE')
+              (isCurUser ||
+                permissionType.info == 'RETENTION_SPONSOR' ||
+                permissionType.info == 'TRANSFER_RECEIVE')
             "
             class="iconfont-qds-crm icon-view1 phone-info_icon"
             data-tid="infoShowModalHandleClick"
             @click="showModalHandleClick('showPhoneRef', item.contactNoFull)"
           ></i>
-
           <i
+            v-if="
+              (isCurUser || permissionType.info != 'TRANSFER_SPONSOR') &&
+              businessInfo.noAttention != '1'
+            "
             v-accControls:noAttention="businessInfo"
             class="iconfont-qds-crm icon-dianhua phone-info_icon"
             data-tid="infoBusinessInfoCall"
@@ -161,13 +167,21 @@
       <span class="item-label">备用联系号码：</span
       ><span>{{ businessInfo.bakRelation.contactNo }}</span>
       <i
-        v-if="from !== 'team-manage' && (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')"
+        v-if="
+          from !== 'team-manage' &&
+          (isCurUser ||
+            permissionType.info == 'RETENTION_SPONSOR' ||
+            permissionType.info == 'TRANSFER_RECEIVE')
+        "
         class="iconfont-qds-crm icon-view1 phone-info_icon"
         data-tid="infoShowModalHandleClick"
         @click="showModalHandleClick('showPhoneRef', businessInfo.bakRelation.contactNoFull)"
       ></i>
       <i
-        v-if="isCurUser || permissionType.info != 'TRANSFER_SPONSOR'"
+        v-if="
+          (isCurUser || permissionType.info != 'TRANSFER_SPONSOR') &&
+          businessInfo.noAttention != '1'
+        "
         v-accControls:noAttention="businessInfo"
         class="iconfont-qds-crm icon-dianhua phone-info_icon"
         data-tid="infoBusinessInfoCall"
@@ -310,6 +324,7 @@ export default {
      */
     async getBusinessInfo() {
       const wayData = await this.getParentCode('CRM_GET_WAY');
+      console.log('sdjhjfshfj', wayData);
       this.getWayMap = Object.freeze(wayData);
       this.loading = true;
       const params = { bizId: this.businessId };

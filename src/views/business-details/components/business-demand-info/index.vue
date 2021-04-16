@@ -75,12 +75,14 @@
             v-if="
               from !== 'team-manage' && (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')
             "
-            v-accControls:noAttention="noAttentionStatus"
             class="button-warp_item"
             data-tid="demandEditDemandHandleClick"
             @click="editDemandHandleClick('edit')"
             >修改</span
           >
+          <!--
+           // TODO 23点18分 此处有修改 v-accControls:noAttention="noAttentionStatus"
+           -->
           <span
             v-show="isShowDel"
             v-if="
@@ -141,8 +143,9 @@ export default {
   components: {
     EditDemandInfo,
   },
-
-  inject: ['permissionType'],
+  inject: {
+    permissionType: { default: {} },
+  },
   props: {
     businessId: {
       type: String,
@@ -216,6 +219,7 @@ export default {
     this.$eventBus.$on('get-business-info', (value) => {
       this.businessInfoUserId = value?.plannerId;
       this.noAttentionStatus = value.noAttention;
+      console.log(this.noAttentionStatus, 'this.noAttentionStatus');
     });
     this.$eventBus.$on('update-demand-list', () => {
       this.getDemandInfoList();
@@ -227,7 +231,7 @@ export default {
     });
   },
   mounted() {
-    this.warpWidth = this.$el.offsetWidth;
+    this.warpWidth = this.$el?.offsetWidth;
     window.addEventListener('resize', this.resize);
   },
   destroyed() {

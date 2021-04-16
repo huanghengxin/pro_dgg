@@ -8,6 +8,7 @@ import axios from 'axios';
 import { sign } from '@fe/common';
 import CONFIG from '@/config';
 import store from 'storejs';
+import router from '@/router';
 
 // 支持的方法
 const methods = ['get', 'head', 'post', 'put', 'delete', 'options', 'patch', 'form'];
@@ -96,6 +97,9 @@ class Api {
         resolve(data);
         if (data.code === 5223) {
           Vue.prototype.$mainService?.logout();
+          if (!window.SP_MICRO_FE) {
+            router.push('/login');
+          }
         }
       })
       .catch(async (error) => {

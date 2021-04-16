@@ -12,6 +12,10 @@ import {
   RETENTION_RECEIVE_COMPONENT, //自留维护-合作接收人组件
   TRANSFER_SPONSOR, //自留维护-合作接收人
   TRANSFER_SPONSOR_COMPONENT, //自留维护-合作接收人组件
+  RETENTION_RECEIVE_NO_ATTENTION, //自留维护-合作接收人 暂不关注
+  RETENTION_RECEIVE_NO_ATTENTION_COMPONENT, //自留维护-合作接收人组件 暂不关注
+  TRANSFER_RETENTION_NO_ATTENTION, //自留维护-合作发起人 暂不关注
+  TRANSFER_RETENTION_NO_ATTENTION_COMPONENT, //自留维护-合作发起人组件 暂不关注
 } from 'constants/permission';
 import InviteInterview from 'views/my-business/components/invite-interview/index.vue';
 import SetGroup from 'views/my-business/components/set-group';
@@ -22,6 +26,7 @@ import EditBaseInfo from '../edit-base-info';
 import SetNextFollowTime from '../set-next-follow-time';
 import InitiateCooperation from '../initiate-cooperation/index.vue';
 import { recoverInattention } from 'api/common';
+import imChatMinixs from 'utils/mixins/imChatMinixs';
 export default {
   name: 'MoreHandle',
   components: {
@@ -45,6 +50,7 @@ export default {
       businessInfo: {},
     };
   },
+  mixins: [imChatMinixs],
   computed: {},
   mounted() {
     //监听基础信息获取数据后，打开基础信息的按钮限制
@@ -123,13 +129,24 @@ export default {
     },
     genRenderNodeComponent() {
       let moreHandleComponent;
-      console.log('exist=======', this.permissionType);
+      console.log('exist=======', this.permissionType, this.from);
       if (this.from === 'team-manage') {
         moreHandleComponent = MORE_TEAM_MANAGE_COMPONENT;
+      } else if (
+        this.permissionType.info == 'RETENTION_RECEIVE' &&
+        this.businessInfo.noAttention == 1
+      ) {
+        moreHandleComponent = RETENTION_RECEIVE_NO_ATTENTION_COMPONENT;
       } else if (this.permissionType.info == 'RETENTION_RECEIVE') {
         moreHandleComponent = RETENTION_RECEIVE_COMPONENT;
       } else if (this.permissionType.info == 'TRANSFER_SPONSOR') {
         moreHandleComponent = TRANSFER_SPONSOR_COMPONENT;
+      } else if (
+        (this.permissionType.info == 'TRANSFER_RECEIVE' ||
+          this.permissionType.info == 'RETENTION_SPONSOR') &&
+        this.businessInfo.noAttention == 1
+      ) {
+        moreHandleComponent = TRANSFER_RETENTION_NO_ATTENTION_COMPONENT;
       } else if (this.businessInfo.noAttention == 1) {
         moreHandleComponent = NO_ATTENTION_MORE_HANDLE_COMPONENT;
       } else if (this.businessInfo.bizStatus == 'CRM_BIZ_STATUS_ORDER') {
@@ -149,12 +166,23 @@ export default {
       let moreHandle;
       if (this.from === 'team-manage') {
         moreHandle = MORE_TEAM_MANAGE;
-      } else if (this.businessInfo.noAttention == 1) {
-        moreHandle = NO_ATTENTION_MORE_HANDLE;
+      } else if (
+        this.permissionType.info == 'RETENTION_RECEIVE' &&
+        this.businessInfo.noAttention == 1
+      ) {
+        moreHandle = RETENTION_RECEIVE_NO_ATTENTION;
       } else if (this.permissionType.info == 'RETENTION_RECEIVE') {
         moreHandle = RETENTION_RECEIVE;
       } else if (this.permissionType.info == 'TRANSFER_SPONSOR') {
         moreHandle = TRANSFER_SPONSOR;
+      } else if (
+        (this.permissionType.info == 'TRANSFER_RECEIVE' ||
+          this.permissionType.info == 'RETENTION_SPONSOR') &&
+        this.businessInfo.noAttention == 1
+      ) {
+        moreHandle = TRANSFER_RETENTION_NO_ATTENTION;
+      } else if (this.businessInfo.noAttention == 1) {
+        moreHandle = NO_ATTENTION_MORE_HANDLE;
       } else if (this.businessInfo.bizStatus == 'CRM_BIZ_STATUS_ORDER') {
         moreHandle = SIGNED_BUSINESS;
       } else {
@@ -189,7 +217,7 @@ export default {
         {this.genRenderNodeComponent()}
       </div>
     );
-
-    return this.isShow && this.permissionType.info != 'TRANSFER_SPONSOR' ? node : '';
+    // return this.isShow && this.permissionType.info != 'TRANSFER_SPONSOR' ? node : '';
+    return this.isShow ? node : '';
   },
 };

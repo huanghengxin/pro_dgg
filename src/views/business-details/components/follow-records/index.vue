@@ -138,7 +138,10 @@
                               >
                             </span>
                             <span
-                              v-if="from !== 'team-manage'"
+                              v-if="
+                                from !== 'team-manage' &&
+                                (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')
+                              "
                               v-show="subTabActive == 1 && item.inviteStatus == 0"
                               class="invite-warp_right"
                               data-tid="recordCancelInviteClick"
@@ -207,6 +210,7 @@
       is-place="business-details"
       data-tid="recordWriteFollowRecordk"
       :from="from"
+      :permission-type="permissionType"
       @on-submit="writeFollowRecord"
     />
     <play-recording ref="playRecordingRef" :customer-name="customerName" />

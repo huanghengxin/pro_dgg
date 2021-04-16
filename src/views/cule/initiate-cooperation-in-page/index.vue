@@ -17,13 +17,15 @@
         ><!-- 手机行！ -->
         <el-form-item label="手机号码：" prop="customerPhone" class="content-phone">
           <div class="phone-warp">
+            <div v-if="desePhone">{{ desePhone }}</div>
             <el-input
+              v-else
               key="desensitization"
               v-model.trim="ruleForm.customerPhone"
               maxlength="11"
               placeholder="请输入11位手机号码"
               data-tid="customerPhoneInput"
-              @blur="phoneBlurValidate"
+              @input="phoneBlurValidate"
             ></el-input>
             <!-- 新增？ -->
             <span
@@ -81,7 +83,6 @@
           <!-- v-emoji="'input'" -->
           <el-input
             v-model="ruleForm.customerName"
-            onkeyup="this.value=this.value.replace(/^\s+/g,'')"
             clearable
             maxlength="20"
             data-tid="nameInput"
@@ -217,7 +218,7 @@
             "
           />
           <p v-if="ratio" class="warn-text">
-            合作方分得的比例<span v-if="ruleForm.type">
+            合作方分得的比例<span v-if="ratio.minCooperationRatio && ratio.maxCooperationRatio">
               ，平台规定最高比例{{
                 ratio.minCooperationRatio ? ratio.minCooperationRatio + '%-' : ''
               }}{{ ratio.maxCooperationRatio ? ratio.maxCooperationRatio + '%' : '' }}
@@ -251,27 +252,33 @@
             <el-option
               v-for="(item, index) in peopleList"
               :key="item.mchUserId"
-              :label="item.userName + '(' + item.userCenterNo + ')'"
+              :label="item.userName + '/' + item.userCenterNo"
               :value="item"
               :data-tid="'value' + index"
             ></el-option>
           </el-select>
         </el-form-item>
         <!-- 抢单人员范围 发起人可选择参与抢单的人员范围，默认选择“本商户内”-->
-        <el-form-item v-else label="抢单人员范围" data-tid="grabOrderScope" class="singleRange">
+        <el-form-item
+          v-else
+          label="抢单人员范围"
+          prop="grabOrderScope"
+          data-tid="grabOrderScope"
+          class="singleRange"
+        >
           <el-radio
             v-model="ruleForm.grabOrderScope"
-            :label="1"
+            label="1"
             class="content-radio-man"
             data-tid="content-radio-man"
             >本商户内</el-radio
           >
-          <el-radio v-model="ruleForm.grabOrderScope" :label="2" data-tid="content-radio-woman"
+          <el-radio v-model="ruleForm.grabOrderScope" label="2" data-tid="content-radio-woman"
             >薯片平台</el-radio
           >
         </el-form-item>
         <!-- 合作原因行！ -->
-        <el-form-item label="合作原因：" data-tid="reason">
+        <el-form-item label="合作原因：" prop="reason" data-tid="reason">
           <el-input
             v-model="ruleForm.reason"
             v-emoji="'textarea'"
@@ -296,7 +303,7 @@
         <p>发起后在等待建立合作过程中将不可取消，请谨慎操作。</p>
       </div>
     </div>
-    <InitiateCooperation ref="initiateCooperationRef" />
+    <InitiateCooperation ref="initiateCooperationRef" @reset-form="resetForm" />
   </div>
 </template>
 <script>

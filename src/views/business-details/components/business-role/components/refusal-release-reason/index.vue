@@ -5,7 +5,6 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="480px"
-    append-to-body
     @close="diologHandleClose"
   >
     <!-- 解除原因文本框 -->
@@ -118,11 +117,13 @@ export default {
                 //触发父组件刷新自列表
                 this.$emit('refresh-list');
                 this.$message.success(message);
+              } else if (code == 7004 || code == 7021 || code == 7019 || code == 7001) {
+                this.$emit('refresh-list');
+                this.$message.warning(message);
               } else {
                 this.$message.warning(message);
               }
               this.loading = false;
-              this.dialogVisible = false;
               this.dialogVisible = false;
             })
             .catch(() => {

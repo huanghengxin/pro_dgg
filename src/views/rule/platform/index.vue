@@ -104,7 +104,12 @@
                     v-model="scope.row.val2"
                     type="text"
                     class="val"
-                    :disabled="!edit"
+                    :disabled="
+                      !edit ||
+                      scope.row.code === 'LZ_PUB_BATCH_CLUE_RETRIEVE' ||
+                      scope.row.code === 'LZ_PRE_DROP_MSG' ||
+                      scope.row.code === 'LZ_PUB_INV'
+                    "
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data1.' + scope.$index + '.val3'" :rules="rules.val3">
@@ -112,7 +117,15 @@
                     v-model="scope.row.val3"
                     type="text"
                     class="val"
-                    :disabled="!edit"
+                    :disabled="
+                      !edit ||
+                      scope.row.code === 'LZ_PUB_INV' ||
+                      scope.row.code === 'LZ_CA_INT ' ||
+                      scope.row.code === 'LZ_PUB_BATCH_CLUE_RETRIEVE' ||
+                      scope.row.code === 'RULE_DELAY' ||
+                      scope.row.code === 'LZ_CA_INT' ||
+                      scope.row.code === 'LZ_PRE_DROP_MSG'
+                    "
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data1.' + scope.$index + '.val4'" :rules="rules.val4">
@@ -120,22 +133,21 @@
                     v-model="scope.row.val4"
                     type="text"
                     class="val"
-                    :disabled="!edit"
+                    :disabled="
+                      !edit || (scope.row.code !== 'LZ_PUB_HID' && scope.row.code !== 'LZ_PUB_SE')
+                    "
                   ></el-input>
                 </el-form-item>
                 <el-form-item prop="val5">
-                  <el-input
-                    v-model="scope.row.val5"
-                    type="text"
-                    class="val"
-                    :disabled="!edit"
-                  ></el-input>
+                  <el-input v-model="scope.row.val5" type="text" class="val" disabled></el-input>
                 </el-form-item>
               </template>
             </el-table-column>
             <el-table-column label="当前状态" min-width="76">
               <template slot-scope="scope">
+                <span v-if="scope.row.code === 'LZ_PUB_INV'">启用</span>
                 <el-switch
+                  v-else
                   v-model="scope.row.status"
                   :disabled="scope.row.id === '' || !edit"
                   :active-value="1"
@@ -194,7 +206,7 @@
                     type="text"
                     class="val"
                     data-tid="val2Input"
-                    :disabled="!edit"
+                    :disabled="!edit || scope.row.code !== 'RULE_SX_NOT_CONCERNED_LIMIT'"
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data2.' + scope.$index + '.val3'" :rules="rules.val3">
@@ -203,7 +215,7 @@
                     type="text"
                     class="val"
                     data-tid="val3Input"
-                    :disabled="!edit"
+                    disabled
                   ></el-input>
                 </el-form-item>
                 <el-form-item :prop="'data2.' + scope.$index + '.val4'" :rules="rules.val4">
@@ -212,7 +224,7 @@
                     type="text"
                     class="val"
                     data-tid="val4Input"
-                    :disabled="!edit"
+                    disabled
                   ></el-input>
                 </el-form-item>
                 <el-form-item prop="val5">
@@ -220,8 +232,8 @@
                     v-model="scope.row.val5"
                     type="text"
                     class="val"
+                    disabled
                     data-tid="val5Input"
-                    :disabled="!edit"
                   ></el-input>
                 </el-form-item>
               </template>

@@ -27,9 +27,9 @@
           <template slot-scope="scope">
             <div>
               <router-link
-                :to="
-                  `/my-business/business-details?businessId=${scope.row.id || ''}&from=my-business`
-                "
+                :to="`/my-business/business-details?businessId=${
+                  scope.row.id || ''
+                }&from=my-business`"
                 class="router-link"
               >
                 <show-tooltip :text="scope.row.customerName" :width="120"></show-tooltip>

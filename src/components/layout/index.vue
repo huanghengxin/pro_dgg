@@ -15,19 +15,19 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
-      <div v-if="!SP_MICRO_FE && !isShowMenu" class="back-button" @click="handleClick">
+      <div v-if="!SP_MICRO_FE && !isShowMenu && fallback" class="back-button" @click="handleClick">
         <el-button type="primary"><i class="el-icon-arrow-left"></i></el-button>
       </div>
       <el-main style="width: 1200px; margin: 0 auto">
         <div v-if="!SP_MICRO_FE && isShowMenu" class="el-main_menu">
-          <el-menu default-active="1-1" active-text-color="#4974F5">
+          <el-menu ref="elMenuRef" :default-active="defaultActive" active-text-color="#4974F5">
             <el-submenu index="1">
               <template slot="title">商机</template>
               <el-menu-item-group>
-                <el-menu-item index="1-1">
+                <el-menu-item index="1-1" route="/my-business">
                   <router-link to="/my-business" tag="div">我的商机</router-link>
                 </el-menu-item>
-                <el-menu-item index="1-2">
+                <el-menu-item index="1-2" route="/dynamic-business">
                   <router-link to="/dynamic-business" tag="div">商机动态</router-link>
                 </el-menu-item>
               </el-menu-item-group>
@@ -35,16 +35,16 @@
             <el-submenu index="2">
               <template slot="title">线索</template>
               <el-menu-item-group>
-                <el-menu-item index="2-1">
+                <el-menu-item index="2-1" route="/prospective-customer">
                   <router-link to="/prospective-customer" tag="div">我的潜在客户</router-link>
                 </el-menu-item>
-                <el-menu-item index="2-2">
+                <el-menu-item index="2-2" route="/public-library">
                   <router-link to="/public-library" tag="div">公共库</router-link>
                 </el-menu-item>
-                <el-menu-item index="2-3">
+                <el-menu-item index="2-3" route="/clue-seas-library">
                   <router-link to="/clue-seas-library" tag="div">线索公海库</router-link>
                 </el-menu-item>
-                <el-menu-item index="2-4">
+                <el-menu-item index="2-4" route="/cooperation-alliance-clients">
                   <router-link to="/cooperation-alliance-clients" tag="div"
                     >合作联盟客户</router-link
                   >
@@ -93,7 +93,6 @@
             </el-submenu>
           </el-menu>
         </div>
-
         <div class="el-main_view">
           <keep-alive :include="$store.state['keep-alive'].cacheList">
             <router-view />
@@ -112,6 +111,8 @@ export default {
     return {
       SP_MICRO_FE: window.SP_MICRO_FE,
       isShowMenu: true,
+      fallback: true,
+      defaultActive: '',
     };
   },
   computed: {
@@ -124,13 +125,25 @@ export default {
       this.$watch(
         '$route',
         (val) => {
+          this.$nextTick(() => {
+            const items = this.$refs.elMenuRef?.items;
+            if (!items) return;
+            for (const key in items) {
+              const value = items[key];
+              if (val.path === value.route) {
+                this.defaultActive = value.index;
+              }
+            }
+          });
           this.isShowMenu = ![
             '/my-business/business-details',
             '/team-manage/business-details',
             '/add-business',
             '/error-list',
+            '/login',
           ].includes(val.path);
           if (val.path === '/login') {
+            this.fallback = false;
             this.$store.commit('user/SET_FULLNAME', '');
           }
         },

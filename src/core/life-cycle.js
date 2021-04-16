@@ -75,8 +75,8 @@ const render = ({ routerBase, container } = {}) => {
   Vue.prototype.$eventBus = new Vue();
   Vue.config.productionTip = false;
   instance = new Vue({
-    router,
     store,
+    router,
     render: (h) => h(App),
   }).$mount(container ? container.querySelector('#app') : '#app');
 };

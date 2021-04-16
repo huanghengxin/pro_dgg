@@ -17,9 +17,7 @@ import {
   count_interview,
 } from 'api/business-details';
 import stores from 'storejs';
-const ThreeMonthAgo = dayjs()
-  .subtract(3, 'month')
-  .format('YYYY-MM');
+const ThreeMonthAgo = dayjs().subtract(3, 'month').format('YYYY-MM');
 export default {
   name: 'FollowRecords',
   components: {
@@ -196,12 +194,12 @@ export default {
           cancel_interview(params).then((res) => {
             if (res.code === 200) {
               this.$message.success(res.message);
+              this.getInviteInterviewList();
               this.reset();
             } else {
               this.$message.warning(res.message);
             }
             this.getCountInterview();
-            this.getInviteInterviewList();
             this.loading = false;
           });
         });

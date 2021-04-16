@@ -46,7 +46,31 @@ const validatePhone = {
         callback();
       }
     },
-
+    secondaryContact(rule, value, callback) {
+      value = value.trim();
+      const field = rule.field;
+      const index = field.indexOf('.');
+      const i = field.slice(index + 1, index + 2);
+      const ruleForm = this.ruleForm;
+      const phoneList = [ruleForm.customerPhone];
+      ruleForm.phoneArray.map((item) => {
+        phoneList.push(item.contactNo);
+      });
+      if (ruleForm.phoneArray[i]?.id || this.isDisabledStand) {
+        callback();
+      } else {
+        const flag = regPhone.test(value);
+        if (!flag) {
+          callback('请输入正确手机号');
+        } else if (phone === value) {
+          callback('不能输入自己的号码');
+        } else if (phoneList.filter((item) => item === value).length > 1) {
+          callback('不能输入相同号码');
+        } else {
+          callback();
+        }
+      }
+    },
     checkContactNo(rule, value, callback) {
       value = value.trim();
       const field = rule.field;

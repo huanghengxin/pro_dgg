@@ -1,13 +1,14 @@
 /**
  * @description 数据字典翻译
  */
+//需求类型
 export const PRODUCE_TYPE_MAP = {
   PRO_CLASS_TYPE_SERVICE: 1, //服务
   PRO_CLASS_TYPE_SERVICE_RESOURCE: 2, //资源
   PRO_CLASS_TYPE_TRANSACTION: 3, //交易
   PRO_CLASS_TYPE_SALES: 4, //销售
 };
-
+//操作日志类型
 export const HANDLE_LOG = {
   CRM_OPER_ADD_BIZ: '新增商机',
   CRM_OPER_EDIT_BIZ: '编辑商机',

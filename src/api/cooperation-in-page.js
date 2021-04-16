@@ -96,3 +96,11 @@ export function get_menu_permission(qurry) {
     qurry,
   );
 }
+
+//合作关系建立X天后，发起人解除合作无需合作接收方同意，请知晓。
+export function get_relieve_timeout(qurry) {
+  return api.get(
+    '/crm-middle-pc/api/crisps-crm/service/yk/v1/rule/platform/get_relieve_timeout.do',
+    qurry,
+  );
+}

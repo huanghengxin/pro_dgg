@@ -220,7 +220,13 @@ export default {
       get_product_list(params).then((res) => {
         if (res.code === 200) {
           res = res.data;
-          this.demandProductList = res?.records || [];
+          const array = [];
+          res?.records.forEach((item) => {
+            if (item.productCode) {
+              array.push(item);
+            }
+          });
+          this.demandProductList = array || [];
           this.ruleForm.demandProduct =
             this.demandProductList.find((_) => _.productCode === item?.intentionProductCode) || '';
         } else {

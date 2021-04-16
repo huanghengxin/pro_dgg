@@ -52,7 +52,7 @@ export default {
       // 请求数据字段
       this.ruleList = (await this.getRulesMerchantLists()) || [];
       this.upperLimit =
-        (await this.getDictionaryBycodes('BUSINESS_REFERRAL_MAN,ASSOCIATION_SINGLE')) || [];
+        (await this.getDictionaryBycodes('BUSINESS_REFERRAL_MAN,ASSOCIATION_SINGLE_MAN')) || [];
 
       this.libraryRule =
         (await this.getDictionary('RULE_COOPERATE'))?.map((item) => {
@@ -80,6 +80,7 @@ export default {
       try {
         const param = {
           codes: codes,
+          status: 1,
         };
         const result = await get_tree_book_by_codes(param);
         this.loading = false;
@@ -98,7 +99,7 @@ export default {
      * @description 匹配RULE_COOPERATE_PCN 最大值
      */
     regDescription(item, code) {
-      let arr = [this.upperLimit[0].ext5, this.upperLimit[0].ext5];
+      let arr = [this.upperLimit[0].ext5, this.upperLimit[1].ext5];
       if (item.code === code) {
         let reg1 = /35/g;
         for (const item1 of arr) {

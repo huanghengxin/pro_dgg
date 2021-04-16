@@ -3,13 +3,15 @@
     <div class="title">
       <span>掉库</span>
       <!-- 搜索框 -->
-      <search-button
-        show-word-limit
-        placeholder="请输入姓名/联系方式/商机编号查询"
-        data-tid="dynamicHandleInputValue"
-        @search="searchUser"
-        @clear="handleInputValue"
-      ></search-button>
+      <div>
+        <search-button
+          show-word-limit
+          placeholder="请输入姓名/联系方式/商机编号查询"
+          data-tid="dynamicHandleInputValue"
+          @search="searchUser"
+          @clear="handleInputValue"
+        ></search-button>
+      </div>
       <!-- 时间选择 -->
       <div class="title-time">
         <span>动态时间</span>

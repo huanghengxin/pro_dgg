@@ -24,23 +24,7 @@ export default {
     SvgIcon,
   },
   data() {
-    const validateVal1 = (rule, value, callback) => {
-      value = value?.trim();
-      if (value === '') {
-        callback(new Error('必填项'));
-      } else {
-        var reg = /^[1-9][0-9]{0,3}$/;
-        if (!reg.test(value)) {
-          callback(new Error('≤9999正整数'));
-        }
-        callback();
-      }
-    };
-
     return {
-      rules: {
-        val1: [{ validator: validateVal1, trigger: 'blur' }],
-      },
       ruleList: [],
       cooperationHeight: null,
       switchboardStatus: null,
@@ -92,7 +76,7 @@ export default {
     // 后台
     this.unitCode = (await this.getDictionary('rule_date_code')) || [];
     this.upperLimit =
-      (await this.getDictionaryBycodes('BUSINESS_REFERRAL_MAN,ASSOCIATION_SINGLE')) || [];
+      (await this.getDictionaryBycodes('BUSINESS_REFERRAL_MAN,ASSOCIATION_SINGLE_MAN')) || [];
     // 字典和code码一一对应
     this.libraryRule =
       (await this.getDictionary('RULE_COOPERATE'))?.map((item) => {
@@ -119,7 +103,7 @@ export default {
      * @description 匹配RULE_COOPERATE_PCN 最大值
      */
     regDescription(item, code) {
-      let arr = [this.upperLimit[0].ext5, this.upperLimit[0].ext5];
+      let arr = [this.upperLimit[0].ext5, this.upperLimit[1].ext5];
       if (item.code === code) {
         let reg1 = /35/g;
         for (const item1 of arr) {
@@ -140,6 +124,36 @@ export default {
         document.documentElement.clientHeight ||
         document.body.clientHeight - top;
     },
+    /**
+     * @description val1校验
+     */
+    handleRuleVal1(item) {
+      const rule = [
+        {
+          validator: (rule, value, callback) => {
+            value = value?.trim();
+            if (value === '') {
+              callback(new Error('必填项'));
+            } else if (
+              item.code === 'RULE_COOPERATE_PCN' &&
+              value * 1 > this.upperLimit[0].ext5 * 1
+            ) {
+              callback(new Error('请输入小于维护权合作最大值'));
+            }
+            {
+              var reg = /^[1-9][0-9]{0,3}$/;
+              if (!reg.test(value)) {
+                callback(new Error('≤9999正整数'));
+              }
+              callback();
+            }
+          },
+          trigger: ['blur'],
+        },
+      ];
+      return rule;
+    },
+
     /**
      * @description val2输入框校验
      */
@@ -162,6 +176,11 @@ export default {
                   callback(new Error('请输入大写字母或下划线'));
                 }
                 callback();
+              } else if (
+                item.code === 'RULE_COOPERATE_PCN' &&
+                value * 1 > this.upperLimit[1].ext5 * 1
+              ) {
+                callback(new Error('请输入小于维护权合作最大值'));
               } else {
                 var reg = /^[1-9][0-9]{0,3}$/;
                 if (!reg.test(value)) {
@@ -238,6 +257,7 @@ export default {
       try {
         const param = {
           codes: codes,
+          status: 1,
         };
         const result = await get_tree_book_by_codes(param);
         if (result.code !== 200) {
@@ -320,6 +340,7 @@ export default {
      * @description 更新规则接口
      */
     updateMerchants() {
+      this.loading = true;
       const getRule = this.getRuleList?.data1 || [];
       const rulesMerchant =
         getRule?.map((item) => {
@@ -343,8 +364,11 @@ export default {
           } else {
             this.$message.warning(res.message);
           }
+          this.loading = false;
         })
-        .catch(() => {});
+        .catch(() => {
+          this.loading = false;
+        });
     },
   },
 };

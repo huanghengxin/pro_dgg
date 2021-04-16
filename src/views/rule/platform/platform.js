@@ -412,6 +412,7 @@ export default {
      * @description 请求保存接口
      */
     updatePlatformRuleList() {
+      this.loading = true;
       const getRule = this.getRuleList.data1;
       const getStaff = this.getStaffList.data2;
       const rulesPlatform =
@@ -434,6 +435,7 @@ export default {
             return;
           }
           if (res.code === 200) {
+            this.loading = false;
             this.$message({
               type: 'success',
               message: '保存成功!',

@@ -51,13 +51,6 @@
         <span class="iconfont-qds-crm icon-plus" data-tid="addNewRequire" @click="addNewRequire"
           ><em>新增需求</em>
         </span>
-        <!--<el-cascader
-          ref="customerRequireRef"
-          v-model="ruleForms.customerRequire"
-          placeholder="请选择客户需求"
-          data-tid="customerRequire"
-          :props="props"
-        ></el-cascader>-->
         <!-- 提示行！ -->
         <p class="warn-text">
           请选择合作联盟的客户需求（仅可选择未签单和未处于合作期间的一个需求）
@@ -125,7 +118,7 @@
           "
         />
         <p v-if="ratio" class="warn-text">
-          合作方分得的比例<span v-if="ruleForms.type">
+          合作方分得的比例<span v-if="ratio.minCooperationRatio && ratio.maxCooperationRatio">
             ，平台规定最高比例{{ ratio.minCooperationRatio ? ratio.minCooperationRatio + '%-' : ''
             }}{{ ratio.maxCooperationRatio ? ratio.maxCooperationRatio + '%' : '' }}
           </span>
@@ -158,10 +151,11 @@
           <el-option
             v-for="(item, index) in peopleList"
             :key="item.mchUserId"
-            :label="item.userName + '(' + item.userCenterNo + ')'"
+            :label="item.userName + '/' + item.userCenterNo"
             :value="item"
             :data-tid="'value' + index"
-          ></el-option>
+          >
+          </el-option>
         </el-select>
       </el-form-item>
 

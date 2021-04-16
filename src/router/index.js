@@ -7,6 +7,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import routers from '@/router/routers';
 import store from '@/store';
+import { keepAliveList } from 'constants/index';
 Vue.use(VueRouter);
 
 const routes = routers;
@@ -21,14 +22,26 @@ const router = new VueRouter({
   mode: 'hash',
   routes: routes,
 });
-
+const cacheList = keepAliveList;
 router.beforeEach((to, from, next) => {
-  if (to.path == '/my-business' || to.path == '/my-business/business-details') {
-    store.dispatch('keep-alive/setKeepAlive', 'MyBusiness');
+  console.log('前', store.state['keep-alive'].cacheList);
+  if (cacheList.includes(to.name)) {
+    if (cacheList.includes(from.name)) {
+      store.dispatch(
+        'keep-alive/clearKeepAlive',
+        cacheList.find((_) => _ === from.name),
+      );
+    }
+    store.dispatch('keep-alive/setKeepAlive', to.name);
+  } else if (to.path == '/my-business/business-details') {
+    store.dispatch('keep-alive/setKeepAlive', from.name);
   } else {
-    store.dispatch('keep-alive/clearKeepAlive', 'MyBusiness');
+    store.dispatch(
+      'keep-alive/clearKeepAlive',
+      cacheList.find((_) => _ === from.name),
+    );
   }
-  // 如果用户未能验证身份，则 `next` 会被调用两次
+  console.log('后', store.state['keep-alive'].cacheList);
   next();
 });
 

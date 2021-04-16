@@ -35,35 +35,39 @@
     <div class="content">
       <div class="business">
         <div class="business__title">合作联盟规则</div>
-        <el-form ref="getRuleListRef" :model="getRuleList" :rules="rules">
+        <el-form ref="getRuleListRef" :model="getRuleList">
           <el-table :data="getRuleList.data1" class="business__table">
             <template slot="empty">
               <svg-icon key="item-warp" type="nodata" icon="icon-icon_nodata" />
             </template>
-            <el-table-column label="规则名称" min-width="110">
+            <el-table-column label="规则名称" min-width="120">
               <template slot-scope="scope">
                 <show-tooltip
                   v-if="scope.row.name"
                   :text="scope.row.name"
-                  :width="92"
+                  :width="102"
                 ></show-tooltip>
               </template>
             </el-table-column>
-            <el-table-column label="规则内容" min-width="380">
+            <el-table-column label="规则内容" min-width="410">
               <template slot-scope="scope">
                 <div class="max">
                   <show-tooltip
                     v-if="scope.row.description"
                     :text="scope.row.description"
-                    :width="340"
+                    :width="400"
                     :tooltip-line-clamp="2"
                   ></show-tooltip>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column class-name="list-input" prop="val1" label="值" min-width="350">
+            <el-table-column class-name="list-input" prop="val1" label="值" min-width="300">
               <template slot-scope="scope">
-                <el-form-item :prop="'data1.' + scope.$index + '.val1'" :rules="rules.val1">
+                <!-- handleRuleVal1 -->
+                <el-form-item
+                  :prop="'data1.' + scope.$index + '.val1'"
+                  :rules="handleRuleVal1(scope.row)"
+                >
                   <el-input
                     v-model="scope.row.val1"
                     :placeholder="scope.row.val1"
@@ -81,6 +85,7 @@
                     :placeholder="scope.row.val2"
                     type="text"
                     class="val1"
+                    :disabled="scope.row.code === 'RULE_COOPERATE_SPONSOR_TERMINATION'"
                     :data-tid="'val2Input' + scope.$index"
                   ></el-input>
                 </el-form-item>
@@ -92,6 +97,7 @@
                     v-model="scope.row.val3"
                     :placeholder="scope.row.val3"
                     type="text"
+                    :disabled="scope.row.code !== 'RULE_COOPERATE_ORDER_TURN'"
                     :data-tid="'val3Input' + scope.$index"
                     class="val1"
                   ></el-input>
@@ -103,6 +109,7 @@
                   <el-input
                     v-model="scope.row.val4"
                     :placeholder="scope.row.val4"
+                    :disabled="scope.row.code !== 'RULE_COOPERATE_ORDER_TURN'"
                     type="text"
                     class="val1"
                     :data-tid="'val4Input' + scope.$index"

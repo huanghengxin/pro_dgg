@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { checkBizByPhone } from 'api/add-business';
 import {
   get_receiver,
@@ -6,7 +7,7 @@ import {
   cooperation_proportion,
 } from 'api/cooperation-in-page';
 import ShowTooltip from '../../../components/show-tooltip/index.js';
-import { listContact, get_dictionary_data_by_parent_code } from 'api/common';
+import { listContact, get_dictionary_data_by_parent_code, show_real_phone } from 'api/common';
 import { save_by_absent_customer } from 'api/cooperation-in-page';
 import InitiateCooperation from '../../business-details/components/initiate-cooperation/index.vue';
 import './index.scss';
@@ -25,7 +26,7 @@ export default {
       inserted(el, binding, vnode) {
         // 获取element-ui定义好的scroll盒子
         const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap');
-        SELECTWRAP_DOM.addEventListener('scroll', function() {
+        SELECTWRAP_DOM.addEventListener('scroll', function () {
           if (vnode.context.optionFlag) {
             // 滚到底部
             const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight;
@@ -49,6 +50,7 @@ export default {
       defaultPeopleList: [], //搜索人员默认列表
       peopleList: [], //合作接收人请求列表
       selectLoading: false,
+      desePhone: '',
       blurPhoneNumber: '', //判断输入号码是否与当前号码一致
       accompanyInfo: {},
       // initiateRowInfo: {}, //合作列表转出拒绝传递参数
@@ -70,7 +72,7 @@ export default {
         allocationMode: '1', //分配方式 1.定向分配,2.抢单
         ratio: '', //合作比例
         receiveUserId: '', //合作接收方ID
-        grabOrderScope: 1, //抢单人员范围 (1.本商户,2.薯片平台)
+        grabOrderScope: '', //抢单人员范围 (1.本商户,2.薯片平台)
         reason: '', //合作原因
       },
       optionPage: 1, //下拉框页数
@@ -97,14 +99,12 @@ export default {
       isActive: '1',
       order: [
         { id: '1', name: '定向分单' },
-        { id: 2, name: '抢单' },
+        { id: '2', name: '抢单' },
       ],
       props: {
         lazy: true,
         lazyLoad: (node, resolve) => {
-          console.log('SSKDSDFJSK', this.ruleForm.requirementArray);
           const { level, data, value } = node;
-          console.log(data, value, '=====');
           const params = {
             productTypeCode: data?.productTypeCode || value,
             code: value,
@@ -152,19 +152,16 @@ export default {
     this.getIntentionList(); //等级
     this.getCooperationProportion(); //比例范围
     this.getPeopleList();
-    //关掉有客户信息弹窗后，清空表单字段
-    this.$eventBus.$on('close-parent-dialog', (flag) => {
-      if (!flag) return;
-      this.$refs.ruleForm.resetFields();
-    });
     if (!store.rowInfo) return;
     let rowInfo = store.rowInfo;
     const { customerPhone, receiveUserId, ...ruleRowInfo } = rowInfo;
     Object.assign(this.ruleForm, ruleRowInfo);
     console.log(ruleRowInfo, 'ruleRowInfo');
     let ruleForm = this.ruleForm;
+    this.desePhone = customerPhone;
     ruleForm.customerPhone = '';
-    ruleForm.receiveUserId = receiveUserId;
+    // TODO 23点18分 cqj 此处有修改
+    // ruleForm.receiveUserId = receiveUserId;
     ruleForm.customerSex = Number(ruleRowInfo.customerSex);
     ruleForm.areaCode = ruleRowInfo.bizAreaCode;
     ruleForm.areaName = ruleRowInfo.bizAreaName;
@@ -172,17 +169,64 @@ export default {
     ruleForm.requirementArray[1] = ruleRowInfo.requirementParentCode;
     ruleForm.requirementArray[2] = ruleRowInfo.requirementCode;
     ruleForm.requirementArray[2] = ruleRowInfo.requirementCode;
+    ruleForm.grabOrderScope = '1';
     ruleForm.receiveUserId = '';
     this.isActive = ruleRowInfo.allocationMode;
+    this.ruleForm.allocationMode = ruleRowInfo.allocationMode;
+    if (ruleRowInfo.customerContact != '') {
+      const params = {
+        encryptPhone: ruleRowInfo.customerContact,
+      };
+      show_real_phone(params).then((res) => {
+        if (res.code === 200) {
+          res = res.data;
+          if (!res) return;
+          this.ruleForm.customerPhone = res;
+          // this.isRelevance = true;
+          this.getPhone();
+        }
+      });
+    }
   },
-  beforeRouteLeave(to, from, next) {
+  mounted() {
+    this.$eventBus.$on('router-push-list', () => {
+      this.routerPush(); //跳转列表
+    });
+  },
+  destroyed() {
     store.rowInfo = null;
-    next();
+    this.$eventBus.$off('router-push-list');
   },
-  beforeDestroy() {
-    this.$eventBus.$off('close-parent-dialog');
-  },
+
   methods: {
+    //父子组件传值 重置表单
+    resetForm() {
+      this.desePhone = '';
+      this.getPeopleList();
+      this.$refs.ruleForm.resetFields();
+      this.ruleForm = {
+        customerName: '', //客户姓名
+        customerSex: '', //客户性别(0女 1男 2保密)
+        customerPhone: '', //客户手机号码
+        phoneArray: [], //新增手机号
+        areaCode: '', //业务区域Code
+        areaName: '', //业务区域名称
+        requirementArray: [],
+        productTypeCode: '', //产品类型
+        requirementCode: '', //客户需求
+        requirementName: '', //客户名称
+        requirementParentCode: '', //客户需求父级Code
+        requirementParentName: '', //客户需求父级名字
+        intentionLevel: 3, //客户意向等级
+        type: '', //合作类型 1.自留维护权,2.转出维护权
+        allocationMode: '1', //分配方式 1.定向分配,2.抢单
+        ratio: '', //合作比例
+        receiveUserId: '', //合作接收方ID
+        grabOrderScope: '', //抢单人员范围 (1.本商户,2.薯片平台)
+        reason: '', //合作原因
+      };
+      this.isActive = 1;
+    },
     /**
      * @description 通过抢单范围获取合作比例
      */
@@ -190,7 +234,6 @@ export default {
       cooperation_proportion().then((res) => {
         const { code, data } = res;
         if (code === 200) {
-          console.log(data, 'data');
           this.cooperationRatioInfo = data || {};
         }
       });
@@ -251,12 +294,13 @@ export default {
      */
     phoneBlurValidate(event) {
       this.$refs.ruleForm.validateField('customerPhone', (valid) => {
+        console.log(valid, 'valid');
         if (!valid) {
           //判断是否是一样得号码
-          if (this.blurPhoneNumber !== event.target.value) {
+          if (this.blurPhoneNumber !== this.ruleForm.customerPhone) {
             this.getPhone();
           } else {
-            this.blurPhoneNumber = event.target.value;
+            this.blurPhoneNumber = this.ruleForm.customerPhone;
           }
         }
       });
@@ -268,9 +312,9 @@ export default {
       const checkBiz = await checkBizByPhone({
         phone: this.ruleForm.customerPhone,
       }).catch();
-      if (!checkBiz.data.canCreate) {
-        this.$refs.initiateCooperationRef.openModal({ id: checkBiz.data.bizId }, true);
-        // this.$message.warning('已有客户商机，无需填写基础信息可直接发起');
+      console.log(checkBiz.data.bizId, 'checkBizId');
+      if (!checkBiz.data?.canCreate) {
+        this.$refs.initiateCooperationRef.openModal({ id: checkBiz.data.bizId }, undefined, true);
       } else {
         const value = this.ruleForm.customerPhone;
         let params = { customerNo: value };
@@ -286,11 +330,9 @@ export default {
                 return;
               }
               this.isRelevance = true;
-              // this.isNewRequire = true;
               this.separatePhoneList(data);
             } else {
               this.resetPhone();
-              // this.isNewRequire = false;
               this.ruleForm.phoneArray = [];
             }
           })
@@ -302,7 +344,6 @@ export default {
     },
     separatePhoneList(res) {
       for (const item of res) {
-        console.log(item, 'item');
         if (item.contactWay !== 'CONTACT_WAY_MB' || item.contactRlat === 'CONTACT_RLAT_SPARE')
           continue;
         this.ruleForm.phoneArray.push(item);
@@ -340,6 +381,7 @@ export default {
      * @param {Number}
      */
     changeFullFree(id) {
+      this.ruleForm.grabOrderScope = '1';
       this.$refs.ruleForm.clearValidate('ratio');
       this.$refs.ruleForm.clearValidate('receiveUserId');
       this.isActive = id;
@@ -417,7 +459,11 @@ export default {
         this.peopleList = [];
       }
     },
-
+    //跳转到列表
+    routerPush() {
+      let path = 'cooperation-alliance-clients';
+      this.$router.replace(`/${path}?active=1`);
+    },
     /**
      * @description 提交事件
      */
@@ -425,17 +471,22 @@ export default {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
           const ruleForm = this.ruleForm;
-          this.loading = true;
           const checkBiz = await checkBizByPhone({
             phone: ruleForm.customerPhone,
           }).catch(() => (this.loading = false));
-          if (!checkBiz) return;
+          if (!checkBiz.data.canCreate) {
+            this.$message.warning(checkBiz.message);
+            this.$set(this.ruleForm, 'customerPhone', '');
+            return;
+          }
+          this.loading = true;
           let { phoneArray, customerPhone, ...elseFrom } = ruleForm;
           console.log(phoneArray, '1212121');
           const accompanyInfo = this.accompanyInfo;
-          let params = elseFrom;
+          let params = Object.assign({}, elseFrom);
           params.receiveUserId = accompanyInfo.mchUserId || undefined;
           params.customerPhone = customerPhone;
+          params.customerName = params.customerName.trim();
           params.phoneArray = phoneArray.reduce((acc, cur) => {
             if (!cur.id) {
               acc.push(cur.contactNo);
@@ -456,7 +507,7 @@ export default {
               if (res.code === 200) {
                 this.$message({
                   type: 'success',
-                  message: '操作成功',
+                  message: '合作申请已发出',
                 });
                 let path = 'cooperation-alliance-clients';
                 this.$router.replace(`/${path}?active=1`);

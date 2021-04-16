@@ -16,7 +16,7 @@ export const store = Vue.observable({
     limit: 10,
     page: 1,
     column: 'expectReturnTime',
-    asc: undefined,
+    asc: true,
     mchUserId: undefined,
   },
   activeTab: undefined,
@@ -26,6 +26,8 @@ export const store = Vue.observable({
     list: [],
   },
   rowInfo: null, //重新发起列表一行数据
+  permissionInfo: null,
+  loading: false,
 });
 export const mutations = {
   //设置不同tab页筛选项
@@ -35,15 +37,46 @@ export const mutations = {
     }
     Vue.set(store.fieldParams[tabActive], fieldCode, fieldChildCode);
   },
-  clearSortParams() {
-    store.params.asc = undefined;
-    store.params.column = undefined;
+  setPermissionInfo(val) {
+    store.permissionInfo.info = val;
   },
+  //默认排序参数
+  clearSortParams(fieldChildCode) {
+    if (store.activeTab == 0) {
+      const accept = store.fieldParams[0] && store.fieldParams[0]['receiveStatus'];
+      if (accept === undefined) {
+        store.params.column = 'expectReturnTime';
+        store.params.asc = true;
+      } else {
+        store.params.column = 'receiveTime';
+        store.params.asc = undefined;
+      }
+    } else {
+      const initiate = store.fieldParams[1] && store.fieldParams[1]['buildStatus'];
+      if (initiate === undefined) {
+        store.params.column = 'expectReturnTime';
+        store.params.asc = true;
+      } else if (initiate == 9) {
+        store.params.column = 'returnTime';
+        store.params.asc = undefined;
+      } else {
+        store.params.column = 'receiveTime';
+        store.params.asc = undefined;
+      }
+    }
+  },
+  //设置当前页
   setActiveTab(value) {
     store.activeTab = value;
   },
+  setDefaultPage() {
+    store.params.page = 1;
+  },
   setBackInfo(row) {
     store.rowInfo = row;
+  },
+  clearCurTab(tab) {
+    Vue.set(store.fieldParams, tab, {});
   },
   clearFull() {
     store.fieldParams = {};
@@ -51,28 +84,17 @@ export const mutations = {
       limit: 10,
       page: 1,
       column: 'expectReturnTime',
-      asc: undefined,
-      mchUserId: stores.get('mchInfo')?.mchUserId || undefined,
+      asc: true,
+      mchUserId: undefined,
     };
     store.activeTab = undefined;
   },
   //排序默认参数
-  setDefaultSort(tabActive, fieldCode, fieldChildCode) {
-    if (tabActive == 0 && fieldCode == 'receiveStatus') {
-      if (fieldChildCode == undefined) {
-        store.params.column = 'expectReturnTime';
-      } else {
-        store.params.column = 'receiveTime';
-      }
-    } else {
-      if (fieldChildCode == undefined) {
-        store.params.column = 'expectReturnTime';
-      } else if (fieldChildCode == 9) {
-        store.params.column = 'returnTime';
-      } else {
-        store.params.column = 'receiveTime';
-      }
-    }
+  setDefaultSort() {
+    console.log(store.activeTab, 'store.activeTab');
+    const { params } = store;
+    params.column = 'expectReturnTime';
+    params.asc = true;
   },
   //设置tab切换请求参数
   setParams(name, fieldCode) {
@@ -130,14 +152,19 @@ export const mutations = {
 };
 export const actions = {
   async getDataList() {
+    store.loading = true;
     store.params.mchUserId = stores.get('mchInfo')?.mchUserId;
     const { data, code, message } = await get_page({
       ...store.fieldParams[store.activeTab],
       ...store.params,
       switchType: store.activeTab,
     });
-    if (code !== 200) return Vue.prototype.$message.warning(message);
+    if (code !== 200) {
+      store.loading = false;
+      return Vue.prototype.$message.warning(message);
+    }
     const { records, totalCount } = data;
+    store.loading = false;
     store.tableData.list = records || [];
     store.tableData.totalCount = Number(totalCount);
   },

@@ -36,6 +36,8 @@ const commonMixins = {
         receiveUserNameStatus:
           (this.statusType == 'buildStatus' && this.statusValue == undefined) ||
           (this.statusType == 'buildStatus' && this.statusValue == 9),
+        //接收人时间是否显示
+        receiveUserNameTimeStatus: this.statusType == 'buildStatus' && this.statusValue == 1,
         //原因是否显示
         reasonStatus:
           (this.statusType == 'receiveStatus' && this.statusValue == undefined) ||

@@ -299,6 +299,6 @@
 </template>
 <script>
 import './index.scss';
-import ProspectiveCustomer from './prospective-customer';
+import ProspectiveCustomer from './index';
 export default ProspectiveCustomer;
 </script>

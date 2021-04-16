@@ -3,7 +3,6 @@
 .eslintcache
 .vscode
 yarn.lock
-/src/views/login.vue
 dist
 node_modules
 npm-debug.log*

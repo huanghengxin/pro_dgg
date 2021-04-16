@@ -20,7 +20,7 @@ export default {
       inserted(el, binding, vnode) {
         // 获取element-ui定义好的scroll盒子
         const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap');
-        SELECTWRAP_DOM.addEventListener('scroll', function() {
+        SELECTWRAP_DOM.addEventListener('scroll', function () {
           if (vnode.context.optionFlag) {
             // 滚到底部
             const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight;
@@ -40,7 +40,7 @@ export default {
   data() {
     let reg = /^[1-9]{1,}[\d]*$/;
     const checkProportion = (rule, value, callback) => {
-      value = value.trim();
+      value = (value + '')?.trim();
       if (!value) {
         callback(new Error(`比例不能为空`));
         this.ruleForms.ratio = '';
@@ -183,7 +183,7 @@ export default {
   },
   watch: {
     requireNameList: {
-      handler: function(val, oldval) {
+      handler: function (val, oldval) {
         if (val.length == 1) {
           this.rules.requirementCode[0].required = false;
           this.ruleForms.requirementName = this.requireNameList[0].intentionName;
@@ -193,19 +193,6 @@ export default {
         }
       },
     },
-    // cooperationRatioInfo: {
-    //   handler: function (val, oldval) {
-    //     if (!val) {
-    //       this.getCooperationProportion();
-    //       if (this.ruleForms.type == 2 && val) {
-    //         this.ratio = val.transferOut;
-    //       } else {
-    //         this.ratio = val.retention;
-    //       }
-    //     }
-    //   },
-    //   deep: true,
-    // },
   },
   computed: {
     ratio() {
@@ -222,8 +209,6 @@ export default {
   },
   created() {
     this.mchDetailId = store.get('mchInfo')?.mchDetailId || '';
-    console.log(this.mchDetailId, 'this.mchDetailId');
-
     let query = new getQueryString();
     this.ruleForms.bizId = query?.businessId;
   },
@@ -241,17 +226,33 @@ export default {
     /**
      * @description 弹窗打开时的事件
      */
-    openModal(info, flag) {
-      console.log(info, 'info');
+    openModal(info, data, type) {
+      console.log(info, data, type, 'info, data, type');
       this.dialogVisible = true;
-      this.getBusinessInfo(info.id); //商机详情
       this.getCooperationProportion(); //比例范围
       this.ruleForms.customerName = info.customerName;
-      this.getRequireNameList(info.id); //客户需求
-      this.ruleForms.bizId = info?.id;
       this.getPeopleList();
-      if (!flag) return;
-      this.openedFlag = flag;
+      if (type == 'list') {
+        const bizInfo = data || {};
+        console.log(bizInfo, 'this.bizInfo1');
+        this.ruleForms.bizId = info?.bizId;
+        this.ruleForms.customerName = bizInfo.customerName;
+        this.ruleForms.type = typeof info.type == String ? info.type : info.type.toString();
+        this.ruleForms.reason = info.reason;
+        this.ruleForms.ratio = info.ratio;
+        this.ruleForms.receiveName = info.receiveName;
+        // TODO 23点18分 CQJ此处有修改 this.ruleForms.receiveUserId = info.receiveUserId;
+        this.ruleForms.receiveUserId = '';
+        this.ruleForms.allocationMode = info.allocationMode;
+        this.isActive = Number(info.allocationMode);
+        this.ruleForms.grabOrderScope = 1;
+        this.getRequireNameList(info.bizId, info.requirementCode); //客户需求
+      } else {
+        this.ruleForms.bizId = info?.id;
+        this.getRequireNameList(info.id); //客户需求
+        this.getBusinessInfo(info.id); //商机详情
+        this.openedFlag = type;
+      }
     },
     /**
      * @description 获取商机基本信息
@@ -265,9 +266,7 @@ export default {
           this.ruleForms.customerName = this.bizInfo.customerName;
         } else {
           this.dialogVisible = false;
-          setTimeout(() => {
-            this.$message.warning(message);
-          }, 500);
+          this.$message.warning(message);
         }
         this.loading = false;
       });
@@ -283,12 +282,12 @@ export default {
       this.ruleForms.receiveUserName = '';
       this.dialogVisible = false;
       this.stateNum = 1;
-      this.$eventBus.$emit('close-parent-dialog', true);
+      this.$emit('reset-form');
     },
     /**
      * @description 获取未合作客户需求
      */
-    getRequireNameList(id) {
+    getRequireNameList(id, requirementCode) {
       let params = {
         bizId: id,
       };
@@ -296,11 +295,18 @@ export default {
         .then((res) => {
           const { code, data } = res;
           if (code === 200) {
+            if (!data) return;
+            // TODO 23点18分 cqj 此处有修改
+            this.ruleForms.requirementCode = data.find((_) => {
+              return _.intentionCode == requirementCode;
+            })?.id;
+            this.ruleForms.requirementId = data.find((_) => {
+              return _.intentionCode == requirementCode;
+            })?.id;
             //判断数据数量是否为1，为1则直接显示
             if (data.length === 1) {
               this.ruleForms.requirementName = data[0].intentionName;
             }
-            console.log(data, 'data');
             this.requireNameList = data || [];
           } else {
             this.$message.warning(res.message);
@@ -344,12 +350,11 @@ export default {
      */
     selectChangeHandle(val) {
       console.log(val, 'val');
-      if (val === '') {
-        // this.peopleList = this.defaultPeopleList;
-      }
+      // if (val === '') {
+      // this.peopleList = this.defaultPeopleList;
+      // }
       this.ruleForms.mchUserId = val.mchUserId;
       /*此处receiveUserId需要修改*/
-      this.ruleForms.receiveUserName = val.userName;
       this.ruleForms.receiveUserId = val.mchUserId;
     },
     /**
@@ -414,13 +419,20 @@ export default {
      * @description 需求变化
      */
     requireChange(val) {
-      this.ruleForms.requirementId = val;
-      this.ruleForms.requirementCode = val;
+      console.log(val, this.flagId, 'val', 'this.flagId');
+      //如果新增的id
+      if (this.flagId == val) {
+        this.ruleForms.requirementCode = val;
+        this.ruleForms.requirementId = '';
+      } else {
+        this.ruleForms.requirementId = val;
+      }
     },
     /**
      * @description 新增需求
      */
     addNewRequire() {
+      console.log(this.requireNameList, 'this.requireNameList');
       this.$refs.newRequireRef.openModal(this.requireNameList);
     },
     /**
@@ -458,20 +470,25 @@ export default {
             this.ruleForms.requirementId = '';
           }
           const params = { ...this.ruleForms };
+          console.log(params, '请求参数');
           save_by_present_customer(params)
             .then((res) => {
               const { code, message } = res;
               if (code === 200) {
-                this.$message.success('发起合作成功');
+                this.$message.success('合作申请已发出');
                 this.$eventBus.$emit('reload-list', true, 'Partners');
                 this.$eventBus.$emit('reload-require-list', true);
+                this.$eventBus.$emit('router-push-list');
                 this.dialogVisible = false;
               } else {
                 this.$message.warning(message);
               }
               this.loading = false;
             })
-            .catch(() => ((this.loading = false), (this.dialogVisible = false)));
+            .catch(() => {
+              this.loading = false;
+              this.dialogVisible = false;
+            });
         }
       });
     },

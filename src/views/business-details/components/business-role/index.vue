@@ -66,52 +66,60 @@
             </div>
             <div class="cooperationInfo-titleInfo-contentCont">
               <div
-                v-if="
-                  item.status == 'GRAB' &&
-                    (permissionType.info == 'RETENTION_SPONSOR' ||
-                      permissionType.info == 'TRANSFER_RECEIVE')
-                "
+                v-if="item.status == 'GRAB'"
                 class="cooperationInfo-titleInfo-contentCont-grabSingleBox"
               >
                 <p class="cooperationInfo-titleInfo-contentCont-grabSingleBox-grabSingleText">
                   <i class="iconfont-qds-crm icon-Urgelighting"></i> 抢单中
                 </p>
-                <!-- <div 
+                <!--  <div
+                  v-if="
+                    permissionType.info == 'RETENTION_SPONSOR' ||
+                    permissionType.info == 'TRANSFER_RECEIVE'
+                  "
                   class="common-button cooperationInfo-titleInfo-contentCont-grabSingleBox-priceApply"
                 >
                   查看加价申请
-                </div> -->
+                </div>-->
               </div>
               <div
-                v-if="
-                  item.status == 'COLLABORATE' &&
-                    (isCurUser || permissionType.info != 'TRANSFER_SPONSOR')
-                "
+                v-if="item.status == 'COLLABORATE'"
                 class="cooperationInfo-titleInfo-contentCont-onlineTalkBox"
               >
                 <div
+                  v-if="isManage(item)"
                   class="common-button cooperationInfo-titleInfo-contentCont-onlineTalkBox-onlineTalk"
                   @click="onlineTalk(item)"
                 >
                   在线聊
                 </div>
+
                 <div
-                  class="common-button cooperationInfo-titleInfo-contentCont-onlineTalkBox-cancel"
-                  data-tid="relieveCooperation"
-                  @click="relieveCooperation(item.id)"
+                  v-if="
+                    isManage(item) &&
+                    (permissionType.info == 'RETENTION_SPONSOR' ||
+                      permissionType.info == 'RETENTION_RECEIVE')
+                  "
+                  style="display: flex;align-items：center"
                 >
-                  解除合作
+                  <div
+                    class="common-button cooperationInfo-titleInfo-contentCont-onlineTalkBox-cancel"
+                    data-tid="relieveCooperation"
+                    @click="relieveCooperation(item.id)"
+                  >
+                    解除合作
+                  </div>
+                  <el-tooltip
+                    data-tid="searchTooltip"
+                    :open-delay="320"
+                    effect="dark"
+                    :content="`合作关系建立${tooltip}天后，发起人解除合作无需合作接收方同意，请知晓。`"
+                    placement="top-start"
+                    popper-class="show-tooltip"
+                  >
+                    <i class="iconfont-qds-crm icon-question icon-tip" style="color: #bfbfbf"></i>
+                  </el-tooltip>
                 </div>
-                <el-tooltip
-                  data-tid="searchTooltip"
-                  :open-delay="320"
-                  effect="dark"
-                  :content="tooltip"
-                  placement="top-start"
-                  popper-class="show-tooltip"
-                >
-                  <i class="iconfont-qds-crm icon-question icon-tip" style="color: #bfbfbf"></i>
-                </el-tooltip>
               </div>
               <p
                 v-else-if="item.status == 'SUCCESS'"
@@ -122,7 +130,7 @@
               </p>
             </div>
           </div>
-          <div class="accendant-item proportion-item">
+          <div v-if="item.sponsor" class="accendant-item proportion-item">
             <div class="accendant-item-left">
               <img v-if="item.sponsor.avatar" :src="item.sponsor.avatar" alt="" />
               <div v-else class="accendant-item-left_avatar">
@@ -168,7 +176,7 @@
             </div>
           </div>
           <!-- 合作接收人 -->
-          <div v-if="item.status != 'GRAB'" class="accendant-item proportion-item">
+          <div v-if="item.status != 'GRAB' && item.receive" class="accendant-item proportion-item">
             <div class="accendant-item-left">
               <img v-if="item.receive && item.receive.avatar" :src="item.receive.avatar" alt="" />
               <div v-else class="accendant-item-left_avatar">
@@ -203,10 +211,7 @@
               <div v-else class="accendant-item-right-ring">
                 <span>{{ item.status == 'RECEIVE' ? '待接收' : '' }}</span>
                 <span
-                  v-if="
-                    permissionType.info == 'TRANSFER_RECEIVE' ||
-                      permissionType.info == 'RETENTION_SPONSOR'
-                  "
+                  v-if="canTalkOnline(item)"
                   class="accendant-item-right-ring-box"
                   @click="ringSomeOne(item)"
                 >

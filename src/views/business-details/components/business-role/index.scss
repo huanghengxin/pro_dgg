@@ -141,7 +141,6 @@
           border: 1px solid $gray-10;
           border-radius: 2px;
           &-titleInfo {
-            width: 780px;
             height: 80px;
             background-color: $gray-13;
             padding: 16px 20px;
@@ -205,11 +204,10 @@
                 justify-content: flex-end;
                 &-onlineTalk {
                   width: 60px;
-                  margin-right: 12px;
                 }
                 &-cancel {
                   width: 71px;
-                  margin-right: 6px;
+                  margin: 0 6px 0 12px;
                 }
               }
               &-success {
@@ -222,6 +220,7 @@
                 }
               }
               .icon-tip {
+                line-height: 32px;
                 cursor: pointer;
               }
             }

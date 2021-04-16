@@ -33,12 +33,12 @@
             <template slot="empty">
               <svg-icon key="item-warp" type="nodata" icon="icon-icon_nodata" />
             </template>
-            <el-table-column label="规则名称" min-width="110">
+            <el-table-column label="规则名称" min-width="130">
               <template slot-scope="scope">
                 <show-tooltip
                   v-if="scope.row.name"
                   :text="scope.row.name"
-                  :width="92"
+                  :width="122"
                 ></show-tooltip>
               </template>
             </el-table-column>

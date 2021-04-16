@@ -4,7 +4,7 @@ const commonMixins = {
     // let reg = /^((2[0-9])|(3[0-9])|4[0-5])$/;
     const checkProportion = (rule, value, callback) => {
       console.log(value, 'value');
-      value = value.toString().trim();
+      value = value?.toString().trim();
       if (!value) {
         callback(new Error(`比例不能为空`));
         this.ruleForm.ratio = '';
@@ -32,13 +32,14 @@ const commonMixins = {
           { required: true, validator: this.checkCtomerName, trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
         ], //姓名
-        requirementCode: [
+        requirementArray: [
           {
             required: true,
             message: '请选择您的需求',
             trigger: 'change',
           },
         ],
+        contactNo: [{ validator: this.secondaryContact, trigger: 'blur' }], //次联系人号码验证
         areaCode: [{ required: true, message: '请选择业务区域', trigger: 'change' }],
         //合作类型
         type: [
