@@ -1,0 +1,53 @@
+@import 'assets/scss/mixins/base';
+@import 'assets/scss/mixins/list-ui';
+
+@include list();
+
+.seas {
+  width: 100%;
+  font-size: $font-size-md;
+
+  &__search {
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    background-color: $white;
+    padding: 16px 0 16px 20px;
+    display: flex;
+    align-items: center;
+    &-from {
+      height: 42px;
+      &:first-child {
+        margin-top: 0;
+      }
+      span {
+        margin: 8px 0;
+      }
+      .lable {
+        display: inline-block;
+        font-size: $font-size-sm;
+        color: $black-2;
+        margin-right: 42px;
+        width: 48px;
+        font-weight: $font-weight-crm;
+      }
+
+      @include filter-item();
+    }
+  }
+
+  .button-box {
+    margin-top: 12px;
+
+    .list-base-box-button {
+      padding: 7px 15px;
+    }
+  }
+
+  &__main &__main-warp {
+    margin-top: 12px;
+  }
+
+  &__main {
+    background-color: $white;
+    position: relative;
+  }
+}

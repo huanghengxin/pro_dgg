@@ -1,0 +1,268 @@
+.answer_detail {
+  font-size: $font-size-md;
+  &-title-text {
+    height: 48px;
+    line-height: 48px;
+    background-color: $base-list-background-color;
+    padding: 0 20px;
+    border-bottom: $list-search-tab-warp-border-bottom;
+    font-weight: $font-weight-crm;
+    color: #222222;
+  }
+
+  //  cursor: pointer;
+  &-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: $white;
+    .title-content-1 {
+      width: 75%;
+      // background-color: red;
+      padding-right: 20px;
+      .problem-title {
+        font-size: 22px !important;
+        font-weight: $font-weight-crm !important;
+      }
+      .answer-tag {
+        margin-top: 16px;
+        .el-tag {
+          height: 28px;
+          line-height: 28px;
+          border-width: 0px;
+          border-radius: 28px;
+          margin-right: 12px;
+        }
+      }
+
+      .question-title {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        .answer-content {
+          margin-top: 16px;
+          font-size: 14px;
+          font-weight: 400;
+          color: #555555;
+          line-height: 20px;
+        }
+        .answer-content-hidden {
+          overflow: hidden;
+          -webkit-line-clamp: 2;
+          display: -webkit-box !important;
+          -webkit-box-orient: vertical;
+        }
+      }
+      .close-more {
+        cursor: pointer;
+        color: #809ef8;
+        margin: 12px 0;
+      }
+      .show-more {
+        margin: 12px 0;
+        width: 100px;
+        cursor: pointer;
+        color: #809ef8;
+      }
+      .answer-button {
+        margin-top: 16px;
+        .click-active {
+          color: #4974f5;
+          background: #edf1fe;
+          border-color: #b6c7fb;
+        }
+        .bgc {
+          background-color: #4974f5 !important;
+          color: #ffffff;
+          border-color: #edf1fe;
+        }
+        .font-active {
+          color: #4974f5;
+        }
+        .default-font {
+          color: #555555;
+          :hover {
+            color: #4974f5;
+          }
+        }
+
+        i {
+          font-size: 12px !important;
+        }
+      }
+    }
+    .title-content-2 {
+      width: 25%;
+      text-align: right;
+      .collect {
+        display: inline-block;
+        text-align: center;
+        border-right: $list-search-tab-warp-border-bottom;
+        padding: 0 24px;
+        .text {
+          color: #999999;
+          height: 25px;
+        }
+      }
+      .browse {
+        display: inline-block;
+        text-align: center;
+        padding-left: 8px;
+        .text {
+          color: #999999;
+          height: 25px;
+        }
+      }
+    }
+  }
+  &-richtext {
+    margin-top: 16px;
+    padding: 20px;
+    background: $white;
+    .richtext-title {
+      display: flex;
+      align-items: center;
+      height: 50px;
+      img {
+        height: 24px;
+        width: 24px;
+        border-radius: 24px;
+        margin-right: 16px;
+      }
+    }
+    .richtext-btn {
+      margin-top: 20px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .redColor {
+        color: red;
+      }
+      .grayColor {
+        color: #555555;
+      }
+      .blackColor {
+        color: #262626;
+      }
+    }
+  }
+
+  &-content {
+    min-height: 150px;
+    .data-available {
+      height: 150px;
+    }
+    margin-top: 16px;
+    background: $white;
+    padding: 0 20px 20px;
+    .content-title {
+      height: 48px;
+      line-height: 48px;
+      color: #222222;
+      font-weight: 500;
+      border-bottom: $list-search-tab-warp-border-bottom;
+    }
+    .is-scroll {
+      max-height: 580px;
+      overflow-y: scroll;
+    }
+    .scroll-ele {
+      .content-subject {
+        padding: 20px 0;
+        border-bottom: $list-search-tab-warp-border-bottom;
+        .subject-title {
+          display: flex;
+          align-items: center;
+          img {
+            height: 24px;
+            width: 24px;
+            border-radius: 12px;
+            margin-right: 8px;
+          }
+          &-name {
+            color: #555555;
+            margin-right: 8px;
+          }
+          &-time {
+            color: #bfbfbf;
+            margin-right: 8px;
+          }
+        }
+        .subject-main-all {
+          max-height: 200px;
+        }
+        .subject-main {
+          height: auto !important;
+          overflow-y: hidden;
+          margin-top: 8px;
+          color: #222222;
+          position: relative;
+          .subject-main-content {
+            p {
+              line-height: 30px;
+            }
+            img {
+              display: block;
+              width: 400px;
+              height: 100%;
+              margin-left: 50%;
+              transform: translateX(-200px);
+            }
+          }
+          .seeAll {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            .lucency {
+              height: 30px;
+              background: -webkit-linear-gradient(rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+              background: -moz-linear-gradient(rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+              background: -ms-linear-gradient(rgba(0, 0, 0, 0), rgba(255, 255, 255, 1));
+            }
+            span {
+              cursor: pointer;
+              display: block;
+              color: #809ef8;
+              text-align: center;
+              background-color: rgb(255, 255, 255);
+            }
+          }
+        }
+        .subject-btn {
+          margin-top: 8px;
+          .font-icon {
+            font-size: 12px !important;
+          }
+          .bgc {
+            background-color: #4974f5 !important;
+            color: #ffffff;
+            border-color: #edf1fe;
+          }
+          .dislike {
+            margin-left: 0 !important;
+          }
+          .default-font {
+            color: #555555;
+            :hover {
+              color: #4974f5;
+            }
+          }
+          .nobgc {
+            color: #4974f5;
+            background: #edf1fe;
+            border-color: #b6c7fb;
+          }
+        }
+      }
+    }
+  }
+  &-more {
+    background: $white;
+    margin-top: 20px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    color: #222222;
+  }
+}

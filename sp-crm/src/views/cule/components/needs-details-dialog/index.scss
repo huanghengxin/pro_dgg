@@ -1,0 +1,24 @@
+.needs-details-dialog {
+  user-select: none;
+  .business-demand-info {
+    box-shadow: none !important;
+  }
+  .el-icon-close {
+    cursor: pointer;
+  }
+
+  .el-dialog__body {
+    padding-top: 0;
+    padding-bottom: 30px;
+  }
+
+  .el-dialog__header {
+    height: 0;
+  }
+
+  .business-demand-info {
+    margin-top: 0;
+    padding: 0;
+    width: 100%;
+  }
+}

@@ -1,0 +1,140 @@
+@mixin flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@mixin flex-center_align() {
+  display: flex;
+  align-items: center;
+}
+@mixin flex-center_content($way: center) {
+  display: flex;
+  justify-content: $way;
+}
+
+@mixin arrow-right_icon() {
+  .arrow_right {
+    margin-left: 4px;
+    font-size: 8px;
+    color: #4974f5;
+    font-weight: 600;
+  }
+}
+
+@mixin flex-center_pagination() {
+  .pagination {
+    margin: 13px 0;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    margin: 13px auto;
+  }
+}
+
+@mixin filter-item() {
+  .filter-item {
+    cursor: pointer;
+    padding: $list-search-filter-list-warp-item-padding;
+    font-size: $list-search-filter-list-warp-item-font-size;
+    border: 1px solid transparent;
+    width: max-content;
+    display: inline-block;
+    &_active {
+      border: $list-search-filter-list-warp-item-active-border;
+      color: $list-search-filter-list-warp-item-active-color;
+      border-radius: $list-search-filter-list-warp-item-active-border-radius;
+    }
+  }
+}
+
+@mixin reset-label-before() {
+  .el-form-item__label {
+    position: relative;
+    text-indent: 10px;
+    &::before {
+      position: absolute;
+      left: -10px;
+    }
+  }
+}
+
+@mixin set-next-follow-datatime() {
+  .set-next-follow-datatime {
+    .el-picker-panel__link-btn.el-button--text {
+      display: none;
+    }
+  }
+}
+
+@mixin button-item() {
+  .button-warp {
+    .disable {
+      color: $base-tag-disable-color;
+      border-color: $base-tag-disable-border-color;
+      background-color: $gray-16;
+    }
+    &_item {
+      cursor: pointer;
+      user-select: none;
+      padding: $more-handle-button-warp-item-padding;
+      border: 1px solid $base-tag-border-color;
+      display: inline-block;
+    }
+    &_more {
+      margin-top: $more-handle-button-warp-margin-top;
+      margin-right: $more-handle-button-warp-item-margin-right;
+    }
+  }
+}
+//无可用分组，号码样式
+@mixin quick-note() {
+  .quick-note {
+    margin-bottom: 10px;
+    margin-left: 130px;
+    &_item {
+      cursor: pointer;
+      line-height: 1;
+      padding: $write-quick-note-item-padding;
+      font-size: $write-quick-note-item-font-size;
+      display: inline-block;
+      margin-right: $write-quick-note-item-margin-right;
+      background-color: $write-quick-note-item-background-color;
+      margin-bottom: 6px;
+      &-active {
+        background-color: $base-color;
+        color: #ffffff;
+      }
+    }
+    &_group {
+      display: flex;
+      font-size: $font-size-sm;
+      color: $base-color;
+      @include arrow-right_icon();
+      &-add {
+        cursor: pointer;
+        margin-left: 12px;
+      }
+    }
+  }
+}
+//经营管理详情写跟进
+@mixin quick-note-team-manage() {
+  .quick-note-team-manage {
+    margin-bottom: 10px;
+    margin-left: 100px;
+    &_item {
+      cursor: pointer;
+      line-height: 1;
+      padding: $write-quick-note-item-padding;
+      font-size: $write-quick-note-item-font-size;
+      display: inline-block;
+      margin-right: $write-quick-note-item-margin-right;
+      background-color: $write-quick-note-item-background-color;
+      margin-bottom: 6px;
+      &-active {
+        background-color: $base-color;
+        color: #ffffff;
+      }
+    }
+  }
+}

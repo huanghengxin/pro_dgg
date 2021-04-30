@@ -1,0 +1,44 @@
+.link-company {
+  box-shadow: $defalut-box-shadow;
+  padding: $business-details-item-padding;
+  background-color: $base-business-info-background-color;
+  margin-top: $more-handle-title-margin-top;
+  .title {
+    margin-bottom: 16px;
+    color: $more-handle-title-color;
+    font-weight: $more-handle-title-font-weight;
+    display: flex;
+    .disable {
+      color: $base-button-disable-color;
+    }
+    &-button {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-left: 12px;
+      font-size: $font-size-sm;
+      color: $base-color;
+      i {
+        margin-right: 5px;
+        font-size: 15px;
+      }
+      span {
+        font-size: 14px;
+      }
+    }
+  }
+  .company-item {
+    margin-top: 16px;
+    &_button {
+      margin-top: 8px;
+      span:first-child {
+        color: #9b9c9f;
+      }
+      span:not(:first-child) {
+        cursor: pointer;
+        color: $base-color;
+        margin-left: 16px;
+      }
+    }
+  }
+}

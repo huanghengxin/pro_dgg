@@ -1,0 +1,144 @@
+@import 'assets/scss/mixins/base';
+
+.must-understand-my-answer {
+  font-size: $font-size-md;
+  background: $white;
+  height: auto !important;
+  .answer__tab {
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $base-list-background-color;
+    padding: 0 20px;
+    border-bottom: $list-search-tab-warp-border-bottom;
+  }
+  .answer_title {
+    padding: 0 20px;
+    height: 48px;
+    line-height: 48px;
+    display: flex;
+    justify-content: space-between;
+    color: #555555;
+    .el-date-editor--daterange.el-input__inner {
+      height: 32px;
+      vertical-align: middle;
+      margin-left: 5px;
+      margin-right: 8px;
+      width: 274px;
+    }
+    .el-date-editor .el-range__icon {
+      line-height: 26px;
+    }
+    .el-date-editor .el-range__close-icon {
+      line-height: 26px;
+    }
+    .el-date-editor .el-range-separator {
+      line-height: 26px;
+      color: #bfbfbf !important;
+    }
+  }
+  .answer__content {
+    padding: 0 20px 8px;
+    min-height: 150px;
+    &-item {
+      padding: 20px 0 10px;
+      border-bottom: $list-search-tab-warp-border-bottom;
+      .item-comment {
+        .item-comment-more {
+          margin-top: 20px;
+          color: #262626;
+          padding: 14px 16px;
+          background: #fafafb;
+          .item-comment-text {
+            white-space: nowrap; /*文本不换行*/
+            text-overflow: ellipsis; /*设置超出部分显示...*/
+            -o-text-overflow: ellipsis;
+            overflow: hidden;
+            em,
+            strong {
+              font-size: 14px;
+              font-weight: normal;
+              font-style: normal;
+            }
+            p {
+              display: inline;
+            }
+          }
+        }
+      }
+      .item-answerText {
+        display: flex;
+        justify-content: space-between;
+        color: #262626;
+        padding: 0 16px;
+        .item-answerText-text {
+          white-space: nowrap; /*文本不换行*/
+          text-overflow: ellipsis; /*设置超出部分显示...*/
+          -o-text-overflow: ellipsis;
+          overflow: hidden;
+          em,
+          strong {
+            font-size: 14px;
+            font-weight: normal;
+            font-style: normal;
+          }
+          p {
+            display: inline;
+          }
+        }
+      }
+
+      .default-font {
+        color: #555555;
+        margin-left: 20px;
+        :hover {
+          color: #4974f5;
+        }
+      }
+      a:link {
+        color: #222222;
+      }
+      a:visited {
+        color: #999999;
+      }
+      a:hover {
+        color: #4974f5;
+      }
+      a:active {
+        color: #999999;
+      }
+      .item-title {
+        font-weight: 500;
+        font-size: 16px;
+      }
+      .item-data {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #999999;
+        width: 964px;
+        span {
+          margin-right: 16px;
+          i {
+            margin-right: 4px;
+            font-size: 12px !important;
+          }
+        }
+      }
+      .item-btn {
+        margin-top: 16px;
+        padding: 0;
+        i {
+          font-size: 12px !important;
+        }
+      }
+    }
+  }
+
+  .answer-footer {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

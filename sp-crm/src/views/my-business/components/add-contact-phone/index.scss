@@ -1,0 +1,37 @@
+.add-contact-phone {
+  .warn {
+    line-height: 18px;
+    color: #999999;
+    .warn-icon {
+      font-size: 12px;
+    }
+    .warn-text {
+      font-size: 12px;
+      margin-left: 4px;
+    }
+  }
+  .add-button {
+    margin-bottom: 16px;
+    .icon-plusoutline {
+      font-size: 8px;
+      margin-right: 4px;
+    }
+  }
+  .el-input {
+    width: 272px;
+    .el-input__inner {
+      height: 32px;
+      border-radius: 2px;
+    }
+  }
+  .el-form-item {
+    margin-bottom: 20px;
+  }
+  .added-phone {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    margin-left: 10px;
+    margin-bottom: 16px;
+  }
+}

@@ -1,0 +1,71 @@
+@import 'assets/scss/mixins/reset-ui.scss';
+.batch-add-limit-page {
+  .batch-add-limit-text {
+    margin-bottom: 16px;
+    & > span:nth-child(1) {
+      font-size: 14px;
+      font-weight: 400;
+      color: #222222;
+      line-height: 20px;
+    }
+    & > span:nth-child(2) {
+      font-size: 14px;
+      font-weight: 400;
+      color: #4974f5;
+      line-height: 20px;
+      cursor: pointer;
+      a {
+        color: #4974f5;
+      }
+    }
+  }
+  .batch-add-limit-button {
+    .el-button {
+      width: 72px;
+      height: 32px;
+      border-radius: 2px;
+      border: 1px solid #4974f5;
+      padding: 0;
+      span {
+        font-size: 12px;
+        font-weight: 400;
+        color: #4974f5;
+      }
+    }
+    .el-upload__tip {
+      font-size: 12px;
+      font-weight: 400;
+      color: #999999;
+      line-height: 17px;
+      margin-top: 8px;
+    }
+    .el-upload-list__item {
+      background: #f2f2f2;
+      .el-upload-list__item-name {
+        font-size: 12px;
+        font-weight: 400;
+        color: #222222;
+        height: 28px;
+        line-height: 28px;
+      }
+    }
+    .el-upload-list__item-name:hover {
+      color: #222222;
+    }
+    .el-upload-list__item:hover .el-upload-list__item-status-label {
+      display: none;
+    }
+  }
+  .el-dialog__footer {
+    .el-button {
+      width: 50px;
+      height: 32px;
+      border-radius: 2px;
+      padding: 0;
+      span {
+        font-size: 12px;
+        font-weight: 400;
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+@import 'assets/scss/mixins/base';
+@import 'assets/scss/mixins/list-ui';
+@include list();
+.harassment-client-page {
+  .harassment-client-title {
+    background: #ffffff;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    .search-condition {
+      display: flex;
+      margin-bottom: 30px;
+      & span {
+        font-size: 14px;
+        font-weight: 400;
+        color: #222222;
+        line-height: 32px;
+        width: max-content;
+        padding: 0;
+      }
+      &-ml16 {
+        margin-left: 16px;
+      }
+      .el-input {
+        width: 290px;
+        height: 32px;
+        .el-input__inner {
+          width: 290px;
+          height: 32px;
+          border-radius: 2px;
+          border: 1px solid #d9d9d9;
+        }
+      }
+      .el-select {
+        width: 228px;
+        .el-input {
+          width: 228px;
+          .el-input__inner {
+            width: 228px;
+          }
+        }
+      }
+    }
+    .sign-time {
+      font-size: 12px;
+      height: 42px;
+      @include filter-item();
+      & > span:nth-child(1) {
+        margin-right: 54px;
+      }
+      .filter-item {
+        margin-right: 22px;
+      }
+      .active {
+        border: 1px solid #4974f5;
+        color: #4974f5;
+        border-radius: 2px;
+      }
+      .noActive {
+        pointer-events: none;
+      }
+      .date-picker {
+        width: 300px;
+        height: 28px;
+        .el-range__icon,
+        .el-range-separator,
+        .el-range__close-icon {
+          line-height: 22px;
+          font-size: 12px;
+        }
+      }
+      .search-button {
+        margin: 0 16px;
+      }
+      .is-plain {
+        margin: 0;
+      }
+    }
+  }
+  .harassment-client-table {
+    .last-column {
+      display: flex;
+      .el-popover__reference {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        & > i {
+          font-size: 10px;
+          color: #4974f5;
+          margin-left: 8px;
+        }
+      }
+    }
+  }
+}
+.more-popover {
+  width: 158px;
+  line-height: 36px;
+}

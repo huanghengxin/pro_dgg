@@ -1,0 +1,137 @@
+@import 'assets/scss/mixins/base';
+
+.must-understand-answer {
+  font-size: $font-size-md;
+  height: auto !important;
+  background: $white;
+  .answer__search {
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $base-list-background-color;
+    padding: 0 20px;
+    border-bottom: $list-search-tab-warp-border-bottom;
+    &-tabs {
+      display: flex;
+      .tabs-item {
+        border-bottom: 1px solid $white;
+        flex-shrink: 0;
+        @include flex-center_align();
+        height: 48px;
+        line-height: 40px;
+        margin: 0 48px 0 0;
+        font-size: 16px;
+        font-weight: $list-search-tab-warp-item-name-font-weight;
+        cursor: pointer;
+        &_active {
+          border-bottom: $list-search-tab-warp-item-border-bottom;
+        }
+      }
+    }
+    &-head {
+      font-size: 16px;
+      font-weight: $list-search-tab-warp-item-name-font-weight;
+    }
+    .panswer__search-keyword {
+      display: flex;
+      .el-input {
+        width: 304px;
+        .el-input__inner {
+          width: 304px;
+          border-bottom-right-radius: 0;
+          border-top-right-radius: 0;
+          border-right-width: 0px;
+        }
+      }
+      .search-button {
+        width: 76px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+  .answer__content {
+    padding: 0 20px;
+    min-height: 150px;
+    &-item {
+      display: flex;
+      padding: 8px 0px;
+      border-bottom: $list-search-tab-warp-border-bottom;
+      .png {
+        margin-right: 8px;
+        img {
+          height: 24px;
+          width: 24px;
+          border-radius: 24px;
+        }
+      }
+      .right {
+        .recommend {
+          font-size: 14px;
+          font-weight: 400;
+          color: #555555;
+          height: 42px;
+          line-height: 42px;
+        }
+        // 默认
+        a:link {
+          color: #222222;
+        }
+        /* 已访问的链接 */
+        a:visited {
+          color: #999999;
+        }
+        /* 鼠标悬停链接 */
+        a:hover {
+          color: #4974f5;
+        }
+        /* 已选择的链接 */
+        a:active {
+          color: #0000ff;
+        }
+        .item-title {
+          font-weight: 500;
+          height: 42px;
+          line-height: 42px;
+          font-size: 16px;
+        }
+        .item-name {
+          display: flex;
+          align-items: center;
+          div {
+            color: #555555;
+            height: 28px;
+            line-height: 28px;
+            margin-right: 12px;
+          }
+          .time {
+            color: #bfbfbf;
+          }
+        }
+        .item-data {
+          height: 42px;
+          line-height: 42px;
+          font-size: 12px;
+          color: #999999;
+          span {
+            margin-right: 16px;
+            i {
+              margin-right: 4px;
+              font-size: 12px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+  .no-data {
+    height: 300px;
+  }
+  .answer-footer {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

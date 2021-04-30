@@ -1,0 +1,18 @@
+@import 'assets/scss/mixins/base';
+@include set-next-follow-datatime();
+.set-next-follow-time {
+  .el-input__inner {
+    height: 32px;
+    border-radius: 2px;
+  }
+  .label {
+    color: #333333;
+  }
+  .el-date-editor {
+    width: 300px;
+  }
+  .el-dialog__body {
+    display: flex;
+    align-items: center;
+  }
+}

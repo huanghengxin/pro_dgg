@@ -1,0 +1,123 @@
+@import 'assets/scss/mixins/list-ui';
+@include list();
+.close-black-current-limit-page {
+  box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+  .close-black-current-limit-title {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 20px 0 20px;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    & > div:nth-child(1) {
+      height: 48px;
+      padding-bottom: 13px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #222222;
+      line-height: 22px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .el-form {
+      display: flex;
+      margin-top: 16px;
+      .el-form-item {
+        display: flex;
+        margin-bottom: 16px;
+        .el-form-item__label {
+          height: 32px;
+          line-height: 32px;
+          font-size: 14px;
+          font-weight: 400;
+          color: #222222;
+          padding: 0;
+        }
+        .el-form-item__content {
+          height: 32px;
+          line-height: 32px;
+          .el-input {
+            width: 268px;
+            height: 32px;
+            margin-right: 16px;
+            .el-input__inner {
+              width: 268px;
+              height: 32px;
+              border-radius: 2px;
+            }
+          }
+          .el-input__icon {
+            line-height: 32px;
+          }
+        }
+        .el-button {
+          width: 50px;
+          height: 32px;
+          border-radius: 2px;
+          padding: 0;
+          span {
+            font-size: 12px;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+  }
+  .close-black-current-limit-button {
+    .el-button {
+      width: 74px;
+      height: 28px;
+      padding: 6px 12px;
+      margin: 16px 10px 0 0;
+      border-radius: 2px;
+      & > span {
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 400;
+      }
+    }
+  }
+  .close-black-current-limit-table {
+    margin-top: 16px;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    .close-black-name {
+      padding-left: 20px;
+      .cell {
+        padding: 0;
+      }
+    }
+    .close-black-way {
+      display: flex;
+    }
+    .close-black-handle {
+      color: #4974f5;
+      .cell {
+        display: flex;
+        padding: 0;
+        span {
+          cursor: pointer;
+        }
+        & > span:nth-child(1) {
+          margin-right: 32px;
+        }
+      }
+    }
+  }
+  .page-break {
+    background-color: #ffffff;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+.danger-limit-way {
+  .el-message-box__content {
+    .el-message-box__container {
+      .el-icon-warning {
+        color: #f1524e;
+        font-size: 18px !important;
+      }
+    }
+  }
+}

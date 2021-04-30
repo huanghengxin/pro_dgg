@@ -1,0 +1,97 @@
+.answer-review-dialog {
+  .el-dialog__header {
+    height: 58px;
+  }
+  .slot-title {
+    display: flex;
+    .title {
+      height: 22px;
+      line-height: 22px;
+      width: 650px;
+      display: flex;
+      justify-content: space-between;
+      .title-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #222222;
+      }
+      .title-btn.title-btn_active {
+        color: #6d90f7;
+      }
+      .title-btn {
+        height: 22px;
+        line-height: 22px;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+        color: #555555;
+        user-select: null;
+        .el-icon-sort {
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+
+  .el-dialog__body {
+    padding: 0;
+    .main {
+      padding: 0 20px 16px;
+      border-bottom: $list-search-tab-warp-border-bottom;
+      &-content {
+        padding: 20px 0 12px;
+        display: flex;
+        border-bottom: $list-search-tab-warp-border-bottom;
+        img {
+          height: 24px;
+          width: 24px;
+          border-radius: 12px;
+          margin-right: 8px;
+        }
+        .right {
+          .name {
+            height: 24px;
+            line-height: 24px;
+            color: #555555;
+            margin-right: 16px;
+          }
+          .update-time {
+            color: #bfbfbf;
+          }
+          .font-active {
+            color: #4974f5;
+          }
+          .default-font {
+            color: #555555;
+            :hover {
+              color: #4974f5;
+            }
+          }
+          .describe {
+            margin: 8px 0;
+            color: #222222;
+          }
+          i {
+            font-size: 14px !important;
+          }
+
+          .get-like {
+            padding: 8px 0;
+            margin-right: 14px;
+          }
+        }
+      }
+      &-content:last-child {
+        border-bottom: 1px solid $white;
+      }
+      .empty {
+        height: 300px;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .rich-text {
+      padding: 16px 20px 2px;
+    }
+  }
+}

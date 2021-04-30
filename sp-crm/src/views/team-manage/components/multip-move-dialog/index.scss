@@ -1,0 +1,68 @@
+.multip-move-select-remote {
+  .el-select-dropdown__wrap {
+    .el-select-dropdown__item {
+      height: max-content;
+    }
+  }
+}
+
+.multip-move-dialog {
+  .el-dialog__body {
+    height: 248px;
+
+    .el-loading-parent--relative {
+      width: 100%;
+    }
+
+    .el-form-item__label {
+      width: 98px !important;
+      padding: 0 !important;
+    }
+
+    .el-form-item__content {
+      margin-left: 98px !important;
+    }
+
+    .text {
+      height: 20px;
+      margin-bottom: 28px;
+
+      &__remind {
+        color: $push-sheet-dialog-title-content-color !important;
+      }
+    }
+
+    .icon-success {
+      color: $gray-11;
+    }
+
+    .el-select {
+      width: 300px;
+    }
+
+    .el-input__count {
+      line-height: 14px;
+    }
+  }
+
+  .el-dialog__footer {
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .note {
+        color: $gray-11;
+        font-size: $font-size-sm;
+      }
+    }
+  }
+}
+
+.clue-move-error {
+  .el-message-box__status {
+    top: 6%;
+    transform: translateY(0%);
+    font-size: 18px !important;
+  }
+}

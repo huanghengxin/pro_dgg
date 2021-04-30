@@ -1,0 +1,138 @@
+.torch-plan {
+  background-color: $bgc-color;
+  .explain {
+    width: 100%;
+    height: 122px;
+    padding: 9px 20px 16px 20px;
+    background: $white;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+
+    &__title {
+      padding: 0 0 10px 0;
+      border-bottom: 1px solid $gray-10;
+      color: $black-2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: $font-size-lg;
+      font-weight: $font-weight-crm;
+
+      &-txt1 {
+        height: 22px;
+        line-height: 22px;
+        word-spacing: 0.31px;
+      }
+
+      .el-button {
+        height: 28px;
+        width: 40px;
+        font-size: $font-size-sm;
+        line-height: 8px;
+        padding: 0;
+        word-spacing: 0.31px;
+      }
+    }
+
+    &__text {
+      box-sizing: border-box;
+      padding: 16px 0 8px 0;
+      color: $gray;
+
+      &-1 {
+        box-sizing: border-box;
+        color: $gray;
+        .to-allocation {
+          color: $base-color;
+          cursor: pointer;
+          user-select: none;
+        }
+      }
+    }
+  }
+  .staff-box {
+    .staff {
+      padding: 13px 20px 16px 18px;
+      background: $white;
+
+      &__title {
+        font-size: $font-size-md;
+        font-weight: $font-weight-crm;
+        color: $black-2;
+        padding-bottom: 13px;
+      }
+
+      &__table {
+        width: 100%;
+        color: $black-2;
+
+        th {
+          padding: 14px 0 !important;
+          color: $black-2;
+          font-size: $font-size-md;
+          font-weight: $font-weight-crm;
+        }
+
+        td {
+          padding: 13px 0 !important;
+        }
+
+        .cell {
+          line-height: 20px;
+          display: flex;
+
+          .el-switch {
+            .el-switch__core {
+              width: 28px !important;
+              height: 16px;
+            }
+
+            .el-switch__core::after {
+              height: 12px;
+              width: 12px;
+            }
+          }
+
+          .el-switch.is-checked {
+            .el-switch__core::after {
+              margin-left: -13px !important;
+            }
+          }
+        }
+
+        .el-form-item {
+          // height: 68px;
+          margin-bottom: 0;
+          margin-right: 4px;
+          width: 100px !important;
+
+          .val {
+            font-size: $font-size-sm;
+
+            .el-input__inner {
+              width: 100px;
+              height: 32px;
+              text-align: center;
+              padding: 0;
+            }
+          }
+
+          .el-form-item__content {
+            position: relative;
+          }
+          .el-form-item__error {
+            width: 104px;
+            position: unset;
+            font-size: 8px;
+            line-height: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+.message-box-min-height {
+  .el-message-box__content {
+    height: auto;
+  }
+}

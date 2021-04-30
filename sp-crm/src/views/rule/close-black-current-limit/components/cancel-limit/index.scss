@@ -1,0 +1,32 @@
+@import 'assets/scss/mixins/reset-ui.scss';
+.cancel-limit-page {
+  .el-dialog__body {
+    height: max-content;
+  }
+  .el-checkbox {
+    display: block;
+    .cancel-limit-checkbox {
+      margin-bottom: 28px;
+      .el-checkbox__label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #222222;
+        line-height: 20px;
+      }
+    }
+  }
+  .el-dialog__footer {
+    padding-top: 0;
+    .dialog-footer {
+      .el-button {
+        width: 50px;
+        height: 32px;
+        border-radius: 2px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 17px;
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+@import 'assets/scss/mixins/base';
+@import 'assets/scss/mixins/list-ui';
+
+@include list();
+
+.prospective {
+  width: 100%;
+  font-size: $font-size-md;
+
+  .follow {
+    display: flex;
+
+    &-more {
+      color: $list-table-handle-color !important;
+      cursor: pointer;
+    }
+  }
+
+  &__search {
+    background-color: $base-list-background-color;
+    padding: $list-search-padding;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    &-tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e5e5;
+      border-bottom: $list-search-tab-warp-border-bottom;
+      margin-top: $list-search-tab-warp-margin-top;
+      .tabs-item {
+        flex-shrink: 0;
+        @include flex-center_align();
+        height: 40px;
+        line-height: 40px;
+        margin: 0 34px 0 0;
+        font-weight: $list-search-tab-warp-item-name-font-weight;
+        cursor: pointer;
+        &_active {
+          border-bottom: $list-search-tab-warp-item-border-bottom;
+        }
+      }
+    }
+    &-list {
+      height: 48px;
+      span {
+        margin: 12px 0 4px 0;
+      }
+      .lable {
+        font-size: $font-size-sm;
+        color: $black-2;
+        margin-right: 42px;
+        font-weight: $font-weight-crm;
+      }
+      @include filter-item();
+    }
+  }
+
+  &__main {
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    background-color: $white;
+    position: relative;
+
+    &-warp {
+      .list-handle {
+        @include flex-center();
+
+        .hidden {
+          width: 68px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+      }
+
+      .cell {
+        padding-right: 0;
+        .el-tag {
+          width: max-content;
+          height: 20px;
+          font-size: $font-size-sm;
+          padding: 0 4px;
+          text-align: center;
+          line-height: 20px;
+          border-radius: 2px;
+          border: 1px solid #409eff;
+          margin-right: 5px;
+        }
+        .source {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+
+      th {
+        background-color: $white;
+        color: $black-2;
+        font-weight: $font-weight-crm;
+      }
+    }
+  }
+}

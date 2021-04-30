@@ -1,0 +1,63 @@
+@import 'assets/scss/mixins/reset-ui.scss';
+@import 'assets/scss/mixins/base.scss';
+
+.select-remote {
+  .el-select-dropdown__item {
+    height: auto;
+  }
+}
+
+el-form-item__content {
+  margin-left: 130px;
+}
+
+.invite-interview {
+  .quick-note_group-add > i {
+    font-size: 8px;
+  }
+  .el-dialog__body &_resource {
+    margin-bottom: 0;
+  }
+
+  .el-checkbox {
+    margin-right: 20px;
+  }
+
+  .el-form-item__label {
+    padding-right: 0;
+  }
+
+  .el-form-item {
+    margin-bottom: 16px;
+  }
+  .el-input {
+    width: 300px;
+    .el-input__inner {
+      height: 32px;
+      border-radius: 2px;
+    }
+  }
+  .warn {
+    line-height: 20px;
+    color: #999999;
+    .warn-icon {
+      font-size: 12px;
+    }
+    .warn-text {
+      font-size: 12px;
+      margin-left: 4px;
+    }
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+
+    .footer-info {
+      color: $invite-interview-footer-info-color;
+      display: inline-block;
+    }
+  }
+
+  @include reset-label-before();
+  @include quick-note();
+}

@@ -1,0 +1,14 @@
+@import 'assets/scss/mixins/base';
+.business-details {
+  @include flex-center_content(space-between);
+  .business-details_left {
+    // width: $business-details-left-width;
+    flex: 1;
+    flex-shrink: 0;
+    margin-right: 16px;
+  }
+  .business-details_right {
+    width: $business-details-right-width;
+    flex-shrink: 0;
+  }
+}
