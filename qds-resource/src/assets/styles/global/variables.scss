@@ -1,0 +1,266 @@
+// Color Palette
+$black: #000;
+$black-2: #222;
+$black-3: #333;
+$white: #fff;
+$gray: #555555;
+$gray-1: #f8f8f8;
+$gray-2: #f2f3f5;
+$gray-3: #ebedf0;
+$gray-4: #dcdee0;
+$gray-5: #c8c9cc;
+$gray-6: #969799;
+$gray-7: #646566;
+$gray-8: #1a1a1a;
+$gray-9: #9a9a9a;
+$gray-10: #e5e5e5;
+$gray-11: #999999;
+$gray-12: #d9d9d9;
+$gray-13: #f2f2f2;
+$gray-14: #555555;
+$gray-15: #9b9c9f;
+$gray-16: #f2f2f2;
+$red: #f1524e;
+$red-1: #f56c6c;
+
+$white-1: #f2faff;
+
+$orange: #fe8c29;
+$golden-one: #dac79a;
+$golden-two: #ffefc5;
+$orange-dark: #ed6a0c;
+$orange-light: #fffbe8;
+$green: #24ae68;
+$blue-1: #f2faff;
+$blue-2: #8cadff;
+$bgc-color: #eeeeee;
+$yellow: #f1b244;
+
+$defalut-box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+
+$blue-bg: #ecf1fe;
+
+// Gradient Colors
+$gradient-red: linear-gradient(to right, #ff6034, #ee0a24);
+$gradient-orange: linear-gradient(to right, #ffd01e, #ff8917);
+
+// Component Colors
+$text-color: $gray-8;
+$active-color: $gray-1;
+$active-opacity: 0.7;
+$disabled-opacity: 0.5;
+$background-color: $gray-1;
+$background-color-light: #fafafa;
+$text-link-color: #576b95;
+$search-icon-right: $gray-9;
+
+//margin
+$padding-base: 4px;
+$margin-base: 4px;
+$margin-xs: $padding-base * 2.5;
+$margin-20: $padding-base * 5;
+// Padding
+
+$padding-list-base: 16px 20px;
+$padding-dialog-title-base: 10px 16px;
+$padding-xs: $padding-base * 2;
+$padding-sm: $padding-base * 3;
+$padding-md: $padding-base * 4;
+$padding-20: $padding-base * 5;
+$padding-lg: $padding-base * 6;
+$padding-28: $padding-base * 7;
+$padding-xl: $padding-base * 8;
+$padding-xxl: $padding-base * 5;
+
+// Font
+$font-size-xs: 10px;
+$font-size-qs: 11px;
+$font-size-sm: 12px;
+$font-size-13: 13px;
+$font-size-md: 14px;
+$font-size-lg: 16px;
+$font-size-xlg: 18px;
+$font-size-bb: 18px;
+$font-size-max: 20px;
+$font-weight-noraml: 400;
+$font-weight-bold: 500;
+$font-weight-crm: 600;
+$font-weight-bolder: bold;
+$font-weight-normal: normal;
+$line-height-xs: 14px;
+$line-height-sm: 18px;
+$line-height-md: 20px;
+$line-height-lg: 22px;
+$line-height-max: 28px;
+$base-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial,
+  Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+$price-integer-font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
+
+// Animation
+$animation-duration-base: 0.3s;
+$animation-duration-fast: 0.2s;
+$animation-timing-function-enter: ease-out;
+$animation-timing-function-leave: ease-in;
+
+// Border
+$border-color: $gray-3;
+$border-bottom-color: $gray-10;
+// $border-bottom-color: 1px solid $gray-10;
+$border-width-base: 1px;
+$border-radius-sm: 2px;
+$border-radius-md: 10px;
+$border-radius-lg: 12px;
+$border-radius-max: 999px;
+
+//el-dialog__body
+$dialog-body-padding: 0 $padding-20;
+$dialog-footer-height: 70px;
+
+//base color
+$base-color: #4974f5;
+//business-info active color
+$business-info-active-color: #e6a23c;
+//base color
+$base-list-background-color: #fff;
+//base color
+$base-business-info-background-color: #fff;
+//base border-radius
+$base-tag-border-radius: 2px;
+//base list tag background-color
+$base-tag-background-color: #f2f2f2;
+//base list tag background-color
+$base-tag-border-color: #d9d9d9;
+//base list tag background-color
+$base-tag-line-color: #d8d8d8;
+//base button disable  color
+$base-button-disable-color: #8cadff;
+//base tag disable border color
+$base-tag-disable-border-color: $gray-10;
+//base tag disable color
+$base-tag-disable-color: $gray-11;
+
+//dingqicha
+$dingqicha-height: 620px;
+$dingqicha-title-padding-top: $padding-lg;
+$dingqicha-title-padding-bottom: $padding-lg;
+$dingqicha-title-border-bottom: $border-width-base solid $border-bottom-color;
+$dingqicha-title-input-width: 380px;
+$dingqicha-title-input-margin-top: 24px;
+$dingqicha-title-input-margin-top: 24px;
+$dingqicha-title-input-button-width: 88px;
+$dingqicha-content-width: 350px;
+$dingqicha-content-border-bottom: $border-width-base solid $border-bottom-color;
+$dingqicha-content-item-padding-bottom: $padding-md;
+$dingqicha-content-top-line-height: 20px;
+$dingqicha-content-top-name-color: $gray-8;
+$dingqicha-content-top-margin-top: 12px;
+$dingqicha-content-top-tag-width: 40px;
+$dingqicha-content-top-tag-line-height: 28px;
+$dingqicha-content-top-tag-border: $border-width-base solid $base-color;
+$dingqicha-content-top-tag-color: $base-color;
+$dingqicha-content-top-tag-border-radius: $border-radius-sm;
+$dingqicha-content-padding-left: $padding-lg;
+$dingqicha-content-one-margin-top: 8px;
+$dingqicha-content-two-margin-top: 12px;
+$dingqicha-content-one-frist-child-color: $gray-11;
+$dingqicha-content-one-last-child-color: $black-2;
+$dingqicha-content-one-margin-left: 22px;
+
+//list-search
+$list-search-icon-size: 14px;
+$list-search-padding: $padding-list-base;
+$list-search-add-business-width: 88px;
+$list-search-add-business-height: 32px;
+$list-search-add-business-border: $border-width-base solid $base-color;
+$list-search-add-business-border-radius: $base-tag-border-radius;
+$list-search-add-business-name-color: $base-color;
+$list-search-add-business-name-margin-left: 4px;
+$list-search-add-business-name-font-size: $font-size-sm;
+$list-search-tab-warp-height: 40px;
+$list-search-tab-warp-border-bottom: $border-width-base solid $border-bottom-color;
+$list-search-tab-warp-margin-top: 12px;
+$list-search-tab-warp-item-margin-right: 34px;
+$list-search-tab-warp-item-border-bottom: 3px solid $base-color;
+$list-search-tab-warp-item-icon-width: $list-search-icon-size;
+$list-search-tab-warp-item-icon-height: $list-search-icon-size;
+$list-search-tab-warp-item-icon-margin-left: 4px;
+$list-search-tab-warp-item-name-font-weight: $font-weight-crm;
+$list-search-tab-warp-status-number-color: $base-color;
+$list-search-filter-list-warp-name-width: 90px;
+$list-search-filter-list-warp-name-line-height: 26px;
+$list-search-filter-list-warp-name-color: $black-2;
+$list-search-filter-list-warp-name-font-weight: $font-weight-crm;
+$list-search-filter-list-warp-name-margin-top: 18px;
+$list-search-filter-list-warp-item-padding: 5px 12px;
+$list-search-filter-list-warp-item-height: 26px;
+$list-search-filter-list-warp-item-font-size: $font-size-sm;
+$list-search-filter-list-warp-item-active-border: $border-width-base solid $base-color;
+$list-search-filter-list-warp-item-active-color: $base-color;
+$list-search-filter-list-warp-item-active-border-radius: $base-tag-border-radius;
+$list-search-filter-list-more-padding: 0 18px;
+$list-search-filter-list-checked-height: 40px;
+$list-search-filter-list-checked-background: $base-tag-background-color;
+$list-search-filter-list-checked-font-size: $font-size-sm;
+$list-search-filter-list-checked-name-width: 68px;
+$list-search-filter-list-checked-clear-width: 64px;
+$list-search-filter-list-checked-tag-width: calc(100%- 132px);
+$list-search-filter-list-checked-clear-height: 28px;
+$list-search-filter-list-checked-clear-margin-top: 8px;
+$list-search-filter-list-checked-clear-margin-left: 12px;
+$list-search-filter-list-checked-clear-margin-right: 16px;
+$list-search-filter-list-checked-clear-border: $border-width-base solid $base-tag-border-color;
+$list-search-filter-list-checked-tag-item-margin-left: 8px;
+
+//list
+$list-table-th-font-weight: $font-weight-crm;
+$list-table-th-color: $black-2;
+$list-table-handle-color: $base-color;
+
+//write-follow-record
+$write-quick-note-item-padding: 3px 8px;
+$write-quick-note-item-font-size: $font-size-sm;
+$write-quick-note-item-background-color: $gray-13;
+$write-quick-note-item-margin-right: 8px;
+
+//set-group
+$set-group-info-font-size: $font-size-sm;
+$set-group-info-margin-top: 8px;
+$set-group-item-margin-top: 12px;
+
+// invite-interview
+$invite-interview-footer-info-color: $gray-11;
+
+//push-sheet
+$push-sheet-dialog-border-top-right-radius: 5px;
+$push-sheet-dialog-header-border-top-left-radius: 5px;
+$push-sheet-dialog-header-border-top-right-radius: 5px;
+$push-sheet-bussiness-info-title-fontsize: 14px;
+$push-sheet-bussiness-info-title-color: #222;
+$push-sheet-bussiness-info-title-weight: 600;
+$push-sheet-bussiness-has-been-on: #67c23a; //已上架文字颜色
+$push-sheet-bussiness-sold-out: #ecb212; //已上架文字颜色
+$push-sheet-dialog-title-color: #f2faff; //弹出框背景颜色
+$push-sheet-dialog-title-content-color: #f56c6c; //弹出框背景颜色
+$push-sheet-stages-color: #f56c6c; //分期付款颜色
+$list-search-filter-list-checked-clear-border: $border-width-base solid $base-tag-border-color;
+
+//business-info
+$business-details-right-width: 364px;
+$business-details-left-width: 820px;
+$business-details-item-padding: 20px;
+$business-details-info-margin-bottom: 16px;
+$business-details-info-small-margin-bottom: 8px;
+$business-details-info-name-color: $black-2;
+$business-details-info-item-label-color: #9b9c9f;
+$business-details-info-name-info-attention-padding: 2px 4px;
+
+//more-handle
+$business-details-item-margin-top: 16px;
+$more-handle-title-color: $black-2;
+$more-handle-title-font-weight: $font-weight-crm;
+$more-handle-title-margin-top: $business-details-item-margin-top;
+$more-handle-button-warp-item-padding: 6px 8px;
+$more-handle-button-warp-item-margin-right: 12px;
+$more-handle-button-warp-margin-top: 12px;
+
+//demand-info

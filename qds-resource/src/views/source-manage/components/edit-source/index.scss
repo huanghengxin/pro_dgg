@@ -1,0 +1,59 @@
+@import 'assets/scss/mixins/base.scss';
+@import 'assets/scss/mixins/reset-ui.scss';
+.edit-source-page {
+  @include reset-label-before();
+  .el-form-item {
+    margin-bottom: 20px;
+    .source-text {
+      line-height: normal;
+      font-size: 12px;
+      font-weight: 400;
+      color: #999999;
+    }
+    .input-loading {
+      font-size: 20px;
+    }
+    .el-input {
+      width: 320px;
+      .el-icon-circle-close {
+        line-height: 40px;
+      }
+    }
+  }
+  .el-form-item:last-child {
+    margin-bottom: 0;
+  }
+  .left-content {
+    padding-bottom: 16px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .el-input__inner {
+      border-radius: 2px;
+      width: 320px;
+      height: 32px;
+    }
+    .el-textarea {
+      width: 480px;
+      .el-textarea__inner {
+        height: 120px;
+        border-radius: 2px;
+      }
+    }
+    .el-textarea .el-input__count {
+      background-color: transparent;
+      bottom: 0px;
+    }
+    .el-form-item__label {
+      color: #222222;
+      padding: 0;
+    }
+    .footer-button {
+      .el-form-item__content {
+        display: flex;
+        justify-content: flex-end;
+        // margin-right: 34px;
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "name": "subapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "private": true,
+  "author": "sp",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "sp-scripts start",
+    "build": "sp-scripts build",
+    "format": "sp-scripts format",
+    "lint": "sp-scripts lint",
+    "analyse": "sp-scripts analyse",
+    "copy": "sp-scripts copy"
+  },
+  "commonDependencies": {
+    "vue": "2.6.12",
+    "vue-router": "^3.4.9",
+    "axios": "^0.21.0"
+  },
+  "dependencies": {
+    "@fe/common": "^0.0.8",
+    "@fe/element-ui": "^2.15.5",
+    "dayjs": "^1.10.4",
+    "element-ui": "^2.15.1",
+    "localforage": "^1.9.0",
+    "single-spa": "^5.6.1",
+    "single-spa-vue": "^2.0.0",
+    "storejs": "^1.1.0",
+    "vuex": "^3.5.1"
+  },
+  "devDependencies": {
+    "@fe/sp-scripts": "1.0.6-bate",
+    "core-js": "^3.7.0",
+    "postcss": "^8.1.1",
+    "postcss-loader": "^4.0.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/@fe/sp-scripts/scripts/lint.js"
+    ]
+  },
+  "prettier": "./node_modules/@fe/sp-scripts/scripts/prettier.js",
+  "babel": {
+    "extends": "@fe/sp-scripts/scripts/babel.js"
+  },
+  "browserslist": [
+    "chrome >= 30",
+    "firefox >= 30",
+    "ie >= 11",
+    "safari >= 7",
+    "ios >= 6",
+    "android >= 4"
+  ]
+}

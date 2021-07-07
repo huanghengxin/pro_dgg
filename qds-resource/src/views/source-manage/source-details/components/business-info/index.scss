@@ -1,0 +1,79 @@
+@import 'assets/scss/mixins/base';
+
+.business-info {
+  box-shadow: $defalut-box-shadow;
+  padding: $business-details-item-padding;
+  background-color: $base-business-info-background-color;
+  &_item {
+    margin-bottom: $business-details-info-margin-bottom;
+    &-small {
+      margin-bottom: $business-details-info-small-margin-bottom;
+      .icon-plus {
+        width: 50px;
+        color: #4974f5;
+        font-size: 12px;
+        cursor: pointer;
+        em {
+          margin-left: 4px;
+        }
+      }
+    }
+  }
+
+  .el-icon-edit-outline {
+    cursor: pointer;
+  }
+  .name-info {
+    @include flex-center_content(space-between);
+    color: $business-details-info-name-color;
+    font-size: $font-size-xlg;
+    &_attention {
+      border: 1px solid $business-info-active-color;
+      padding: $business-details-info-name-info-attention-padding;
+      font-size: $font-size-sm;
+      color: $business-info-active-color;
+    }
+  }
+
+  .item-label {
+    flex-shrink: 0;
+    color: $business-details-info-item-label-color;
+  }
+  .customer-property {
+    word-break: break-all; //在恰当的断字点进行换行
+  }
+  .sex-info {
+    display: flex;
+    .el-rate {
+      margin-left: 12px;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+  }
+  .record-info {
+    @include flex-center_content(space-between);
+    .iconfont-qds-crm {
+      cursor: pointer;
+    }
+  }
+  .phone-info {
+    display: flex;
+    &_icon {
+      cursor: pointer;
+      margin-left: 6px;
+      color: $base-color;
+      font-size: 12px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    &_sen {
+      margin-top: 8px;
+    }
+  }
+  .color-info {
+    color: $business-info-active-color;
+  }
+  .require-info {
+    display: flex;
+  }
+}

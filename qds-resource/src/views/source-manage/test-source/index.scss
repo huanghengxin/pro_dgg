@@ -1,0 +1,141 @@
+@import 'assets/scss/mixins/base';
+@import 'assets/scss/mixins/list-ui';
+.test-source-page {
+  @include list();
+  @include font-weight-text();
+  .test-source-title {
+    padding: 0 20px 16px 20px;
+    background-color: #fff;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    .tab-warp {
+      border-bottom: 1px solid #e5e5e5;
+      .warp-tabs {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .icon-edit {
+          font-size: 8px;
+          margin-right: 4px;
+        }
+        &_item {
+          width: 90px;
+          text-align: center;
+          cursor: pointer;
+          padding: 14px 17px;
+          user-select: none;
+          color: $black-2;
+          font-weight: $font-weight-crm;
+          span {
+            padding-bottom: 13px;
+          }
+          &-active {
+            border-bottom: $list-search-tab-warp-item-border-bottom;
+          }
+        }
+        &_left {
+          flex-shrink: 0;
+        }
+        &_left {
+          display: flex;
+        }
+      }
+    }
+    .dis-in-line {
+      display: inline-block;
+    }
+    .search-input {
+      margin: 20px 0;
+      & span {
+        font-size: 14px;
+        font-weight: 400;
+        color: #222222;
+        line-height: 32px;
+        padding: 0;
+      }
+      &-ml16 {
+        margin-left: 16px;
+      }
+      .el-input {
+        width: 280px;
+        height: 32px;
+        .el-input__inner {
+          font-size: 13px;
+          font-weight: 400;
+          line-height: 18px;
+          width: 280px;
+          height: 32px;
+          border-radius: 2px;
+          border: 1px solid #d9d9d9;
+        }
+      }
+      .el-select {
+        width: 228px;
+        .el-input {
+          width: 228px;
+          .el-input__inner {
+            width: 228px;
+          }
+        }
+      }
+    }
+    .sign-time {
+      font-size: 12px;
+      height: 42px;
+      display: inline-block;
+      @include filter-item();
+      & > span:nth-child(1) {
+        margin-right: 42px;
+      }
+      .filter-item {
+        margin-right: 10px;
+      }
+      .active {
+        border: 1px solid #4974f5;
+        color: #4974f5;
+        border-radius: 2px;
+      }
+      .noActive {
+        pointer-events: none;
+      }
+      .date-picker {
+        width: 300px;
+        height: 28px;
+        .el-range__icon,
+        .el-range-separator,
+        .el-range__close-icon {
+          line-height: 22px;
+          font-size: 12px;
+        }
+      }
+    }
+    .search-button {
+      display: inline-block;
+      .el-button {
+        margin: 0 16px;
+      }
+      .is-plain {
+        margin: 0;
+      }
+    }
+  }
+  .test-source-table {
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    border-radius: 0px 0px 2px 2px;
+    .more-customerAttribute,
+    .list-last {
+      .cell {
+        & > span {
+          cursor: pointer;
+          color: #4974f5;
+        }
+      }
+    }
+    .footer {
+      background-color: #ffffff;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

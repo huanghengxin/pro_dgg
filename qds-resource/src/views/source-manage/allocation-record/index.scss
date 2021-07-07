@@ -1,0 +1,94 @@
+@import 'assets/scss/mixins/list-ui';
+.allocation-record-page {
+  @include list();
+  .allocation-record-title {
+    background: #ffffff;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    padding: 16px 20px 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    & > div {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      .el-input {
+        .el-input__inner {
+          padding: 0 15px;
+        }
+      }
+      .el-select {
+        width: 220px;
+        height: 32px;
+        margin-right: 16px;
+        .el-input__inner {
+          width: 220px;
+          height: 32px;
+          padding: 0 15px;
+        }
+      }
+      .el-cascader {
+        width: 220px;
+        height: 32px;
+        margin-right: 16px;
+        .el-input__inner {
+          width: 220px;
+          height: 32px;
+          padding: 0 15px;
+        }
+      }
+      .el-date-editor {
+        width: 300px;
+        height: 32px;
+        margin-right: 16px;
+        .el-input__icon,
+        .el-range-separator {
+          line-height: 26px;
+        }
+      }
+      .drop-select {
+        display: inline-block;
+        .el-select-dropdown {
+          min-width: 284px !important;
+        }
+      }
+      & > span {
+        display: inline-block;
+        width: 70px;
+      }
+    }
+    & > div:nth-child(1) {
+      .el-input {
+        width: 220px;
+        height: 32px;
+        margin-right: 16px;
+        .el-input__inner {
+          height: 32px;
+        }
+      }
+    }
+    .search-button {
+      margin: 0 16px;
+    }
+    .is-plain {
+      margin: 0;
+    }
+  }
+  .allocation-record-table {
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    border-radius: 0px 0px 2px 2px;
+    margin-top: 16px;
+    .handle-text {
+      cursor: pointer;
+      color: #4974f5;
+      margin: 0 8px;
+    }
+    .footer {
+      background-color: #ffffff;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}

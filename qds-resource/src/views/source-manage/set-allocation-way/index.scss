@@ -1,0 +1,105 @@
+@import 'assets/scss/mixins/list-ui';
+.set-allocation-way-page {
+  @include list();
+  background-color: #fff;
+  box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  .el-tabs__header {
+    .el-tabs__item {
+      width: 134px;
+      height: 48px;
+      text-align: center;
+      padding: 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .el-tabs__active-bar {
+      text-align: center;
+      width: 30px !important;
+      left: 13%;
+    }
+  }
+  .allocation-way {
+    .el-form-item {
+      .el-form-item__label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #222222;
+      }
+    }
+    .el-checkbox {
+      margin-left: 20px;
+    }
+    .el-select,
+    .el-cascader {
+      width: 320px;
+      border-radius: 2px;
+    }
+  }
+  .set-allocation {
+    .el-date-editor {
+      width: 250px;
+    }
+    & .el-form-item:last-child {
+      margin-bottom: 0;
+    }
+    .el-form-item__label {
+      font-size: 14px;
+      font-weight: 400;
+      color: #222222;
+    }
+    .set-allocation-right {
+      .el-input {
+        width: 80px;
+        height: 32px;
+        .el-input__inner {
+          border-radius: 2px;
+          height: 32px;
+        }
+      }
+    }
+  }
+  .changeTime {
+    .el-form-item__error {
+      left: 14%;
+    }
+  }
+  .allocation-log {
+    .allocation-log-title {
+      & > div:nth-child(1) {
+        margin-bottom: 20px;
+      }
+      .el-input {
+        width: 280px;
+        height: 32px;
+        margin-right: 16px;
+        .el-input__inner {
+          font-size: 13px;
+          font-weight: 400;
+          line-height: 18px;
+          width: 280px;
+          height: 32px;
+          border-radius: 2px;
+          border: 1px solid #d9d9d9;
+        }
+      }
+    }
+    .allocation-log-table {
+      box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+      border-radius: 0px 0px 2px 2px;
+      .success-color {
+        color: #67c239;
+      }
+      .error-color {
+        color: #f56c6c;
+      }
+      .footer {
+        background-color: #ffffff;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+}

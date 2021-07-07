@@ -1,0 +1,100 @@
+@import 'assets/scss/mixins/base';
+@import 'assets/scss/mixins/list-ui';
+.await-allocation-page {
+  @include list();
+  @include font-weight-text();
+  .await-allocation-title {
+    background: #ffffff;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    .search-input {
+      margin-bottom: 20px;
+      & > span {
+        font-size: 14px;
+        font-weight: 400;
+        color: #222222;
+        line-height: 32px;
+        padding: 0;
+      }
+      &-ml16 {
+        margin-left: 16px;
+      }
+      .el-input {
+        width: 280px;
+        height: 32px;
+        .el-input__inner {
+          font-size: 13px;
+          font-weight: 400;
+          line-height: 18px;
+          width: 280px;
+          height: 32px;
+          border-radius: 2px;
+          border: 1px solid #d9d9d9;
+        }
+      }
+      .el-select {
+        width: 220px;
+        .el-input {
+          width: 220px;
+          .el-input__inner {
+            width: 220px;
+          }
+        }
+      }
+      .drop-select {
+        display: inline-block;
+        .el-select-dropdown {
+          min-width: 284px !important;
+        }
+      }
+    }
+    .sign-time {
+      font-size: 12px;
+      height: 42px;
+      @include filter-item();
+      & > span:nth-child(1) {
+        margin-right: 42px;
+      }
+      .filter-item {
+        margin-right: 10px;
+      }
+      .active {
+        border: 1px solid #4974f5;
+        color: #4974f5;
+        border-radius: 2px;
+      }
+      .noActive {
+        pointer-events: none;
+      }
+      .date-picker {
+        width: 300px;
+        height: 28px;
+        .el-range__icon,
+        .el-range-separator,
+        .el-range__close-icon {
+          line-height: 22px;
+          font-size: 12px;
+        }
+      }
+      .search-button {
+        margin: 0 16px;
+      }
+      .is-plain {
+        margin: 0;
+      }
+    }
+  }
+  .await-allocation-table {
+    margin-top: 16px;
+    box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1);
+    border-radius: 0px 0px 2px 2px;
+    .footer {
+      background-color: #ffffff;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
